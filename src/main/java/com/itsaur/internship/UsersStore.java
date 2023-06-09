@@ -7,4 +7,8 @@ public interface UsersStore {
     Future<Void> insert(User user);
 
     Future<User> findUser(String username);
+
+    Future<Void> delete(String username);
+
+    Future<Void> changePassword(String username, String currentPassword, String newPassword);
 }
