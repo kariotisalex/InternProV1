@@ -1,13 +1,12 @@
 package com.itsaur.internship;
 
-
 import io.vertx.core.Future;
 
-public class UsersConsole {
+public class UserConsole {
 
     private final UserService userService;
 
-    public UsersConsole(UserService userService) {
+    public UserConsole(UserService userService) {
         this.userService = userService;
     }
 
@@ -16,18 +15,29 @@ public class UsersConsole {
             return this.userService.register(args[2], args[3])
                     .onSuccess(v -> System.out.println("User registered!"))
                     .onFailure(v -> {
-                        System.out.println("Failed to register user");
-                        v.printStackTrace();
-                    })
-                    .mapEmpty();
+                        System.out.println("Failed to register the user");
+                    }).mapEmpty();
         } else if (args[1].equals("--login")) {
             return this.userService.login(args[2], args[3])
                     .onSuccess(v -> System.out.println("User logged in!"))
                     .onFailure(v -> {
                         System.out.println("Failed to log in user");
                         v.printStackTrace();
-                    })
-                    .mapEmpty();
+                    }).mapEmpty();
+        } else if (args[1].equals("--delete")) {
+            return this.userService.delete(args[2])
+                    .onSuccess(v -> System.out.println("User deleted!"))
+                    .onFailure(v -> {
+                        System.out.println("Failed to delete user");
+                        v.printStackTrace();
+                    }).mapEmpty();
+        } else if (args[1].equals("--chpasswd")) {
+            return this.userService.changePassword(args[2], args[3],args[4])
+                    .onSuccess(v -> System.out.println("User changed password!"))
+                    .onFailure(v -> {
+                        System.out.println("Failed to change password from user " + args[2]);
+                        v.printStackTrace();
+                    }).mapEmpty();
         } else {
             return Future.failedFuture(new IllegalArgumentException("Invalid argument"));
         }
