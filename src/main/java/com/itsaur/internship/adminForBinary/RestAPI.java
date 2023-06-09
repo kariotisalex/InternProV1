@@ -18,7 +18,7 @@ public class RestAPI {
         router
                 .get("/showAll")
                 .handler(v -> {
-                    readClass.showAll();
+                    readClass.showAll("/home/kariotis@ad.itsaur.com/IdeaProjects/RevisionV1/src/main/java/RestAPI/users.bin");
                     v.end();
                 });
 
@@ -27,6 +27,13 @@ public class RestAPI {
                 .handler(v -> {
                     readClass.showAllResult( "/home/kariotis@ad.itsaur.com/IdeaProjects/RevisionV1/src/main/java/RestAPI/users22.bin");
                     v.end();
+                });
+
+        router
+                .get("/createBinary/:records")
+                .handler(v ->{
+                    int records = Integer.valueOf(v.pathParam("records"));
+                    "/home/kariotis@ad.itsaur.com/Downloads/u2.bin"
                 });
 
         server.requestHandler(router).listen(8081);

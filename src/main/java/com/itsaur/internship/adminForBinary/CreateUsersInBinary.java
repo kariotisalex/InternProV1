@@ -1,14 +1,19 @@
 package com.itsaur.internship.adminForBinary;
 
+import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.file.OpenOptions;
 
 import java.util.Random;
 import java.util.stream.IntStream;
+
 public class CreateUsersInBinary {
 
-    public static void main(String[] args) {
+    public CreateUsersInBinary() {
+    }
+
+    public Future<Void> generate(String path) {
 
         String letters = "abcdefghijklmnopqrstuvwxyz";
         String numbers = "0123456789";
@@ -16,34 +21,29 @@ public class CreateUsersInBinary {
 
 
         //Binary File
-        vertx
+        return vertx
                 .fileSystem()
-                .open("/home/kariotis@ad.itsaur.com/Downloads/u2.bin", new OpenOptions())
-                .onSuccess(h -> {
-                    vertx.executeBlocking(v -> {
-                        IntStream.range(0, 10).forEach(i -> {
-                            final byte[] generatedUsername = generateRandom(letters).getBytes();
-                            final byte[] generatedPassword = generateRandom(numbers).getBytes();
-                            //user size
-                            //username size
-                            //username data
-                            //password data
-                            byte totalSize = Integer.valueOf(2 + generatedUsername.length + generatedPassword.length).byteValue();
-                            Buffer buffer = Buffer.buffer();
-                            buffer.appendByte(totalSize);
-                            buffer.appendByte(Integer.valueOf(generatedUsername.length).byteValue());
-                            buffer.appendBytes(generatedUsername);
-                            buffer.appendBytes(generatedPassword);
-                            h.write(buffer);
-                        });
-                        h.close();
-                        System.out.println("Finished");
-                    });
+                .open(path, new OpenOptions())
+                .compose(h -> {
+                    return vertx
+                            .executeBlocking(v -> {
+                                IntStream.range(0, 10).forEach(i -> {
+                                    final byte[] generatedUsername = generateRandom(letters).getBytes();
+                                    final byte[] generatedPassword = generateRandom(numbers).getBytes();
+                                    byte totalSize = Integer.valueOf(2 + generatedUsername.length + generatedPassword.length).byteValue();
+                                    Buffer buffer = Buffer.buffer();
+                                    buffer.appendByte(totalSize);
+                                    buffer.appendByte(Integer.valueOf(generatedUsername.length).byteValue());
+                                    buffer.appendBytes(generatedUsername);
+                                    buffer.appendBytes(generatedPassword);
+                                    h.write(buffer);
+                                });
+                                h.close();
+                            System.out.println("Finished");
+                    })
+                    .mapEmpty();
                 });
-
-
     }
-
 
     public static String generateRandom(String characters) {
         Random random = new Random();

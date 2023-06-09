@@ -24,10 +24,10 @@ public class ReadClass {
         this.vertx = vertx;
     }
 
-    public Future<ReadResult> showAll(){
+    public Future<ReadResult> showAll(String path){
         return vertx
                 .fileSystem()
-                .open( "/home/kariotis@ad.itsaur.com/IdeaProjects/RevisionV1/src/main/java/RestAPI/users.bin",//"/home/kariotis@ad.itsaur.com/Downloads/u2.bin",
+                .open( path,//"/home/kariotis@ad.itsaur.com/Downloads/u2.bin",
                         new OpenOptions())
                 .compose(file ->{
                     return readNextUser(file, 0,null, null, false);
@@ -36,13 +36,14 @@ public class ReadClass {
     }
 
 
-    public Future<ReadResult> showAllResult(String path){
+    public Future<Void> showAllResult(String path){
         return vertx
                 .fileSystem()
                 .open( path,
                         new OpenOptions())
                 .compose(file ->{
-                    return readNextUser(file, 0,null, null, false);
+                    return readNextUser(file, 0,null, null, false)
+                            .mapEmpty();
                 });
     }
     private Future<ReadResult> readNextUser(AsyncFile file, final int currentPosition, String usernm, String passwd, boolean aTest) {
@@ -90,8 +91,5 @@ public class ReadClass {
                     }
                 });
     }
-
-
-
 
 }
