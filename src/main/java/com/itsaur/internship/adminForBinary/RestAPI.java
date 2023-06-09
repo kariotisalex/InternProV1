@@ -20,9 +20,9 @@ public class RestAPI {
                 });
 
         router
-                .get("/showAllResult")
+                .get("/showAllSpare")
                 .handler(v -> {
-                    readClass.showAllResult( "/home/kariotis@ad.itsaur.com/IdeaProjects/RevisionV1/src/main/java/RestAPI/users22.bin");
+                    readClass.showAllSpare( "/home/kariotis@ad.itsaur.com/IdeaProjects/RevisionV1/src/main/java/RestAPI/users22.bin");
                     v.end();
                 });
 
