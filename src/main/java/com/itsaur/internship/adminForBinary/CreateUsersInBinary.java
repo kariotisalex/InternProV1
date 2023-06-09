@@ -9,15 +9,16 @@ import java.util.Random;
 import java.util.stream.IntStream;
 
 public class CreateUsersInBinary {
+    Vertx vertx;
 
-    public CreateUsersInBinary() {
+    public CreateUsersInBinary(Vertx vertx) {
+        this.vertx = vertx;
     }
 
-    public Future<Void> generate(String path) {
+    public Future<Void> generate(String path, int records) {
 
         String letters = "abcdefghijklmnopqrstuvwxyz";
         String numbers = "0123456789";
-        Vertx vertx = Vertx.vertx();
 
 
         //Binary File
@@ -27,7 +28,7 @@ public class CreateUsersInBinary {
                 .compose(h -> {
                     return vertx
                             .executeBlocking(v -> {
-                                IntStream.range(0, 10).forEach(i -> {
+                                IntStream.range(0, records).forEach(i -> {
                                     final byte[] generatedUsername = generateRandom(letters).getBytes();
                                     final byte[] generatedPassword = generateRandom(numbers).getBytes();
                                     byte totalSize = Integer.valueOf(2 + generatedUsername.length + generatedPassword.length).byteValue();

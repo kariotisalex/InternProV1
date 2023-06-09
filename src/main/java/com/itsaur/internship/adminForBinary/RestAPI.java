@@ -2,10 +2,7 @@ package com.itsaur.internship.adminForBinary;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
-import io.vertx.core.http.HttpServerResponse;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
-import io.vertx.ext.web.handler.BodyHandler;
 
 public class RestAPI {
     public static void main(String[] args) {
@@ -33,7 +30,13 @@ public class RestAPI {
                 .get("/createBinary/:records")
                 .handler(v ->{
                     int records = Integer.valueOf(v.pathParam("records"));
-                    "/home/kariotis@ad.itsaur.com/Downloads/u2.bin"
+                    new CreateUsersInBinary(vertx).generate("/home/kariotis@ad.itsaur.com/Downloads/u2.bin",records)
+                            .onSuccess(ctx -> {
+                                v.response().setStatusCode(200).end();
+                            })
+                            .onFailure(ctx -> {
+                                v.response().setStatusCode(400).end();
+                            });
                 });
 
         server.requestHandler(router).listen(8081);
