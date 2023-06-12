@@ -41,8 +41,7 @@ public class CreateUsersInBinary {
                                 });
                                 h.close();
                             System.out.println("Finished");
-                    })
-                    .mapEmpty();
+                    });
                 });
     }
 

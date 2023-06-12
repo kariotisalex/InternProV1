@@ -33,7 +33,7 @@ public class ReadClass {
                     System.out.println(e);
                 })
                 .compose(file ->{
-                    return readNextUser(file, 0,null, null, false);
+                    return readNextUser(file, 0,null, null);
                 });
 
     }
@@ -44,11 +44,15 @@ public class ReadClass {
                 .fileSystem()
                 .open( path,
                         new OpenOptions())
+                .onFailure(e -> {
+                    System.out.println(e);
+                })
                 .compose(file ->{
-                    return readNextUser(file, 0,null, null, false);
+
+                    return readNextUser(file, 0,null, null);
                 });
     }
-    private Future<ReadResult> readNextUser(AsyncFile file, final int currentPosition, String usernm, String passwd, boolean aTest) {
+    private Future<ReadResult> readNextUser(AsyncFile file, final int currentPosition, String usernm, String passwd) {
         return file
                 .read(Buffer.buffer(), 0, currentPosition, 2)
                 .map(totalSizeBuf -> {
@@ -76,14 +80,12 @@ public class ReadClass {
                 }))
                 .compose(readResult -> {
 
-                        System.out.println(readResult.username + " " + readResult.password);
+                    System.out.println(readResult.username + " " + readResult.password);
 
                     if (readResult.currentPosition == file.sizeBlocking()) {
-                        return Future.failedFuture(new IllegalArgumentException());
-                    } else if (readResult.currentPosition == file.sizeBlocking() + 1) {
                         return Future.succeededFuture();
                     } else {
-                        return readNextUser(file, readResult.currentPosition, usernm, passwd, aTest);
+                        return readNextUser(file, readResult.currentPosition, usernm, passwd);
                     }
                 });
     }

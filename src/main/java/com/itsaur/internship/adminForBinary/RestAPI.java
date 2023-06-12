@@ -30,7 +30,8 @@ public class RestAPI {
                 .get("/createBinary/:records")
                 .handler(v ->{
                     int records = Integer.valueOf(v.pathParam("records"));
-                    new CreateUsersInBinary(vertx).generate("/home/kariotis@ad.itsaur.com/Downloads/u2.bin",records)
+                    new CreateUsersInBinary(vertx)
+                            .generate("/home/kariotis@ad.itsaur.com/Downloads/u2.bin",records)
                             .onSuccess(ctx -> {
                                 v.response().setStatusCode(200).end();
                             })
