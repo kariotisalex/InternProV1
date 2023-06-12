@@ -6,6 +6,16 @@ public class ReadResult {
     private int totalLength;
     private int userPosition;
     User userReadResult;
+    private static String pathUser[] = new String[2];
+
+    public static void setPathUser(int position, String path){
+        pathUser[position] = path;
+    }
+
+    public static String getPathUser(int position){
+        return pathUser[position];
+    }
+
 
     public int getUserPosition() {
         return userPosition;

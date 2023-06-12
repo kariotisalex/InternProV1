@@ -13,6 +13,8 @@ public class UsersInBinary implements UsersStore{
     static int i =1;
 
     public UsersInBinary(Vertx vertx) {
+        ReadResult.setPathUser(0,"/home/kariotis@ad.itsaur.com/IdeaProjects/kariotis-internship/src/main/java/com/itsaur/internship/users.bin");
+        ReadResult.setPathUser(1,"/home/kariotis@ad.itsaur.com/IdeaProjects/kariotis-internship/src/main/java/com/itsaur/internship/users22.bin");
         this.vertx = vertx;
     }
 
@@ -21,7 +23,7 @@ public class UsersInBinary implements UsersStore{
 
         return vertx
                 .fileSystem()
-                .open("/home/kariotis@ad.itsaur.com/IdeaProjects/kariotis-internship/src/main/java/com/itsaur/internship/users.bin",new OpenOptions()
+                .open(ReadResult.getPathUser(0), new OpenOptions()
                         .setAppend(true))
                 .compose(v -> {
                     final byte[] usernameInBytes = user.getUsername().getBytes();
@@ -43,7 +45,7 @@ public class UsersInBinary implements UsersStore{
 
         return vertx
                 .fileSystem()
-                .open("/home/kariotis@ad.itsaur.com/IdeaProjects/kariotis-internship/src/main/java/com/itsaur/internship/users.bin",
+                .open(ReadResult.getPathUser(0),
                         new OpenOptions())
                 .compose(file ->{
                     return readNextUser(file, 0, username)
@@ -101,8 +103,8 @@ public class UsersInBinary implements UsersStore{
 
     @Override
     public Future<Void> delete(String username) {
-        Future<AsyncFile> fs = vertx.fileSystem().open("/home/kariotis@ad.itsaur.com/IdeaProjects/kariotis-internship/src/main/java/com/itsaur/internship/users.bin", new OpenOptions());
-        Future<AsyncFile> fs1 = vertx.fileSystem().open("/home/kariotis@ad.itsaur.com/IdeaProjects/kariotis-internship/src/main/java/com/itsaur/internship/users22.bin", new OpenOptions().setAppend(true));
+        Future<AsyncFile> fs = vertx.fileSystem().open(ReadResult.getPathUser(0), new OpenOptions());
+        Future<AsyncFile> fs1 = vertx.fileSystem().open(ReadResult.getPathUser(1), new OpenOptions().setAppend(true));
 
         return fs
                 .compose(file -> {
@@ -164,9 +166,9 @@ public class UsersInBinary implements UsersStore{
                                     System.out.println("Check : success");
                                     return vertx
                                             .fileSystem()
-                                            .move("/home/kariotis@ad.itsaur.com/IdeaProjects/kariotis-internship/src/main/java/com/itsaur/internship/users22.bin",
-                                                    "/home/kariotis@ad.itsaur.com/IdeaProjects/kariotis-internship/src/main/java/com/itsaur/internship/users.bin",
-                                                    new CopyOptions().setReplaceExisting(true));
+                                            .move(ReadResult.getPathUser(1),
+                                                  ReadResult.getPathUser(0),
+                                                  new CopyOptions().setReplaceExisting(true));
                                 }).mapEmpty();
                     }
                     else {
@@ -178,8 +180,8 @@ public class UsersInBinary implements UsersStore{
 
     @Override
     public Future<Void> changePassword(String username, String currentPassword, String newPassword) {
-        Future<AsyncFile> fs = vertx.fileSystem().open("/home/kariotis@ad.itsaur.com/IdeaProjects/kariotis-internship/src/main/java/com/itsaur/internship/users.bin", new OpenOptions());
-        Future<AsyncFile> fs1 = vertx.fileSystem().open("/home/kariotis@ad.itsaur.com/IdeaProjects/kariotis-internship/src/main/java/com/itsaur/internship/users22.bin", new OpenOptions().setAppend(true));
+        Future<AsyncFile> fs = vertx.fileSystem().open(ReadResult.getPathUser(0), new OpenOptions());
+        Future<AsyncFile> fs1 = vertx.fileSystem().open(ReadResult.getPathUser(1), new OpenOptions().setAppend(true));
         return fs
                 .compose(file -> {
                     return changePasswordNextUser(file, fs1, 0, username, newPassword, vertx);
