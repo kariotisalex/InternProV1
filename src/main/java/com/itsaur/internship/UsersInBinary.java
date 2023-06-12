@@ -8,6 +8,8 @@ import io.vertx.core.file.CopyOptions;
 import io.vertx.core.file.FileSystem;
 import io.vertx.core.file.OpenOptions;
 
+import java.awt.*;
+
 public class UsersInBinary implements UsersStore{
     private Vertx vertx;
     static int i =1;
@@ -104,9 +106,9 @@ public class UsersInBinary implements UsersStore{
         Future<AsyncFile> fs = vertx.fileSystem().open("/home/kariotis@ad.itsaur.com/IdeaProjects/RevisionV1/src/main/java/RestAPI/users.bin", new OpenOptions());
         Future<AsyncFile> fs1 = vertx.fileSystem().open("/home/kariotis@ad.itsaur.com/IdeaProjects/RevisionV1/src/main/java/RestAPI/users22.bin", new OpenOptions().setAppend(true));
 
-        return fs
+        return Future.all(fs, fs1)
                 .compose(file -> {
-                    return deleteNextUser(file, fs1, 0, username, vertx);
+                    return deleteNextUser(file.resultAt(0), fs1, 0, username, vertx);
                 }).compose(file -> {
                     return Future.succeededFuture();
                 });
