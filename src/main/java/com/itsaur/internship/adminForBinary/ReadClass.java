@@ -36,14 +36,13 @@ public class ReadClass {
     }
 
 
-    public Future<Void> showAllSpare(String path){
+    public Future<ReadResult> showAllSpare(String path){
         return vertx
                 .fileSystem()
                 .open( path,
                         new OpenOptions())
                 .compose(file ->{
-                    return readNextUser(file, 0,null, null, false)
-                            .mapEmpty();
+                    return readNextUser(file, 0,null, null, false);
                 });
     }
     private Future<ReadResult> readNextUser(AsyncFile file, final int currentPosition, String usernm, String passwd, boolean aTest) {
@@ -74,13 +73,7 @@ public class ReadClass {
                 }))
                 .compose(readResult -> {
 
-                    if (readResult.isEqual(usernm, passwd) && aTest ){
-                        readResult.currentPosition = (int) file.sizeBlocking() + 1;
-                        System.out.print("The user : " +
-                                "" + readResult.username + " with password : " + readResult.password);
-                    }else if (!aTest){
                         System.out.println(readResult.username + " " + readResult.password);
-                    }
 
                     if (readResult.currentPosition == file.sizeBlocking()) {
                         return Future.failedFuture(new IllegalArgumentException());
