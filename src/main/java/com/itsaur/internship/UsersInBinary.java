@@ -108,6 +108,8 @@ public class UsersInBinary implements UsersStore{
 
         return fs
                 .compose(file -> {
+                    System.out.println(file.getClass());
+                    System.out.println(file.getClass());
                     return deleteNextUser(file, fs1, 0, username, vertx);
                 }).compose(file -> {
                     return Future.succeededFuture();
