@@ -3,6 +3,7 @@ package com.itsaur.internship.adminForBinary;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.file.AsyncFile;
 import io.vertx.core.file.OpenOptions;
 
 import java.util.Random;
@@ -17,32 +18,36 @@ public class CreateUsersInBinary {
 
     public Future<Void> generate(String path, int records) {
 
-        String letters = "abcdefghijklmnopqrstuvwxyz";
-        String numbers = "0123456789";
-
-
-        //Binary File
         return vertx
                 .fileSystem()
                 .open(path, new OpenOptions())
                 .compose(h -> {
-                    return vertx
-                            .executeBlocking(v -> {
-                                IntStream.range(0, records).forEach(i -> {
-                                    final byte[] generatedUsername = generateRandom(letters).getBytes();
-                                    final byte[] generatedPassword = generateRandom(numbers).getBytes();
-                                    byte totalSize = Integer.valueOf(2 + generatedUsername.length + generatedPassword.length).byteValue();
-                                    Buffer buffer = Buffer.buffer();
-                                    buffer.appendByte(totalSize);
-                                    buffer.appendByte(Integer.valueOf(generatedUsername.length).byteValue());
-                                    buffer.appendBytes(generatedUsername);
-                                    buffer.appendBytes(generatedPassword);
-                                    h.write(buffer);
-                                });
-                                h.close();
-                            System.out.println("Finished");
-                    });
+                    return generateRecord(h, 0, records-1);
                 });
+    }
+
+    public Future<Void> generateRecord(AsyncFile file, int counter, int target){
+
+        String letters = "abcdefghijklmnopqrstuvwxyz";
+        String numbers = "0123456789";
+
+        final byte[] generatedUsername = generateRandom(letters).getBytes();
+        final byte[] generatedPassword = generateRandom(numbers).getBytes();
+        byte totalSize = Integer.valueOf(2 + generatedUsername.length + generatedPassword.length).byteValue();
+        Buffer buffer = Buffer.buffer();
+        buffer.appendByte(totalSize);
+        buffer.appendByte(Integer.valueOf(generatedUsername.length).byteValue());
+        buffer.appendBytes(generatedUsername);
+        buffer.appendBytes(generatedPassword);
+        file.write(buffer);
+
+        if (counter == target){
+            file.close();
+            return Future.succeededFuture();
+        }else {
+
+            return generateRecord(file, ++counter, target);
+        }
     }
 
     public static String generateRandom(String characters) {
