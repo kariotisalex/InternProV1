@@ -19,7 +19,7 @@ public class RestAPI {
         router
                 .get("/showAll")
                 .handler(v -> {
-                    readClass.showAll("/home/kariotis@ad.itsaur.com/IdeaProjects/GitPro/src/main/java/com/itsaur/internship/users.bin");
+                    readClass.showAll("/home/kariotis@ad.itsaur.com/IdeaProjects/kariotis-internship/src/main/java/com/itsaur/internship/users.bin");
                     v.end();
                 });
 
