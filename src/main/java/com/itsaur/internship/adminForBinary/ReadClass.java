@@ -29,6 +29,9 @@ public class ReadClass {
                 .fileSystem()
                 .open( path,//"/home/kariotis@ad.itsaur.com/Downloads/u2.bin",
                         new OpenOptions())
+                .onFailure(e -> {
+                    System.out.println(e);
+                })
                 .compose(file ->{
                     return readNextUser(file, 0,null, null, false);
                 });
