@@ -27,7 +27,7 @@ public class ReadClass {
     public Future<ReadResult> showAll(String path){
         return vertx
                 .fileSystem()
-                .open( path,//"/home/kariotis@ad.itsaur.com/Downloads/u2.bin",
+                .open( path,
                         new OpenOptions())
                 .onFailure(e -> {
                     System.out.println(e);
