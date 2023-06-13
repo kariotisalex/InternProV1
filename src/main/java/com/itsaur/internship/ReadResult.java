@@ -6,7 +6,13 @@ public class ReadResult {
     private int totalLength;
     private int userPosition;
     User userReadResult;
-    private static String pathUser[] = new String[2];
+    private static String pathUser[] = {"/home/kariotis@ad.itsaur.com/IdeaProjects/kariotis-internship/src/main/java/com/itsaur/internship/users.bin",
+                                        "/home/kariotis@ad.itsaur.com/IdeaProjects/kariotis-internship/src/main/java/com/itsaur/internship/users22.bin"};
+
+
+    public ReadResult() {
+        userReadResult = new User();
+    }
 
     public static void setPathUser(int position, String path){
         pathUser[position] = path;
@@ -25,9 +31,7 @@ public class ReadResult {
         this.userPosition = userPosition;
     }
 
-    public ReadResult() {
-        userReadResult = new User();
-    }
+
 
     public int getCurrentPosition() {
         return currentPosition;

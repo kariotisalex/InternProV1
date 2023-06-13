@@ -39,7 +39,7 @@ public class ReadClass {
     }
 
 
-    public Future<ReadResult> showAllSpare(String path){
+    public Future<ReadResult> showAllFromPath(String path){
         return vertx
                 .fileSystem()
                 .open( path,
