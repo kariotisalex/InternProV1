@@ -38,6 +38,7 @@ public class RestAPI {
                 .handler(v ->{
                     int records = Integer.valueOf(v.pathParam("records"));
                     String jsonPath = v.body().asJsonObject().getString("path");
+                    System.out.println(jsonPath);
                     if (jsonPath != null || jsonPath != ""){
                         new CreateUsersInBinary(vertx)
                                 .generate("/home/kariotis@ad.itsaur.com/Downloads/u2.bin",records)

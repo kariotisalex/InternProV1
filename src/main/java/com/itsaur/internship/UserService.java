@@ -12,6 +12,9 @@ public class UserService {
 
     public Future<Void> register(String username, String password){
         return usersStore.findUser(username)
+                .onFailure(e -> {
+                    System.out.println(e);
+                })
                 .otherwiseEmpty()
                 .compose(user -> {
                     if (user == null){
@@ -25,6 +28,9 @@ public class UserService {
 
     public Future<User> login(String username, String password){
         return usersStore.findUser(username)
+                .onFailure(e -> {
+                    System.out.println(e);
+                })
                 .compose(user -> {
                     if (user.isPasswordEqual(password)){
                         return Future.succeededFuture();
@@ -36,6 +42,9 @@ public class UserService {
 
     public Future<Void> delete(String username){
         return usersStore.findUser(username)
+                .onFailure(e ->{
+                    System.out.println(e);
+                })
                 .compose(user -> {
                     if(user.isUsernameEqual(username)){
                         usersStore.delete(username);
@@ -48,7 +57,12 @@ public class UserService {
 
 
     public Future<Void> changePassword(String username, String currentPassword, String newPassword){
+        System.out.println(ReadResult.getPathUser(0));
+        System.out.println(ReadResult.getPathUser(1));
         return usersStore.findUser(username)
+                .onFailure(e -> {
+                    System.out.println(e);
+                })
                 .compose(user -> {
                     if (user.isPasswordEqual(currentPassword)){
                         return usersStore.changePassword(username, currentPassword, newPassword);

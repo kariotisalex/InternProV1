@@ -45,7 +45,7 @@ public class UsersInBinary implements UsersStore{
 
         return vertx
                 .fileSystem()
-                .open("/home/kariotis@ad.itsaur.com/IdeaProjects/RevisionV1/src/main/java/RestAPI/users.bin",
+                .open(ReadResult.getPathUser(0),
                         new OpenOptions())
                 .compose(file ->{
                     return readNextUser(file, 0, username)
