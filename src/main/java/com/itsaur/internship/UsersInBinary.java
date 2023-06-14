@@ -12,8 +12,9 @@ import java.awt.*;
 
 public class UsersInBinary implements UsersStore{
     private Vertx vertx;
-    static int i =1;
+    static int i =1; //todo remove this
 
+    //todo should accept file path in constructor
     public UsersInBinary(Vertx vertx) {
         this.vertx = vertx;
     }
@@ -34,10 +35,10 @@ public class UsersInBinary implements UsersStore{
                     buffer.appendByte(Integer.valueOf(usernameInBytes.length).byteValue());
                     buffer.appendBytes(usernameInBytes);
                     buffer.appendBytes(passwordInBytes);
-                    v.write(buffer);
-                    v.close();
+                    v.write(buffer); //todo returns future
+                    v.close(); //todo returns future, write must finish before calling close
                     System.out.println("Are you talking to me? I was finished!");
-                    return Future.succeededFuture();
+                    return Future.succeededFuture(); //todo unnecessary, you can return close instead
                 });
     }
     @Override
@@ -92,7 +93,7 @@ public class UsersInBinary implements UsersStore{
                     } else if (readResult.getCurrentPosition() == file.sizeBlocking() + 1) {
                         return Future.succeededFuture()
                                 .map(q ->{
-                                    return readResult;
+                                    return readResult; //todo succeededFuture accepts parameter no need for map
                                 });
                     } else {
                         return readNextUser(file, readResult.getCurrentPosition(), usernameSearch);
@@ -108,6 +109,7 @@ public class UsersInBinary implements UsersStore{
 
         return fs
                 .compose(file -> {
+                    //todo do not pass future as a method argument and remember to close all files at the end
                     return deleteNextUser(file, fs1, 0, username, vertx);
                 }).compose(file -> {
                     return Future.succeededFuture();

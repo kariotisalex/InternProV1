@@ -6,6 +6,8 @@ public class ReadResult {
     private int totalLength;
     private int userPosition;
     User userReadResult;
+
+    //todo paths should be passed as arguments to the application
     private static String pathUser[] = {"/home/kariotis@ad.itsaur.com/IdeaProjects/kariotis-internship/src/main/java/com/itsaur/internship/users.bin",
                                         "/home/kariotis@ad.itsaur.com/IdeaProjects/kariotis-internship/src/main/java/com/itsaur/internship/users22.bin"};
 
