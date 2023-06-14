@@ -7,6 +7,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class RestAPI {
@@ -35,15 +36,30 @@ public class RestAPI {
                 });
 
         router
+                .get("/showAllFromFile")
+                .handler(BodyHandler.create())
+                .handler(v -> {
+                    JsonObject jsonObject = v.body().asJsonObject();
+                    String path = String.valueOf(Paths.get("src/main/java/com/itsaur/internship/",
+                                                           jsonObject.getString("path")).toAbsolutePath());
+
+                    System.out.println(path);
+                    readClass.showAllFromPath(path);
+                    v.end();
+                });
+
+        router
                 .get("/createBinary/:records")
                 .handler(BodyHandler.create())
                 .handler(v ->{
+
                     int records = Integer.valueOf(v.pathParam("records"));
                     String jsonPath = v.body().asJsonObject().getString("path");
+                    String path = String.valueOf(Paths.get("src/main/java/com/itsaur/internship/u2.bin").toAbsolutePath());
                     System.out.println(jsonPath);
                     if (jsonPath != null || jsonPath != ""){
                         new CreateUsersInBinary(vertx)
-                                .generate("/home/kariotis@ad.itsaur.com/Downloads/u2.bin",records)
+                                .generate(path,records)
                                 .onSuccess(ctx -> {
                                     v.response().setStatusCode(200).end();
                                 })

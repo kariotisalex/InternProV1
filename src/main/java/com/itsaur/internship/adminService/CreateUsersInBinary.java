@@ -50,7 +50,7 @@ public class CreateUsersInBinary {
         }
     }
 
-    public static String generateRandom(String characters) {
+    private String generateRandom(String characters) {
         Random random = new Random();
 
         int size = random.nextInt(10, 20);

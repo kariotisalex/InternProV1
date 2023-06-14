@@ -1,21 +1,20 @@
 package com.itsaur.internship.adminService;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Vertx;
 import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.pgclient.PgPool;
-import io.vertx.sqlclient.PoolOptions;
-import io.vertx.sqlclient.Row;
-import io.vertx.sqlclient.RowSet;
-import io.vertx.sqlclient.SqlClient;
+import io.vertx.sqlclient.*;
 
 public class PostgreSQL extends AbstractVerticle {
+
 
     public void start(){
 
     }
-
-
     public static void main(String[] args) {
+        Vertx vertx = Vertx.vertx();
+
         PgConnectOptions connectOptions = new PgConnectOptions()
                 .setPort(5432)
                 .setHost("localhost")
@@ -29,7 +28,7 @@ public class PostgreSQL extends AbstractVerticle {
 
 
         // Create the client pool
-        SqlClient client = PgPool.client(connectOptions, poolOptions);
+        SqlClient client = PgPool.client( vertx, connectOptions , poolOptions);
 // A simple query
         client
                 .query("SELECT * FROM persons")
@@ -41,7 +40,7 @@ public class PostgreSQL extends AbstractVerticle {
                     System.out.println(ar.succeeded());
                     if (ar.succeeded()) {
                         RowSet<Row> result = ar.result();
-                        System.out.println("Got " + result.size() + " rows ");
+                        System.out.println("Got " + result.value().toString() + " rows ");
                     } else {
                         System.out.println("Failure: " + ar.cause().getMessage());
                         ar.cause().printStackTrace();
