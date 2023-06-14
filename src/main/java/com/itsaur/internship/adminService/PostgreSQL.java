@@ -26,14 +26,15 @@ public class PostgreSQL extends AbstractVerticle {
 // Pool options
         PoolOptions poolOptions = new PoolOptions()
                 .setMaxSize(5);
-        System.out.println(connectOptions);
+
 
         // Create the client pool
         SqlClient client = PgPool.client(connectOptions, poolOptions);
 // A simple query
         client
                 .query("SELECT * FROM persons")
-                .execute().onFailure(event -> {
+                .execute()
+                .onFailure(event -> {
                     System.out.println(event.getMessage());
                 })
                 .onComplete(ar -> {
@@ -43,6 +44,7 @@ public class PostgreSQL extends AbstractVerticle {
                         System.out.println("Got " + result.size() + " rows ");
                     } else {
                         System.out.println("Failure: " + ar.cause().getMessage());
+                        ar.cause().printStackTrace();
                     }
 
                     // Now close the pool
