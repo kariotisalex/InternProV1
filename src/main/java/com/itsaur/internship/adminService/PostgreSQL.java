@@ -1,7 +1,6 @@
-package com.itsaur.internship.adminForBinary;
+package com.itsaur.internship.adminService;
 
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Vertx;
 import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.pgclient.PgPool;
 import io.vertx.sqlclient.PoolOptions;
