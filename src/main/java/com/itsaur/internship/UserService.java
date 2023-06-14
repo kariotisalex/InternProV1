@@ -65,7 +65,7 @@ public class UserService {
                 })
                 .compose(user -> {
                     if (user.isPasswordEqual(currentPassword)){
-                        return usersStore.changePassword(username, currentPassword, newPassword);
+                        return usersStore.changePassword(username, newPassword);
                     }else {
                         return Future.failedFuture(new IllegalArgumentException("The password is wrong."));
                     }

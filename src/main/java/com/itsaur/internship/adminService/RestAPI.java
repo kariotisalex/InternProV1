@@ -7,6 +7,8 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 
+import java.nio.file.Paths;
+
 public class RestAPI {
     public static void main(String[] args) {
         Vertx vertx = Vertx.vertx();

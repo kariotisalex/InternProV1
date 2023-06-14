@@ -38,7 +38,7 @@ public class PostgresUsersStore implements UsersStore{
     }
 
     @Override
-    public Future<Void> changePassword(String username, String currentPassword, String newPassword) {
+    public Future<Void> changePassword(String username, String newPassword) {
         return null;
     }
 

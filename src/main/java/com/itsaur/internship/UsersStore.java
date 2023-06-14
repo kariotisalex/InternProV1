@@ -10,6 +10,5 @@ public interface UsersStore {
 
     Future<Void> delete(String username);
 
-    //todo Remove currentPassword, password is checked by the service
-    Future<Void> changePassword(String username, String currentPassword, String newPassword);
+    Future<Void> changePassword(String username, String newPassword);
 }

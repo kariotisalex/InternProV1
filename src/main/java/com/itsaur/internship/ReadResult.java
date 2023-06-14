@@ -1,5 +1,7 @@
 package com.itsaur.internship;
 
+import java.nio.file.Paths;
+
 public class ReadResult {
     private int currentPosition;
     private int usernameLength;
@@ -7,9 +9,8 @@ public class ReadResult {
     private int userPosition;
     User userReadResult;
 
-    //todo paths should be passed as arguments to the application
-    private static String pathUser[] = {"/home/kariotis@ad.itsaur.com/IdeaProjects/kariotis-internship/src/main/java/com/itsaur/internship/users.bin",
-                                        "/home/kariotis@ad.itsaur.com/IdeaProjects/kariotis-internship/src/main/java/com/itsaur/internship/users22.bin"};
+    private static String pathUser[] = {String.valueOf( Paths.get("src/main/java/com/itsaur/internship/users.bin").toAbsolutePath()),
+                                        String.valueOf( Paths.get("src/main/java/com/itsaur/internship/users22.bin").toAbsolutePath())};
 
 
     public ReadResult() {
