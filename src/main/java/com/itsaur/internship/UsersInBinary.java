@@ -258,7 +258,10 @@ public class UsersInBinary implements UsersStore{
                                                     ReadResult.getPathUser(0),
                                                     new CopyOptions().setReplaceExisting(true));
                                 }).map(o -> {
+                                    fileSource.close();
+                                    fileTemp.close();
                                     return readResult;
+
                                 });
                     }
                     else {
