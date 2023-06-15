@@ -1,4 +1,4 @@
-package com.itsaur.internship.adminService;
+package com.itsaur.internship.adminService.binary;
 
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;

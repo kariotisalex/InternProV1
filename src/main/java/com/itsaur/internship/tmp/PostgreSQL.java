@@ -1,4 +1,4 @@
-package com.itsaur.internship.adminService;
+package com.itsaur.internship.tmp;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
@@ -26,29 +26,27 @@ public class PostgreSQL extends AbstractVerticle {
         PoolOptions poolOptions = new PoolOptions()
                 .setMaxSize(5);
 
+// Create the client pool
+        SqlClient client = PgPool.client(vertx, connectOptions, poolOptions);
 
-        // Create the client pool
-        SqlClient client = PgPool.client( vertx, connectOptions , poolOptions);
-// A simple query
         client
-                .query("SELECT * FROM persons")
+                .preparedQuery("CREATE TABLE persons")
                 .execute()
-                .onFailure(event -> {
-                    System.out.println(event.getMessage());
-                })
                 .onComplete(ar -> {
-                    System.out.println(ar.succeeded());
-                    if (ar.succeeded()) {
-                        RowSet<Row> result = ar.result();
-                        System.out.println("Got " + result.value().toString() + " rows ");
-                    } else {
-                        System.out.println("Failure: " + ar.cause().getMessage());
-                        ar.cause().printStackTrace();
-                    }
+                    System.out.println("1. ");
+                    if(ar.succeeded()) {
+                        System.out.println("2. ");
+                        RowSet<Row> rows = ar.result();
+                        for (Row row : rows){
+                            System.out.println(row.getJson("lastname"));
+                            System.out.println("User " + row.getInteger(0) + " " + row.getString(1));
 
-                    // Now close the pool
+                        }
+                        System.out.println(rows.rowCount());
+                    }else {
+                        System.out.println("Failure : " + ar.cause().getMessage());
+                    }
                     client.close();
                 });
-
     }
 }

@@ -1,13 +1,13 @@
 package com.itsaur.internship.adminService;
 
 import com.itsaur.internship.ReadResult;
+import com.itsaur.internship.adminService.binary.CreateUsersInBinary;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class RestAPI {
