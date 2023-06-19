@@ -11,17 +11,13 @@ import java.util.UUID;
 public class PostgresUsersStore implements UsersStore{
 
     private Vertx vertx;
-    private PgConnectOptions connectOptions = new PgConnectOptions()
-            .setPort(5432)
-            .setHost("localhost")
-            .setDatabase("postgres")
-            .setUser("postgres")
-            .setPassword("password");
+    private PgConnectOptions connectOptions ;
     private PoolOptions poolOptions = new PoolOptions()
             .setMaxSize(5);
 
-    public PostgresUsersStore(Vertx vertx) {
+    public PostgresUsersStore(Vertx vertx, PostgresOptions postgresOptions) {
         this.vertx = vertx;
+        this.connectOptions = postgresOptions.getPgConnectOptions();
     }
 
 
