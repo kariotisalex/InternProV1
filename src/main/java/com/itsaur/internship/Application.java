@@ -2,6 +2,7 @@ package com.itsaur.internship;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.ParameterException;
 import io.vertx.core.Vertx;
 
 public class Application {
@@ -11,12 +12,16 @@ public class Application {
         Vertx vertx = Vertx.vertx();
         PostgresOptions postgresOptions = new PostgresOptions();
 
-        JCommander.newBuilder()
+        JCommander jCommander = new JCommander();
+        jCommander.newBuilder()
                 .addObject(postgresOptions)
-                .build()
-                .parse(args);
+                .build();
 
-
+        try{
+            jCommander.parse(args);
+        }catch (ParameterException e){
+            System.out.println(e.getMessage());
+        }
 
         final UserService service = new UserService(
                 new PostgresUsersStore(vertx, postgresOptions)
@@ -30,6 +35,9 @@ public class Application {
         } else {
             System.out.println("Something went wrong!");
         }
+
+
+
 
     }
 }
