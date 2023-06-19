@@ -20,7 +20,7 @@ public class PostgresOptions {
     private String password = "password";
 
     @Parameter(names = {"--service", "-srv"}, description = "Specify \"console\" or \"server\"")
-    private String service = "server";
+    private String service = "serverdb";
 
     public PostgresOptions() {
     }
