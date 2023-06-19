@@ -4,25 +4,20 @@ import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.pgclient.PgPool;
-import io.vertx.sqlclient.PoolOptions;
-import io.vertx.sqlclient.Row;
-import io.vertx.sqlclient.RowSet;
-import io.vertx.sqlclient.SqlClient;
+import io.vertx.sqlclient.*;
+
+import java.util.UUID;
 
 public class PostgresUsersStore implements UsersStore{
 
     private Vertx vertx;
-
-
-
-    PgConnectOptions connectOptions = new PgConnectOptions()
+    private PgConnectOptions connectOptions = new PgConnectOptions()
             .setPort(5432)
-            .setHost("the-host")
-            .setDatabase("the-db")
-            .setUser("admin")
+            .setHost("localhost")
+            .setDatabase("postgres")
+            .setUser("postgres")
             .setPassword("password");
-
-    PoolOptions poolOptions = new PoolOptions()
+    private PoolOptions poolOptions = new PoolOptions()
             .setMaxSize(5);
 
     public PostgresUsersStore(Vertx vertx) {
@@ -32,39 +27,65 @@ public class PostgresUsersStore implements UsersStore{
 
     @Override
     public Future<Void> insert(User user) {
-        SqlClient client = PgPool.client();
-        client
-                .preparedQuery("INSERT INTO users (personid, username,password) VALUES ($1, $2, $3)")
-                .executeBatch(tupleFiller(startPosition, records))
-                .onComplete(qwe -> {
-                    if (qwe.succeeded()){
-                        RowSet<Row> rows = qwe.result();
+        SqlClient client = PgPool.client(vertx, connectOptions, poolOptions);
+        return this.findUser(user.getUsername())
+                .recover(q -> {
+                    return client
+                            .preparedQuery("INSERT INTO users (personid, username,password) VALUES ($1, $2, $3)")
+                            .execute(Tuple.of(UUID.randomUUID(), user.getUsername(), user.getPassword()))
+                            .compose(w -> {
+                                client.close();
+                                return Future.succeededFuture();
+                            });
+                }).mapEmpty();
 
-
-                    }else {
-                        System.out.println("Batch failed " + qwe.cause());
-                    }
-                });
-        return null;
     }
+
+
 
     @Override
     public Future<User> findUser(String username) {
-        // SELECT EXISTS
-        return null;
+        SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
+        return client
+                .preparedQuery("SELECT username,password FROM users WHERE username=($1)")
+                .execute(Tuple.of(username))
+                .onFailure(e ->{
+                    System.out.println(e);
+                })
+                .compose(res2 ->{
+                    if(res2.iterator().hasNext()){
+                        return Future.succeededFuture(new User(res2.iterator().next().getString("username"), res2.iterator().next().getString("password")));
+                    }else {
+                        return Future.failedFuture(new IllegalArgumentException());
+                    }
+                });
     }
 
     @Override
     public Future<Void> delete(String username) {
-        // KALI EROTISI
-        return null;
+        SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
+        return client
+                .preparedQuery("DELETE FROM users WHERE username=($1)")
+                .execute(Tuple.of(username))
+                .compose(res2 ->{
+                    client.close();
+                    return Future.succeededFuture();
+                });
     }
 
     @Override
     public Future<Void> changePassword(String username, String newPassword) {
+        SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
 
-        // UPDATE
-        return null;
+        return client
+                .preparedQuery("UPDATE users SET password=($2) WHERE username=($1)")
+                .execute(Tuple.of(username,newPassword))
+                .compose(res2 ->{
+                    client.close();
+                    return Future.succeededFuture();
+        });
+
+
     }
 
 }

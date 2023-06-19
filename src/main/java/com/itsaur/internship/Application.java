@@ -9,7 +9,7 @@ public class Application {
         Vertx vertx = Vertx.vertx();
 
         final UserService service = new UserService(
-                new UsersInBinary(vertx)
+                new PostgresUsersStore(vertx)
         );
 
         if (args[0].equals("--server")){

@@ -8,6 +8,7 @@ import io.vertx.sqlclient.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 
@@ -38,14 +39,7 @@ public class CreateUserInPostgreSQL {
                 .execute()
                 .onComplete(res -> {
                     if (res.succeeded()){
-                        client
-                                .query("SELECT * FROM users")
-                                .execute()
-                                .onComplete(req -> {
-                                    if (req.succeeded()){
-                                        insertRandomUsers(client, req.result().size(), records);
-                                    }
-                                });
+                                        insertRandomUsers(client, 0, records);
                     }
 
                 });
@@ -81,7 +75,7 @@ public class CreateUserInPostgreSQL {
         client
 
                 .query("CREATE TABLE users (\n" +
-                        "    personid int primary key not null,\n" +
+                        "    personid uuid primary key not null,\n" +
                         "    username varchar(255),\n" +
                         "    password varchar(255)\n" +
                         "); ")
@@ -122,7 +116,7 @@ public class CreateUserInPostgreSQL {
         records += start;
         List<Tuple> batch = new ArrayList<>();
         IntStream.range(start,records).forEach(e ->{
-            batch.add(Tuple.of(e+1, generateRandom(1), generateRandom(0)));
+            batch.add(Tuple.of(UUID.randomUUID(), generateRandom(1), generateRandom(0)));
         });
         return batch;
     }

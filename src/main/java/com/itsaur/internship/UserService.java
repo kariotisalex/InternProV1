@@ -1,5 +1,4 @@
 package com.itsaur.internship;
-
 import io.vertx.core.Future;
 
 public class UserService {
@@ -9,6 +8,7 @@ public class UserService {
     public UserService(UsersStore usersStore) {
         this.usersStore = usersStore;
     }
+
 
     public Future<Void> register(String username, String password){
         return usersStore.findUser(username)
