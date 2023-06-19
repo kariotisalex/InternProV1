@@ -27,9 +27,15 @@ public class Application {
                 new PostgresUsersStore(vertx, postgresOptions)
         );
 
-        if (postgresOptions.getService().equals("server")){
-            vertx.deployVerticle(new UserVerticle(service));
-        } else if (postgresOptions.getService().equals("console")) {
+        if (postgresOptions.getService().equals("serverdb")){
+            vertx.deployVerticle(new UserVerticle(new UserService(
+                    new PostgresUsersStore(vertx, postgresOptions))));
+
+        }else if (postgresOptions.getService().equals("serverlocal")){
+            vertx.deployVerticle(new UserVerticle(new UserService(
+                    new UsersInBinary(vertx))));
+
+        }else if (postgresOptions.getService().equals("console")) {
             new UserConsole(service).executeCommand(args)
                     .onComplete(v -> System.exit(0));
         } else {
