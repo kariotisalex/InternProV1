@@ -100,6 +100,7 @@ public class UserVerticle extends AbstractVerticle {
                         vertx.fileSystem().move(file.uploadedFileName(),
                                                 file.uploadedFileName() + tmp);
                     }
+
                     ctx.response().end();
                 });
 

@@ -1,4 +1,4 @@
-create table users
+CREATE TABLE users
 (
     personid uuid primary key not null,
     username varchar(255),
@@ -8,6 +8,14 @@ create table users
 CREATE TABLE images
 (
     imageid uuid primary key not null,
-    image varchar(255),
+    date timestamp,
+    image varchar,
     personid uuid references users(personid)
+)
+CREATE TABLE comments
+(
+    commentid uuid primary key not null,
+    date timestamp,
+    comment varchar(255),
+    imageid uuid references images(imageid)
 )
