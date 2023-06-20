@@ -11,7 +11,8 @@ CREATE TABLE images
     date timestamp,
     image varchar,
     personid uuid references users(personid)
-)
+);
+
 CREATE TABLE comments
 (
     commentid uuid primary key not null,

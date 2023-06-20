@@ -2,7 +2,7 @@ package com.itsaur.internship;
 
 import io.vertx.core.Future;
 
-public class ContentService implements ContentStore{
+public class ContentService{
 
     public ContentStore contentStore;
 
@@ -10,14 +10,17 @@ public class ContentService implements ContentStore{
         this.contentStore = contentStore;
     }
 
-    @Override
-    public Future<Void> insertImage(String username, String filename) {
 
+    public Future<Void> addPost(String username, String filename) {
+        this.contentStore.insertImage(username,filename)
+                .onSuccess(w->{
+
+                });
 
         return null;
     }
 
-    @Override
+
     public Future<Void> insertComment() {
         return null;
     }
