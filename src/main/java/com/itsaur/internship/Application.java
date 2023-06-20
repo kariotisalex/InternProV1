@@ -31,7 +31,7 @@ public class Application {
             vertx.deployVerticle(new UserVerticle(new UserService(
                     new PostgresUsersStore(vertx, postgresOptions))));
 
-        }else if (postgresOptions.getService().equals("serverlocal")){
+        }else if (postgresOptions.getService().equals("serverl ocal")){
             vertx.deployVerticle(new UserVerticle(new UserService(
                     new UsersInBinary(vertx))));
 
