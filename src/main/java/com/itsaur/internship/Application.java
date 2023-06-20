@@ -1,7 +1,6 @@
 package com.itsaur.internship;
 
 import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import io.vertx.core.Vertx;
 
@@ -31,7 +30,7 @@ public class Application {
 
         }else if (postgresOptions.getService().equals("serverl ocal")){
             vertx.deployVerticle(new UserVerticle(new UserService(
-                    new UsersInBinary(vertx))));
+                    new UsersInBinaryStore(vertx))));
 
         }else if (postgresOptions.getService().equals("console")) {
             new UserConsole(service).executeCommand(args)

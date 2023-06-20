@@ -5,18 +5,13 @@ import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.file.AsyncFile;
 import io.vertx.core.file.CopyOptions;
-import io.vertx.core.file.FileSystem;
 import io.vertx.core.file.OpenOptions;
 
-import java.awt.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-public class UsersInBinary implements UsersStore{
+public class UsersInBinaryStore implements UsersStore{
     private Vertx vertx;
 
 
-    public UsersInBinary(Vertx vertx) {
+    public UsersInBinaryStore(Vertx vertx) {
         this.vertx = vertx;
     }
 
