@@ -1,8 +1,9 @@
 package com.itsaur.internship;
 
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 import io.vertx.pgclient.PgConnectOptions;
-
+@Parameters(separators = "=")
 public class PostgresOptions {
     @Parameter(names = {"--port", "-p"}, description = "Specify port for PostgreSQL ")
     private int port = 5432;

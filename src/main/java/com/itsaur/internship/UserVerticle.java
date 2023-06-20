@@ -5,8 +5,10 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
+import java.nio.file.Paths;
 
 public class UserVerticle extends AbstractVerticle {
     private final UserService service;
@@ -87,6 +89,20 @@ public class UserVerticle extends AbstractVerticle {
                                 ctx.response().setStatusCode(400).end();
                             });
                 });
+        router
+                .post("/upload/images")
+                .handler(BodyHandler
+                        .create()
+                        .setUploadsDirectory(String.valueOf(Paths.get("src/main/java/com/itsaur/internship/images").toAbsolutePath())))
+                .handler(ctx->{
+                    for(FileUpload file : ctx.fileUploads()){
+                        String tmp = "." + file.fileName().split("[.]")[file.fileName().split("[.]").length-1];
+                        vertx.fileSystem().move(file.uploadedFileName(),
+                                                file.uploadedFileName() + tmp);
+                    }
+                    ctx.response().end();
+                });
+
 
         server.requestHandler(router).listen(8080);
     }

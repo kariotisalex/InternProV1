@@ -12,13 +12,11 @@ public class Application {
         Vertx vertx = Vertx.vertx();
         PostgresOptions postgresOptions = new PostgresOptions();
 
-        JCommander jCommander = new JCommander();
-        jCommander.newBuilder()
-                .addObject(postgresOptions)
-                .build();
-
         try{
-            jCommander.parse(args);
+            JCommander.newBuilder()
+                    .addObject(postgresOptions)
+                    .build()
+                    .parse(args);
         }catch (ParameterException e){
             System.out.println(e.getMessage());
         }
