@@ -80,4 +80,22 @@ public class PostgreContentStore implements ContentStore{
                             });
                 });
     }
+
+    @Override
+    public Future<Void> findUser(String username) {
+        SqlClient client = PgPool.client(vertx, connectOptions, poolOptions);
+        return client
+                .preparedQuery("SELECT personid, username,password FROM users WHERE username=($1)")
+                .execute(Tuple.of(username))
+                .onFailure(e -> {
+                    System.out.println(e);
+                })
+                .compose(res2 -> {
+                    if (res2.iterator().hasNext()) {
+                        return Future.succeededFuture();
+                    } else {
+                        return Future.failedFuture(new IllegalArgumentException());
+                    }
+                });
+    }
 }

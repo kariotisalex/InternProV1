@@ -8,5 +8,6 @@ public interface ContentStore {
 
     public Future<Void> insertComment(String filename, String comment);
 
+    public Future<Void> findUser(String username);
 
 }

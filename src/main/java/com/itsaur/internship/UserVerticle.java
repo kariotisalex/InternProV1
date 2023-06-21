@@ -12,9 +12,14 @@ import java.nio.file.Paths;
 
 public class UserVerticle extends AbstractVerticle {
     private final UserService service;
+    private ContentService contentService;
 
     public UserVerticle(UserService service) {
         this.service = service;
+    }
+    public UserVerticle(UserService service, ContentService contentService) {
+        this.service = service;
+        this.contentService = contentService;
     }
 
     @Override
@@ -90,19 +95,33 @@ public class UserVerticle extends AbstractVerticle {
                             });
                 });
         router
-                .post("/upload/images")
+                .post("/upload/images/:username")
                 .handler(BodyHandler
                         .create()
                         .setUploadsDirectory(String.valueOf(Paths.get("src/main/java/com/itsaur/internship/images").toAbsolutePath())))
                 .handler(ctx->{
-                    for(FileUpload file : ctx.fileUploads()){
-                        String tmp = "." + file.fileName().split("[.]")[file.fileName().split("[.]").length-1];
+                    FileUpload file = ctx.fileUploads().get(0);
+                    if(file.contentType().split("/")[0].equals("image")){
+                        String fileExt = "." + file.fileName().split("[.]")[file.fileName().split("[.]").length-1];
+                        String savedFileName = file.uploadedFileName().split("/")[file.uploadedFileName().split("/").length-1]+fileExt;
                         vertx.fileSystem().move(file.uploadedFileName(),
-                                                file.uploadedFileName() + tmp);
-                    }
+                                                file.uploadedFileName() + fileExt)
+                                .compose(w -> {
 
-                    ctx.response().end();
+                                    return contentService.addPost(ctx.pathParam("username"),savedFileName,"description")
+                                            .onSuccess(f ->{
+                                                ctx.response().setStatusCode(200).end();
+                                            })
+                                            .onFailure(e -> {
+                                                ctx.response().setStatusCode(400).end();
+                                            });
+                                })
+                        ;
+                    }else {
+                        ctx.response().setStatusCode(400).end();
+                    }
                 });
+
 
 
         server.requestHandler(router).listen(8080);

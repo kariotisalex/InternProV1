@@ -12,7 +12,10 @@ public class ContentService{
 
 
     public Future<Void> addPost(String username, String filename, String description) {
-        return this.contentStore.insertImage(username,filename, description);
+        return this.contentStore.findUser(username)
+                .compose(q -> {
+                    return this.contentStore.insertImage(username, filename, description);
+                });
     }
 
 
