@@ -1,7 +1,9 @@
 package com.itsaur.internship;
 
 
+import com.itsaur.internship.content.ContentService;
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.json.JsonObject;
@@ -10,14 +12,14 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import java.nio.file.Paths;
 
-public class UserVerticle extends AbstractVerticle {
+public class VerticleApi extends AbstractVerticle {
     private final UserService service;
     private ContentService contentService;
 
-    public UserVerticle(UserService service) {
+    public VerticleApi(UserService service) {
         this.service = service;
     }
-    public UserVerticle(UserService service, ContentService contentService) {
+    public VerticleApi(UserService service, ContentService contentService) {
         this.service = service;
         this.contentService = contentService;
     }
@@ -94,8 +96,9 @@ public class UserVerticle extends AbstractVerticle {
                                 ctx.response().setStatusCode(400).end();
                             });
                 });
+
         router
-                .post("/upload/images/:username")
+                .post("/upload/post/:username")
                 .handler(BodyHandler
                         .create()
                         .setUploadsDirectory(String.valueOf(Paths.get("src/main/java/com/itsaur/internship/images").toAbsolutePath())))
@@ -107,20 +110,39 @@ public class UserVerticle extends AbstractVerticle {
                         vertx.fileSystem().move(file.uploadedFileName(),
                                                 file.uploadedFileName() + fileExt)
                                 .compose(w -> {
-
                                     return contentService.addPost(ctx.pathParam("username"),savedFileName,"description")
                                             .onSuccess(f ->{
-                                                ctx.response().setStatusCode(200).end();
+                                                ctx.response().setStatusCode(200).end(savedFileName);
                                             })
                                             .onFailure(e -> {
                                                 ctx.response().setStatusCode(400).end();
                                             });
-                                })
-                        ;
-                    }else {
+                                });
+                    } else {
                         ctx.response().setStatusCode(400).end();
                     }
                 });
+
+
+        router
+                .post("/upload/comment/:filename")
+                .handler(BodyHandler.create())
+                .handler(ctx -> {
+                    String filename = ctx.pathParam("filename");
+                    String comment = ctx.body().asJsonObject().getString("comment");
+
+                    contentService.addComment(filename,comment)
+                            .onFailure(e -> {
+                                ctx.response().setStatusCode(400).end();
+                            })
+                            .onSuccess(q->{
+                                ctx.response().setStatusCode(200).end();
+                            });
+
+                });
+
+
+
 
 
 

@@ -1,4 +1,4 @@
-package com.itsaur.internship;
+package com.itsaur.internship.content;
 
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
@@ -65,19 +65,16 @@ public class PostgreContentStore implements ContentStore{
     @Override
     public Future<Void> insertComment(String filename, String comment) {
         SqlClient client = PgPool.client(vertx,connectOptions, poolOptions);
-        return Future.succeededFuture()
-                .compose(q -> {
-                    return client
-                            .preparedQuery("INSERT INTO comments(commentid, date, comment, imageid)" +
-                                    "SELECT ($1), now(), ($2), imageid FROM images WHERE image=($3)")
-                            .execute(Tuple.of(UUID.randomUUID(), comment, filename))
-                            .onFailure(e -> {
-                                System.out.println(e);
-                                e.printStackTrace();
-                            })
-                            .compose(r -> {
-                                return client.close();
-                            });
+        return client
+                .preparedQuery("INSERT INTO comments(commentid, date, comment, imageid)" +
+                                   "SELECT ($1), now(), ($2), imageid FROM images WHERE image=($3)")
+                .execute(Tuple.of(UUID.randomUUID(), comment, filename))
+                .onFailure(e -> {
+                    System.out.println(e);
+                    e.printStackTrace();
+                })
+                .compose(r -> {
+                    return client.close();
                 });
     }
 
@@ -98,4 +95,21 @@ public class PostgreContentStore implements ContentStore{
                     }
                 });
     }
+
+    @Override
+    public Future<Void> findImage(String filename) {
+        SqlClient client = PgPool.client(vertx, connectOptions, poolOptions);
+        return client
+                .preparedQuery("SELECT imageid FROM images WHERE image=($1)")
+                .execute(Tuple.of(filename))
+                .onFailure(e -> {
+                    System.out.println(e);
+                })
+                .compose(res2 -> {
+                    if (res2.iterator().hasNext()) {
+                        return Future.succeededFuture();
+                    } else {
+                        return Future.failedFuture(new IllegalArgumentException());
+                    }
+                });    }
 }

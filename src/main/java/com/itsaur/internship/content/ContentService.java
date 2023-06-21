@@ -1,4 +1,4 @@
-package com.itsaur.internship;
+package com.itsaur.internship.content;
 
 import io.vertx.core.Future;
 
@@ -19,7 +19,10 @@ public class ContentService{
     }
 
 
-    public Future<Void> insertComment() {
-        return null;
+    public Future<Void> addComment(String filename, String comment) {
+        return this.contentStore.findImage(filename)
+                .compose(w -> {
+                    return this.contentStore.insertComment(filename, comment);
+                });
     }
 }
