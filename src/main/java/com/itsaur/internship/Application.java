@@ -21,12 +21,12 @@ public class Application {
         }
 
         final UserService service = new UserService(
-                new PostgresUsersStore(vertx, postgresOptions)
+                new PostgresUsersStore(vertx, postgresOptions.getPgConnectOptions())
         );
 
         if (postgresOptions.getService().equals("serverdb")){
             vertx.deployVerticle(new UserVerticle(new UserService(
-                    new PostgresUsersStore(vertx, postgresOptions))));
+                    new PostgresUsersStore(vertx, postgresOptions.getPgConnectOptions()))));
 
         }else if (postgresOptions.getService().equals("serverl ocal")){
             vertx.deployVerticle(new UserVerticle(new UserService(

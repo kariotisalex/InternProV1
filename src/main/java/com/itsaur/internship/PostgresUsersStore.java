@@ -15,9 +15,9 @@ public class PostgresUsersStore implements UsersStore{
     private PoolOptions poolOptions = new PoolOptions()
             .setMaxSize(5);
 
-    public PostgresUsersStore(Vertx vertx, PostgresOptions postgresOptions) {
+    public PostgresUsersStore(Vertx vertx, PgConnectOptions postgresOptions) {
         this.vertx = vertx;
-        this.connectOptions = postgresOptions.getPgConnectOptions();
+        this.connectOptions = postgresOptions;
     }
 
 
@@ -43,14 +43,14 @@ public class PostgresUsersStore implements UsersStore{
     public Future<User> findUser(String username) {
         SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
         return client
-                .preparedQuery("SELECT username,password FROM users WHERE username=($1)")
+                .preparedQuery("SELECT personid, username,password FROM users WHERE username=($1)")
                 .execute(Tuple.of(username))
                 .onFailure(e ->{
                     System.out.println(e);
                 })
                 .compose(res2 ->{
                     if(res2.iterator().hasNext()){
-                        return Future.succeededFuture(new User(res2.iterator().next().getString("username"), res2.iterator().next().getString("password")));
+                        return Future.succeededFuture(new User(res2.iterator().next().getUUID("personid"),res2.iterator().next().getString("username"), res2.iterator().next().getString("password")));
                     }else {
                         return Future.failedFuture(new IllegalArgumentException());
                     }

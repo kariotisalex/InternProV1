@@ -5,14 +5,14 @@ CREATE TABLE users
     password varchar(255)
 );
 
-CREATE TABLE images
-(
+CREATE TABLE images (
     imageid uuid primary key not null,
     date timestamp,
     image varchar,
+    description varchar,
     personid uuid references users(personid)
-);
 
+);
 CREATE TABLE comments
 (
     commentid uuid primary key not null,

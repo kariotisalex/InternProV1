@@ -11,13 +11,8 @@ public class ContentService{
     }
 
 
-    public Future<Void> addPost(String username, String filename) {
-        this.contentStore.insertImage(username,filename)
-                .onSuccess(w->{
-
-                });
-
-        return null;
+    public Future<Void> addPost(String username, String filename, String description) {
+        return this.contentStore.insertImage(username,filename, description);
     }
 
 
