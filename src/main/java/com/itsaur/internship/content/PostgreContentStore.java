@@ -8,6 +8,7 @@ import io.vertx.sqlclient.PoolOptions;
 import io.vertx.sqlclient.SqlClient;
 import io.vertx.sqlclient.Tuple;
 
+import java.nio.file.Paths;
 import java.util.UUID;
 
 public class PostgreContentStore implements ContentStore{
@@ -89,9 +90,13 @@ public class PostgreContentStore implements ContentStore{
                 })
                 .compose(res2 -> {
                     if (res2.iterator().hasNext()) {
-                        return Future.succeededFuture();
+                        return client.close().compose(w -> {
+                            return Future.succeededFuture();
+                        });
                     } else {
-                        return Future.failedFuture(new IllegalArgumentException());
+                        return client.close().compose(w -> {
+                            return Future.failedFuture(new IllegalArgumentException());
+                        });
                     }
                 });
     }
@@ -107,9 +112,30 @@ public class PostgreContentStore implements ContentStore{
                 })
                 .compose(res2 -> {
                     if (res2.iterator().hasNext()) {
-                        return Future.succeededFuture();
+                        return client.close().compose(q -> {
+                            return Future.succeededFuture();
+                        });
+
                     } else {
-                        return Future.failedFuture(new IllegalArgumentException());
+                        return client.close().compose(q -> {
+                            return Future.failedFuture(new IllegalArgumentException());
+                        });
+
                     }
-                });    }
+                });
+    }
+    @Override
+    public Future<Void> deleteImage(String filename){
+        SqlClient client = PgPool.client(vertx, connectOptions,poolOptions);
+        return client
+                .preparedQuery("DELETE FROM images WHERE image=($1)")
+                .execute(Tuple.of(filename))
+                .compose(w -> {
+                    return client
+                            .close()
+                            .compose(r-> {
+                                return vertx.fileSystem().delete(String.valueOf(Paths.get("src/main/java/com/itsaur/internship/images",filename).toAbsolutePath()));
+                            });
+                });
+    }
 }

@@ -10,7 +10,7 @@ CREATE TABLE images (
     date timestamp,
     image varchar,
     description varchar,
-    personid uuid references users(personid)
+    personid uuid references users(personid) ON DELETE CASCADE
 
 );
 CREATE TABLE comments
@@ -18,5 +18,5 @@ CREATE TABLE comments
     commentid uuid primary key not null,
     date timestamp,
     comment varchar(255),
-    imageid uuid references images(imageid)
+    imageid uuid references images(imageid) ON DELETE CASCADE
 )

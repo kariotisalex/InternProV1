@@ -141,6 +141,23 @@ public class VerticleApi extends AbstractVerticle {
 
                 });
 
+        router
+                .delete("/delete/post/:filename")
+                .handler(ctx -> {
+                    String filename = ctx.pathParam("filename");
+                    contentService.deletePost(filename)
+                            .onSuccess(s -> {
+                                ctx.response().setStatusCode(200).end();
+                            })
+                            .onFailure(e -> {
+                                ctx.response().setStatusCode(400).end();
+                            });
+
+                });
+
+        router
+                .delete("/delete/comment/:co");
+
 
 
 

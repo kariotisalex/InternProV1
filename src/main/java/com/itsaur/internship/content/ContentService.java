@@ -25,4 +25,13 @@ public class ContentService{
                     return this.contentStore.insertComment(filename, comment);
                 });
     }
+
+    public Future<Void> deletePost(String filename){
+        return this.contentStore.findImage(filename)
+                .compose(w -> {
+                    return contentStore.deleteImage(filename);
+                });
+
+
+    }
 }

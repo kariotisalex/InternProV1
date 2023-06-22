@@ -12,4 +12,6 @@ public interface ContentStore {
 
     public Future<Void> findImage(String filename);
 
+    public Future<Void> deleteImage(String filename);
+
 }
