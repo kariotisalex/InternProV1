@@ -5,17 +5,20 @@ import io.vertx.core.Vertx;
 import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.pgclient.PgPool;
 import io.vertx.sqlclient.PoolOptions;
+import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.SqlClient;
 import io.vertx.sqlclient.Tuple;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class PostgreContentStore implements ContentStore{
 
-    private Vertx vertx;
-    private PgConnectOptions connectOptions;
-    private PoolOptions poolOptions = new PoolOptions()
+    private final Vertx vertx;
+    private final PgConnectOptions connectOptions;
+    private final PoolOptions poolOptions = new PoolOptions()
             .setMaxSize(5);
 
     public PostgreContentStore(Vertx vertx, PgConnectOptions connectOptions) {
@@ -136,6 +139,23 @@ public class PostgreContentStore implements ContentStore{
                             .compose(r-> {
                                 return vertx.fileSystem().delete(String.valueOf(Paths.get("src/main/java/com/itsaur/internship/images",filename).toAbsolutePath()));
                             });
+                });
+    }
+
+    public Future<List<String>> retrieveAllImage(String username){
+        SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
+        return client
+                .preparedQuery("SELECT image FROM images I INNER JOIN users U ON U.personid=I.personid\n" +
+                        "                                   WHERE u.username=($1)")
+                .execute(Tuple.of(username))
+                .compose(q->{
+                    List<String> posts = new ArrayList<>();
+                    if (q.iterator().hasNext()){
+                        for (Row row: q)
+                        posts.add(row.getString("image"));
+                    }
+                    return Future.succeededFuture(posts);
+
                 });
     }
 }

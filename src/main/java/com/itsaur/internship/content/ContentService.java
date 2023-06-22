@@ -1,6 +1,10 @@
 package com.itsaur.internship.content;
 
 import io.vertx.core.Future;
+import io.vertx.pgclient.PgPool;
+import io.vertx.sqlclient.SqlClient;
+
+import java.util.List;
 
 public class ContentService{
 
@@ -31,7 +35,10 @@ public class ContentService{
                 .compose(w -> {
                     return contentStore.deleteImage(filename);
                 });
+    }
 
+    public Future<List<String>> retrieveAllPosts(String username){
+        return this.contentStore.retrieveAllImage(username);
 
     }
 }

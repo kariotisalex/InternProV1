@@ -11,6 +11,7 @@ import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import java.nio.file.Paths;
+import java.util.List;
 
 public class VerticleApi extends AbstractVerticle {
     private final UserService service;
@@ -156,7 +157,19 @@ public class VerticleApi extends AbstractVerticle {
                 });
 
         router
-                .delete("/delete/comment/:co");
+                .get("/load/post/:username")
+                .handler(ctx -> {
+                    String username = ctx.pathParam("username");
+                    contentService.retrieveAllPosts(username)
+                            .onSuccess(q -> {
+                                System.out.println(q);
+                                System.out.println();
+                                for (String str : q){
+                                    System.out.println(str);
+                                }
+                                ctx.end();
+                            });
+                });
 
 
 
