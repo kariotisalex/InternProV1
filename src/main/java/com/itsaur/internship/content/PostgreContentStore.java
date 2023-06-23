@@ -69,17 +69,20 @@ public class PostgreContentStore implements ContentStore{
     @Override
     public Future<Void> insertComment(String filename, String comment) {
         SqlClient client = PgPool.client(vertx,connectOptions, poolOptions);
-        return client
-                .preparedQuery("INSERT INTO comments(commentid, date, comment, imageid)" +
-                                   "SELECT ($1), now(), ($2), imageid FROM images WHERE image=($3)")
-                .execute(Tuple.of(UUID.randomUUID(), comment, filename))
-                .onFailure(e -> {
-                    System.out.println(e);
-                    e.printStackTrace();
-                })
-                .compose(r -> {
-                    return client.close();
-                });
+        return this.findImage(filename).compose(q -> {
+           return client
+                   .preparedQuery("INSERT INTO comments(commentid, date, comment, imageid)" +
+                                      "SELECT ($1), now(), ($2), imageid FROM images WHERE image=($3)")
+                   .execute(Tuple.of(UUID.randomUUID(), comment, filename))
+                   .onFailure(e -> {
+                       System.out.println(e);
+                       e.printStackTrace();
+                   })
+                   .compose(r -> {
+                       return client.close();
+                   });
+        });
+
     }
 
     @Override
@@ -140,6 +143,17 @@ public class PostgreContentStore implements ContentStore{
                                 return vertx.fileSystem().delete(String.valueOf(Paths.get("src/main/java/com/itsaur/internship/images",filename).toAbsolutePath()));
                             });
                 });
+    }
+    @Override
+    public Future<Void> deleteComment(String commentid) {
+        SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
+        return client
+                .preparedQuery("DELETE FROM comments WHERE commentid=($1)")
+                .execute(Tuple.of(commentid))
+                .compose(q -> {
+                    return client.close();
+                });
+
     }
 
     public Future<List<String>> retrieveAllImage(String username){

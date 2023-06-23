@@ -16,6 +16,8 @@ public interface ContentStore {
 
     public Future<Void> deleteImage(String filename);
 
+    public Future<Void> deleteComment(String commentid);
+
     public Future<List<String>> retrieveAllImage(String username);
 
 }

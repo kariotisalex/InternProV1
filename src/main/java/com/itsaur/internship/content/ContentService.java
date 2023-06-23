@@ -39,6 +39,9 @@ public class ContentService{
 
     public Future<List<String>> retrieveAllPosts(String username){
         return this.contentStore.retrieveAllImage(username);
+    }
 
+    public Future<Void> deleteCommment(String commentid){
+        return this.contentStore.deleteComment(commentid);
     }
 }

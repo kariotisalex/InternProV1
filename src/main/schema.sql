@@ -19,4 +19,12 @@ CREATE TABLE comments
     date timestamp,
     comment varchar(255),
     imageid uuid references images(imageid) ON DELETE CASCADE
+);
+
+CREATE TABLE dialogue
+(
+    dialogueid uuid PRIMARY KEY NOT NULL,
+    date timestamp,
+    content varchar,
+    commentid uuid references comments(commentid) ON DELETE CASCADE
 )

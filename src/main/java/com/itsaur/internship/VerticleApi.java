@@ -80,12 +80,11 @@ public class VerticleApi extends AbstractVerticle {
                 .put("/users/:username/password")
                 .handler(BodyHandler.create())
                 .handler(ctx ->{
-                    System.out.println(ctx.pathParam("username"));
                     final JsonObject body = ctx.body().asJsonObject();
 
-                    String username = ctx.pathParam("username");
-                    String currentPassword = body.getString("currentPassword");
-                    String newPassword = body.getString("newPassword");
+                    final String username = ctx.pathParam("username");
+                    final String currentPassword = body.getString("currentPassword");
+                    final String newPassword = body.getString("newPassword");
 
                     this.service.changePassword(username, currentPassword, newPassword)
                             .onSuccess(v -> {
@@ -100,11 +99,16 @@ public class VerticleApi extends AbstractVerticle {
 
         router
                 .post("/upload/post/:username")
+                .consumes("image/png")
+
                 .handler(BodyHandler
                         .create()
+                        .setBodyLimit(5000000)
                         .setUploadsDirectory(String.valueOf(Paths.get("src/main/java/com/itsaur/internship/images").toAbsolutePath())))
+                .produces("application/json")
                 .handler(ctx->{
                     FileUpload file = ctx.fileUploads().get(0);
+                    System.out.println(file.contentType());
                     if(file.contentType().split("/")[0].equals("image")){
                         String fileExt = "." + file.fileName().split("[.]")[file.fileName().split("[.]").length-1];
                         String savedFileName = file.uploadedFileName().split("/")[file.uploadedFileName().split("/").length-1]+fileExt;
@@ -120,6 +124,7 @@ public class VerticleApi extends AbstractVerticle {
                                             });
                                 });
                     } else {
+                        //vertx.fileSystem().delete(file.uploadedFileName());
                         ctx.response().setStatusCode(400).end();
                     }
                 });
@@ -168,6 +173,21 @@ public class VerticleApi extends AbstractVerticle {
                                     System.out.println(str);
                                 }
                                 ctx.end();
+                            }).onFailure(e -> {
+                                ctx.response().setStatusCode(400).end();
+                            });
+                });
+
+        router
+                .delete("/delete/comment/:commentid")
+                .handler(ctx -> {
+                    String cid = ctx.pathParam("commentid");
+                    contentService.deleteCommment(cid)
+                            .onFailure(e -> {
+                                ctx.response().setStatusCode(400).end();
+                            })
+                            .onSuccess(q -> {
+                                ctx.response().setStatusCode(200).end();
                             });
                 });
 
