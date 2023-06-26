@@ -3,15 +3,14 @@ package com.itsaur.internship;
 
 import com.itsaur.internship.content.ContentService;
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.handler.BodyHandler;
 import java.nio.file.Paths;
-import java.util.List;
 
 public class VerticleApi extends AbstractVerticle {
     private final UserService service;
@@ -27,9 +26,14 @@ public class VerticleApi extends AbstractVerticle {
 
     @Override
     public void start(Promise<Void> startPromise) throws Exception {
-        HttpServer server = vertx.createHttpServer();
 
+        HttpServer server = vertx.createHttpServer();
         Router router = Router.router(vertx);
+
+        WebClient client = WebClient.create(vertx);
+
+
+
         router
                 .post("/login")
                 .handler(BodyHandler.create())
@@ -99,8 +103,7 @@ public class VerticleApi extends AbstractVerticle {
 
         router
                 .post("/upload/post/:username")
-                .consumes("image/png")
-
+                //.consumes("image/png")
                 .handler(BodyHandler
                         .create()
                         .setBodyLimit(5000000)
@@ -124,7 +127,7 @@ public class VerticleApi extends AbstractVerticle {
                                             });
                                 });
                     } else {
-                        //vertx.fileSystem().delete(file.uploadedFileName());
+                        vertx.fileSystem().delete(file.uploadedFileName());
                         ctx.response().setStatusCode(400).end();
                     }
                 });
@@ -190,8 +193,6 @@ public class VerticleApi extends AbstractVerticle {
                                 ctx.response().setStatusCode(200).end();
                             });
                 });
-
-
 
 
 

@@ -1,16 +1,15 @@
 package com.itsaur.internship.content;
 
+import com.itsaur.internship.tmp.PostStore;
 import io.vertx.core.Future;
-import io.vertx.pgclient.PgPool;
-import io.vertx.sqlclient.SqlClient;
 
 import java.util.List;
 
 public class ContentService{
 
-    public ContentStore contentStore;
+    public PostStore contentStore;
 
-    public ContentService(ContentStore contentStore){
+    public ContentService(PostStore contentStore){
         this.contentStore = contentStore;
     }
 

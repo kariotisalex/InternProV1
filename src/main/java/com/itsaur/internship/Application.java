@@ -3,7 +3,7 @@ package com.itsaur.internship;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import com.itsaur.internship.content.ContentService;
-import com.itsaur.internship.content.PostgreContentStore;
+import com.itsaur.internship.tmp.proto.PostgreContentStore;
 import io.vertx.core.Vertx;
 
 public class Application {
