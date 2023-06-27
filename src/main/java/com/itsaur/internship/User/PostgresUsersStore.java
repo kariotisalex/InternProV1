@@ -1,4 +1,4 @@
-package com.itsaur.internship;
+package com.itsaur.internship.User;
 
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
@@ -8,7 +8,7 @@ import io.vertx.sqlclient.*;
 
 import java.util.UUID;
 
-public class PostgresUsersStore implements UsersStore{
+public class PostgresUsersStore implements UsersStore {
 
     private Vertx vertx;
     private PgConnectOptions connectOptions ;
@@ -27,8 +27,10 @@ public class PostgresUsersStore implements UsersStore{
         return this.findUser(user.getUsername())
                 .recover(q -> {
                     return client
-                            .preparedQuery("INSERT INTO users (personid, username,password) VALUES ($1, $2, $3)")
-                            .execute(Tuple.of(UUID.randomUUID(), user.getUsername(), user.getPassword()))
+                            .preparedQuery("INSERT INTO users (personid, createdate username,password) " +
+                                               "VALUES ($1, $2, $3, $4)")
+                            .execute(Tuple.of(UUID.randomUUID(), user.initCreateDate(),
+                                              user.getUsername(), user.getPassword()))
                             .compose(w -> {
                                 client.close();
                                 return Future.succeededFuture();
@@ -43,14 +45,18 @@ public class PostgresUsersStore implements UsersStore{
     public Future<User> findUser(String username) {
         SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
         return client
-                .preparedQuery("SELECT personid, username,password FROM users WHERE username=($1)")
+                .preparedQuery("SELECT personid, createdate, username,password FROM users WHERE username=($1)")
                 .execute(Tuple.of(username))
                 .onFailure(e ->{
                     System.out.println(e);
                 })
                 .compose(res2 ->{
                     if(res2.iterator().hasNext()){
-                        return Future.succeededFuture(new User(res2.iterator().next().getUUID("personid"),res2.iterator().next().getString("username"), res2.iterator().next().getString("password")));
+                        return Future.succeededFuture(
+                                new User(res2.iterator().next().getUUID("personid"),
+                                         res2.iterator().next().getLocalDateTime("createdate"),
+                                         res2.iterator().next().getString("username"),
+                                         res2.iterator().next().getString("password")));
                     }else {
                         return Future.failedFuture(new IllegalArgumentException());
                     }
@@ -64,8 +70,7 @@ public class PostgresUsersStore implements UsersStore{
                 .preparedQuery("DELETE FROM users WHERE username=($1)")
                 .execute(Tuple.of(username))
                 .compose(res2 ->{
-                    client.close();
-                    return Future.succeededFuture();
+                    return client.close();
                 });
     }
 
@@ -77,8 +82,7 @@ public class PostgresUsersStore implements UsersStore{
                 .preparedQuery("UPDATE users SET password=($2) WHERE username=($1)")
                 .execute(Tuple.of(username,newPassword))
                 .compose(res2 ->{
-                    client.close();
-                    return Future.succeededFuture();
+                    return client.close();
         });
 
 

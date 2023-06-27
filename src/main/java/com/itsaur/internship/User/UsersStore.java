@@ -1,5 +1,6 @@
-package com.itsaur.internship;
+package com.itsaur.internship.User;
 
+import com.itsaur.internship.User.User;
 import io.vertx.core.Future;
 
 public interface UsersStore {

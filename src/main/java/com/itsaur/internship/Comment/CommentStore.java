@@ -1,6 +1,6 @@
-package com.itsaur.internship.tmp;
+package com.itsaur.internship.Comment;
 
-import com.itsaur.internship.Comment;
+import com.itsaur.internship.Comment.Comment;
 import io.vertx.core.Future;
 
 import java.util.UUID;

@@ -6,6 +6,7 @@ import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.pgclient.PgPool;
 import io.vertx.sqlclient.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -14,21 +15,20 @@ import java.util.stream.IntStream;
 
 
 public class CreateUserInPostgreSQL {
-    Vertx vertx = Vertx.vertx();
-    PgConnectOptions connectOptions = new PgConnectOptions()
-            .setPort(5432)
-            .setHost("localhost")
-            .setDatabase("postgres")
-            .setUser("postgres")
-            .setPassword("password");
-    PoolOptions poolOptions = new PoolOptions()
-            .setMaxSize(5);
+    Vertx vertx;
+    PgConnectOptions connectOptions;
+    PoolOptions poolOptions;
+
+    public CreateUserInPostgreSQL(Vertx vertx, PgConnectOptions connectOptions, PoolOptions poolOptions) {
+        this.vertx = vertx;
+        this.connectOptions = connectOptions;
+        this.poolOptions = poolOptions;
+    }
 
     public static void main(String[] args) {
-        args = new String[]{"a"};
 
-        new CreateUserInPostgreSQL().generateRecords(10);
-        //new CreateUserInPostgreSQL().addUsers(10);
+
+
 
     }
     public Future<Void> addUsers(int records){
@@ -37,46 +37,18 @@ public class CreateUserInPostgreSQL {
         return client
                 .query("SELECT EXISTS( SELECT FROM users)")
                 .execute()
+                .onSuccess(a -> {
+                    System.out.println(a + " show LoVe");
+                })
                 .compose(res -> {
                     return insertRandomUsers(client, records);
                 });
     }
 
-    public void generateRecords(int records){
-        SqlClient client = PgPool.client(vertx, connectOptions, poolOptions);
-
-        client
-                .query("SELECT EXISTS( SELECT FROM users)")
-                .execute()
-                .onComplete(res ->{
-                    if (res.succeeded()){
-                        RowSet<Row> rows = res.result();
-                        System.out.println(rows.iterator().next().getBoolean(0));
-                    client.close();
-                }else {
-                    generateUsers(records);
-                }
-                });
-    }
-    private Future<Void> generateUsers(int records){
-        SqlClient client = PgPool.client(vertx, connectOptions, poolOptions);
-
-        return client
-                .query("CREATE TABLE users (\n" +
-                        "    personid uuid primary key not null,\n" +
-                        "    username varchar(255),\n" +
-                        "    password varchar(255)\n" +
-                        "); ")
-                .execute()
-                .compose(eq -> {
-                    addUsers(records);
-                    return client.close();
-                });
-    }
 
     private static Future<Void> insertRandomUsers(SqlClient client, int records){
         return client
-                .preparedQuery("INSERT INTO users (personid, username,password) VALUES ($1, $2, $3)")
+                .preparedQuery("INSERT INTO users (personid, createdate, username, password) VALUES ($1, $2, $3, $4)")
                 .executeBatch(tupleFiller(records))
                 .mapEmpty();
     }
@@ -84,7 +56,7 @@ public class CreateUserInPostgreSQL {
 
         List<Tuple> batch = new ArrayList<>();
         IntStream.range(0, records).forEach(e ->{
-            batch.add(Tuple.of(UUID.randomUUID(), generateRandom(1), generateRandom(0)));
+            batch.add(Tuple.of(UUID.randomUUID(), LocalDateTime.now(), generateRandom(1), generateRandom(0)));
         });
         return batch;
     }

@@ -1,10 +1,12 @@
-package com.itsaur.internship;
+package com.itsaur.internship.User;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class User {
 
     private UUID personid;
+    private LocalDateTime createdate;
     private String username;
     private String password;
 
@@ -16,10 +18,25 @@ public class User {
         this.password = password;
     }
 
+    public User(UUID personid, LocalDateTime createdate, String username, String password) {
+        this.personid = personid;
+        this.createdate = createdate;
+        this.username = username;
+        this.password = password;
+    }
+
     public User(UUID personid, String username, String password) {
         this.personid = personid;
         this.username = username;
         this.password = password;
+    }
+
+    public LocalDateTime getCreatedate() {
+        return createdate;
+    }
+
+    public void setCreatedate(LocalDateTime createdate) {
+        this.createdate = createdate;
     }
 
     public UUID getPersonid() {
@@ -52,6 +69,20 @@ public class User {
 
     public boolean isPasswordEqual(String password) {
         return (this.password.equals(password));
+    }
+
+    public LocalDateTime initCreateDate(){
+        this.createdate = LocalDateTime.now();
+        return this.createdate;
+    }
+
+    @Override
+    public String toString() {
+        return "User {" +
+                "personid= " + personid + "\n" +
+                " username= ' " + username + " \'\n" +
+                " password= ' " + password + " \'\n" +
+                '}';
     }
 }
 

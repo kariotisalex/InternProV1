@@ -1,4 +1,6 @@
-package com.itsaur.internship;
+package com.itsaur.internship.User;
+import com.itsaur.internship.User.User;
+import com.itsaur.internship.User.UsersStore;
 import io.vertx.core.Future;
 
 public class UserService {
@@ -57,8 +59,6 @@ public class UserService {
 
 
     public Future<Void> changePassword(String username, String currentPassword, String newPassword){
-        System.out.println(ReadResult.getPathUser(0));
-        System.out.println(ReadResult.getPathUser(1));
         return usersStore.findUser(username)
                 .onFailure(e -> {
                     System.out.println(e);

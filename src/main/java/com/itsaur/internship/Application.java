@@ -2,8 +2,8 @@ package com.itsaur.internship;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-import com.itsaur.internship.content.ContentService;
-import com.itsaur.internship.tmp.proto.PostgreContentStore;
+import com.itsaur.internship.User.PostgresUsersStore;
+import com.itsaur.internship.User.UserService;
 import io.vertx.core.Vertx;
 
 public class Application {
@@ -27,15 +27,11 @@ public class Application {
         );
 
         if (postgresOptions.getService().equals("serverdb")){
-            vertx.deployVerticle(new VerticleApi(
-                    new UserService(
-                            new PostgresUsersStore(vertx, postgresOptions.getPgConnectOptions())),
-                    new ContentService(
-                            new PostgreContentStore(vertx, postgresOptions.getPgConnectOptions()))));
-
-        }else if (postgresOptions.getService().equals("serverlocal")){
-            vertx.deployVerticle(new VerticleApi(new UserService(
-                    new UsersInBinaryStore(vertx))));
+//            vertx.deployVerticle(new VerticleApi(
+//                    new UserService(
+//                            new PostgresUsersStore(vertx, postgresOptions.getPgConnectOptions())),
+//                    new ContentService(
+//                            new PostgreContentStore(vertx, postgresOptions.getPgConnectOptions()))));
 
         }else if (postgresOptions.getService().equals("console")) {
             new UserConsole(service).executeCommand(args)
