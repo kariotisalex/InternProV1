@@ -14,9 +14,7 @@ public class Post {
     private String description;
     private User user;
 
-    public Post() {
-    }
-
+    // For Storing
     public Post(UUID imageid, LocalDateTime createdDate, LocalDateTime updatedDate, String filename, String description, User user) {
         this.imageid = imageid;
         this.createdDate = createdDate;
@@ -26,9 +24,9 @@ public class Post {
         this.user = user;
     }
 
-    public Post(LocalDateTime createdDate, String filename, String description, User user) {
+    // For Creating
+    public Post(String filename, String description, User user) {
         this.imageid = UUID.randomUUID();
-        this.createdDate = createdDate;
         this.filename = filename;
         this.description = description;
         this.user = user;

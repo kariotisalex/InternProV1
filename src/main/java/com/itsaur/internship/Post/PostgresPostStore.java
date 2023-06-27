@@ -29,14 +29,6 @@ public class PostgresPostStore implements PostStore{
     }
 
 
-    public static void main(String[] args) {
-//        new PostgresPostStore(Vertx.vertx(), new PostgresOptions().getPgConnectOptions())
-//                .find("d11f3be4-5f91-4c11-a166-fc1e1c6bf036.png");
-//        new PostgresPostStore(Vertx.vertx(), new PostgresOptions().getPgConnectOptions())
-//                .insert(UUID.fromString("fe65f504-8c04-4dde-b8a4-98a38946ff03"), "testing.png", "testing description");
-//        System.out.println(LocalDateTime.now());
-    }
-
     public Future<Void> insert(Post post) {
         SqlClient client = PgPool.client(vertx, connectOptions, poolOptions);
         return Future.succeededFuture()
