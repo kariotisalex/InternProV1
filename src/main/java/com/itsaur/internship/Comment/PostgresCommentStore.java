@@ -1,5 +1,6 @@
 package com.itsaur.internship.Comment;
 
+import com.itsaur.internship.Post.Post;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.pgclient.PgConnectOptions;
@@ -51,7 +52,14 @@ public class PostgresCommentStore implements CommentStore{
     }
 
     @Override
-    public Future<Void> delete(Comment comment) {
+    public Future<Void> delete(UUID commentid) {
         return null;
     }
+
+    @Override
+    public Future<Void> deleteFromPost(Post post) {
+        return null;
+    }
+
+
 }

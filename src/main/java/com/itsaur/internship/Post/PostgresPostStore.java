@@ -1,5 +1,6 @@
 package com.itsaur.internship.Post;
 
+import com.itsaur.internship.Comment.CommentStore;
 import com.itsaur.internship.User.User;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 public class PostgresPostStore implements PostStore{
 
@@ -22,10 +24,12 @@ public class PostgresPostStore implements PostStore{
     private final PgConnectOptions connectOptions;
     private final PoolOptions poolOptions = new PoolOptions()
             .setMaxSize(5);
+    private CommentStore commentStore;
 
-    public PostgresPostStore(Vertx vertx, PgConnectOptions connectOptions) {
+    public PostgresPostStore(Vertx vertx, PgConnectOptions connectOptions, CommentStore commentStore) {
         this.vertx = vertx;
         this.connectOptions = connectOptions;
+        this.commentStore = commentStore;
     }
 
 
@@ -47,7 +51,7 @@ public class PostgresPostStore implements PostStore{
     }
 
     @Override
-    public Future<Post> find(String filename) {
+    public Future<Post> findPost(String filename) {
         SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
         return client
                 .preparedQuery("SELECT i.imageid, i.createdate, i.updatedate," +
@@ -78,22 +82,53 @@ public class PostgresPostStore implements PostStore{
     }
 
     @Override
-    public Future<Void> update(UUID personid, String description) {
+    public Future<Void> updatePost(User user, String description) {
         SqlClient client = PgPool.client(vertx, connectOptions, poolOptions);
         return client
-                .preparedQuery("UPDATE images SET description=($2) WHERE personid=($1)")
-                .execute(Tuple.of(personid, description))
+                .preparedQuery("UPDATE images SET description=($2), updatedate=($3) WHERE personid=($1)")
+                .execute(Tuple.of(user.getPersonid(), description, LocalDateTime.now()))
                 .compose(q -> {
                     client.close();
                     return Future.succeededFuture();
                 });
     }
     @Override
-    public Future<Void> delete(String filename){
+    public Future<Void> deletePost(String filename){
         SqlClient client = PgPool.client(vertx, connectOptions,poolOptions);
         return client
                 .preparedQuery("DELETE FROM images WHERE image=($1)")
                 .execute(Tuple.of(filename))
+                .compose(w -> {
+                    return client
+                            .close()
+                            .compose(r-> {
+                                return vertx.fileSystem().delete(String.valueOf(Paths.get("src/main/java/com/itsaur/internship/images",filename).toAbsolutePath()));
+                            });
+                });
+    }
+
+    @Override
+    public Future<Void> deleteFromUser(User user) {
+        SqlClient client = PgPool.client(vertx, connectOptions,poolOptions);
+        retrieveAll(user)
+                .compose(res -> {
+                    return vertx.executeBlocking(o -> {
+                        IntStream.range(0, res.size())
+                                .forEach(i -> {
+                                    findPost(res.get(i))
+                                            .compose(w -> {
+                                                return this.commentStore.deleteFromPost(w);
+                                            });
+                                });
+                    });
+                })
+                .compose(r -> {
+
+                });
+
+        return client
+                .preparedQuery("DELETE FROM images WHERE personid=($1)")
+                .execute(Tuple.of(user.getPersonid()))
                 .compose(w -> {
                     return client
                             .close()
