@@ -1,7 +1,7 @@
-package com.itsaur.internship.Comment;
+package com.itsaur.internship.comment;
 
-import com.itsaur.internship.Post.Post;
-import com.itsaur.internship.User.User;
+import com.itsaur.internship.post.Post;
+import com.itsaur.internship.user.User;
 
 import java.sql.Timestamp;
 import java.util.UUID;

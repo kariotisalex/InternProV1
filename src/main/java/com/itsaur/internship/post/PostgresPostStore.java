@@ -1,7 +1,7 @@
-package com.itsaur.internship.Post;
+package com.itsaur.internship.post;
 
-import com.itsaur.internship.Comment.CommentStore;
-import com.itsaur.internship.User.User;
+import com.itsaur.internship.comment.CommentStore;
+import com.itsaur.internship.user.User;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.pgclient.PgConnectOptions;

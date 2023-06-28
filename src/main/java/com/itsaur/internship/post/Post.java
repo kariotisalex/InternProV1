@@ -1,6 +1,6 @@
-package com.itsaur.internship.Post;
+package com.itsaur.internship.post;
 
-import com.itsaur.internship.User.User;
+import com.itsaur.internship.user.User;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

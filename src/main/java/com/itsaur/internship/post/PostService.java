@@ -1,8 +1,8 @@
-package com.itsaur.internship.Post;
+package com.itsaur.internship.post;
 
 
-import com.itsaur.internship.Comment.CommentStore;
-import com.itsaur.internship.User.UsersStore;
+import com.itsaur.internship.comment.CommentStore;
+import com.itsaur.internship.user.UsersStore;
 import io.vertx.core.Future;
 
 import java.util.List;

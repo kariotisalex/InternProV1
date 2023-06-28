@@ -1,7 +1,7 @@
 package com.itsaur.internship;
 
 
-import com.itsaur.internship.User.UserService;
+import com.itsaur.internship.user.UserService;
 import com.itsaur.internship.content.ContentService;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;

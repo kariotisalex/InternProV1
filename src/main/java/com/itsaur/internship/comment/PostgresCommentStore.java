@@ -1,6 +1,6 @@
-package com.itsaur.internship.Comment;
+package com.itsaur.internship.comment;
 
-import com.itsaur.internship.Post.Post;
+import com.itsaur.internship.post.Post;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.pgclient.PgConnectOptions;

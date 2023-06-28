@@ -1,4 +1,4 @@
-package com.itsaur.internship.User;
+package com.itsaur.internship.user;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

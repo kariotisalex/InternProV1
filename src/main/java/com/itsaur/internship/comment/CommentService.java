@@ -1,4 +1,4 @@
-package com.itsaur.internship.Comment;
+package com.itsaur.internship.comment;
 
 import io.vertx.core.Future;
 

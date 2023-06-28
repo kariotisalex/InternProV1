@@ -2,8 +2,8 @@ package com.itsaur.internship;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-import com.itsaur.internship.User.PostgresUsersStore;
-import com.itsaur.internship.User.UserService;
+import com.itsaur.internship.user.PostgresUsersStore;
+import com.itsaur.internship.user.UserService;
 import io.vertx.core.Vertx;
 
 public class Application {

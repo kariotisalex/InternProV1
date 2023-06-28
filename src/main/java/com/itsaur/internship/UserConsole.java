@@ -1,7 +1,7 @@
 package com.itsaur.internship;
 
 
-import com.itsaur.internship.User.UserService;
+import com.itsaur.internship.user.UserService;
 import io.vertx.core.Future;
 
 public class UserConsole {
