@@ -34,7 +34,7 @@ public class CommentService {
    }
 
 
-   public Future<Void> retrieveAll(){
-        return null;
+   public Future<Void> retrieveAll(UUID commentid){
+        return this.commentStore.readAllById();
     }
 }

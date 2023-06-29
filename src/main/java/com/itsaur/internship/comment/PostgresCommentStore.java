@@ -100,7 +100,7 @@ public class PostgresCommentStore implements CommentStore{
                 });
     }
     @Override
-    public Future<List<Comment>> readById(UUID commentid){
+    public Future<List<Comment>> readAllById(UUID commentid){
         SqlClient client = PgPool.client(vertx,connectOptions, poolOptions);
         return client
                 .preparedQuery("SELECT commentid, createdate, updatedate, comment, userid, postid" +
