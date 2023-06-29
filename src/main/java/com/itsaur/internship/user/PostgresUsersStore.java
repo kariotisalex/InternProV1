@@ -6,8 +6,6 @@ import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.pgclient.PgPool;
 import io.vertx.sqlclient.*;
 
-import java.util.UUID;
-
 public class PostgresUsersStore implements UsersStore {
 
     private Vertx vertx;
@@ -22,14 +20,14 @@ public class PostgresUsersStore implements UsersStore {
 
 
     @Override
-    public Future<Void> insert(User user) {
+    public Future<Void> insert(UUID user) {
         SqlClient client = PgPool.client(vertx, connectOptions, poolOptions);
-        return this.findUser(user.getUsername())
+        return this.findUserByUsername(user.getUsername())
                 .recover(q -> {
                     return client
                             .preparedQuery("INSERT INTO users (personid, createdate username,password) " +
                                                "VALUES ($1, $2, $3, $4)")
-                            .execute(Tuple.of(UUID.randomUUID(), user.initCreateDate(),
+                            .execute(Tuple.of(java.util.UUID.randomUUID(), user.initCreateDate(),
                                               user.getUsername(), user.getPassword()))
                             .compose(w -> {
                                 client.close();
@@ -42,7 +40,7 @@ public class PostgresUsersStore implements UsersStore {
 
 
     @Override
-    public Future<User> findUser(String username) {
+    public Future<UUID> findUserByUsername(String username) {
         SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
         return client
                 .preparedQuery("SELECT personid, createdate, username,password FROM users WHERE username=($1)")
@@ -53,7 +51,7 @@ public class PostgresUsersStore implements UsersStore {
                 .compose(res2 ->{
                     if(res2.iterator().hasNext()){
                         return Future.succeededFuture(
-                                new User(res2.iterator().next().getUUID("personid"),
+                                new UUID(res2.iterator().next().getUUID("personid"),
                                          res2.iterator().next().getLocalDateTime("createdate"),
                                          res2.iterator().next().getString("username"),
                                          res2.iterator().next().getString("password")));

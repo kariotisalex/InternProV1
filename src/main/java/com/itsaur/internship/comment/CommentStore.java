@@ -1,20 +1,22 @@
 package com.itsaur.internship.comment;
 
-import com.itsaur.internship.post.Post;
 import io.vertx.core.Future;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface CommentStore {
 
     public Future<Void> insert(Comment comment);
 
-    public Future<Comment> find(UUID commentid);
+    public Future<Comment> findById(UUID commentid);
 
-    public Future<Void> update(UUID commentid);
+    public Future<Void> update(Comment comment);
 
-    public Future<Void> delete(UUID commentid);
+    public Future<Void> deleteById(UUID commentid);
 
-    public Future<Void> deleteFromPost(Post post);
+    public Future<Void> deleteByPost(UUID imageid);
+
+    public Future<List<Comment>> readById(UUID commentid);
 
 }

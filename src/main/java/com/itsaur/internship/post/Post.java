@@ -1,43 +1,42 @@
 package com.itsaur.internship.post;
 
-import com.itsaur.internship.user.User;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Post {
 
-    private UUID imageid;
+    private UUID postid;
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
     private String filename;
     private String description;
-    private User user;
+    private UUID userid;
 
     // For Storing
-    public Post(UUID imageid, LocalDateTime createdDate, LocalDateTime updatedDate, String filename, String description, User user) {
-        this.imageid = imageid;
+    public Post(UUID postid, LocalDateTime createdDate, LocalDateTime updatedDate, String filename, String description, UUID userid) {
+        this.postid = postid;
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;
         this.filename = filename;
         this.description = description;
-        this.user = user;
+        this.userid = userid;
     }
 
     // For Creating
-    public Post(String filename, String description, User user) {
-        this.imageid = UUID.randomUUID();
+    public Post(String filename, String description, UUID userid) {
+        this.postid = UUID.randomUUID();
         this.filename = filename;
         this.description = description;
-        this.user = user;
+        this.userid = userid;
     }
 
-    public UUID getImageid() {
-        return imageid;
+    public UUID getPostid() {
+        return postid;
     }
 
-    public void setImageid(UUID imageid) {
-        this.imageid = imageid;
+    public void setPostid(java.util.UUID postid) {
+        this.postid = postid;
     }
 
     public LocalDateTime getCreatedDate() {
@@ -72,15 +71,19 @@ public class Post {
         this.description = description;
     }
 
-    public User getUser() {
-        return user;
+    public UUID getUserid() {
+        return userid;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserid(UUID userid) {
+        this.userid = userid;
     }
 
     public LocalDateTime initCreateDate(){
+        this.createdDate = LocalDateTime.now();
+        return this.createdDate;
+    }
+    public LocalDateTime initUpdateDate(){
         this.createdDate = LocalDateTime.now();
         return this.createdDate;
     }

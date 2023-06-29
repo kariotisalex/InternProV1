@@ -1,18 +1,19 @@
 CREATE TABLE users
 (
-    personid uuid primary key not null,
-    createdate timestamp,
-    username varchar(255),
-    password varchar(255)
-);
-
-CREATE TABLE images (
-    imageid uuid primary key not null,
+    userid uuid primary key not null,
     createdate timestamp,
     updatedate timestamp,
-    image varchar,
+    username varchar,
+    password varchar
+);
+
+CREATE TABLE posts (
+    postid uuid primary key not null,
+    createdate timestamp,
+    updatedate timestamp,
+    filename varchar,
     description varchar,
-    personid uuid references users(personid)
+    userid uuid references users(userid)
 );
 
 CREATE TABLE comments
@@ -21,6 +22,6 @@ CREATE TABLE comments
     createdate timestamp,
     updatedate timestamp,
     comment varchar,
-    personid uuid references users(personid),
-    imageid uuid references images(imageid)
+    userid uuid references users(userid),
+    postid uuid references posts(postid)
 );

@@ -1,33 +1,63 @@
 package com.itsaur.internship.comment;
 
 import com.itsaur.internship.post.Post;
-import com.itsaur.internship.user.User;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 import java.sql.Timestamp;
-import java.util.UUID;
 
 public class Comment {
 
     private UUID commentid;
-    private Timestamp date;
+    private LocalDateTime createdate;
+    private LocalDateTime updatedate;
     private String comment;
-    private User user;
-    private Post image;
+    private UUID userid;
+    private UUID postid;
 
     public UUID getCommentid() {
         return commentid;
+    }
+
+    public Comment(UUID commentid, LocalDateTime createdate, LocalDateTime updatedate, String comment, UUID userid, UUID postid) {
+        this.commentid = commentid;
+        this.createdate = createdate;
+        this.updatedate = updatedate;
+        this.comment = comment;
+        this.userid = userid;
+        this.postid = postid;
+    }
+
+    public Comment(String comment, UUID userid, UUID postid) {
+        this.comment = comment;
+        this.userid = userid;
+        this.postid = postid;
+    }
+
+    public Comment(UUID commentid, String comment) {
+        this.commentid = commentid;
+        this.comment = comment;
     }
 
     public void setCommentid(UUID commentid) {
         this.commentid = commentid;
     }
 
-    public Timestamp getDate() {
-        return date;
+    public LocalDateTime getCreatedate() {
+        return createdate;
     }
 
-    public void setDate(Timestamp date) {
-        this.date = date;
+    public void setCreatedate(LocalDateTime createdate) {
+        this.createdate = createdate;
+    }
+
+    public LocalDateTime getUpdatedate() {
+        return updatedate;
+    }
+
+    public void setUpdatedate(LocalDateTime updatedate) {
+        this.updatedate = updatedate;
     }
 
     public String getComment() {
@@ -38,19 +68,19 @@ public class Comment {
         this.comment = comment;
     }
 
-    public User getUser() {
-        return user;
+    public UUID getUserid() {
+        return userid;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserid(UUID userid) {
+        this.userid = userid;
     }
 
-    public Post getImage() {
-        return image;
+    public UUID getPostid() {
+        return postid;
     }
 
-    public void setImage(Post image) {
-        this.image = image;
+    public void setPostid(UUID postid) {
+        this.postid = postid;
     }
 }

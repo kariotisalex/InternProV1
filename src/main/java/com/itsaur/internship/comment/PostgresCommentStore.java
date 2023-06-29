@@ -5,9 +5,11 @@ import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.pgclient.PgPool;
-import io.vertx.sqlclient.PoolOptions;
-import io.vertx.sqlclient.SqlClient;
+import io.vertx.sqlclient.*;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class PostgresCommentStore implements CommentStore{
@@ -25,40 +27,98 @@ public class PostgresCommentStore implements CommentStore{
     @Override
     public Future<Void> insert(Comment comment) {
         SqlClient client = PgPool.client(vertx,connectOptions, poolOptions);
-        return null;
-//                this.findImage(filename).compose(q -> {
-//            return client
-//                    .preparedQuery("INSERT INTO comments(commentid, date, comment, imageid)" +
-//                            "SELECT ($1), now(), ($2), imageid FROM images WHERE image=($3)")
-//                    .execute(Tuple.of(UUID.randomUUID(), comment, filename))
-//                    .onFailure(e -> {
-//                        System.out.println(e);
-//                        e.printStackTrace();
-//                    })
-//                    .compose(r -> {
-//                        return client.close();
-//                    });
-//        });
+        return client
+                .preparedQuery("INSERT INTO comments(commentid, createdate, comment, userid, postid) " +
+                                   "VALUES ($1, $2, $3, $4, $5)")
+                .execute(Tuple.of(UUID.randomUUID(), LocalDateTime.now(), comment.getComment(),
+                                  comment.getUserid(), comment.getPostid()))
+                .onFailure(e -> {
+                    e.printStackTrace();
+                })
+                .compose(q -> {
+                    return client.close();
+                });
     }
 
     @Override
-    public Future<Comment> find(UUID commentid) {
-        return null;
+    public Future<Comment> findById(UUID commentid) {
+        SqlClient client = PgPool.client(vertx,connectOptions, poolOptions);
+        return client
+                .preparedQuery("SELECT commentid, createdate, updatedate, comment, userid, postid" +
+                                   "FROM comments WHERE commentid=($1)")
+                .execute(Tuple.of(commentid))
+                .compose(rows -> {
+                    if (rows.iterator().hasNext()){
+                        return Future.succeededFuture( new Comment(
+                                rows.iterator().next().getUUID(0),
+                                rows.iterator().next().getLocalDateTime(1),
+                                rows.iterator().next().getLocalDateTime(2),
+                                rows.iterator().next().getString(3),
+                                rows.iterator().next().getUUID(4),
+                                rows.iterator().next().getUUID(5)));
+                    }else {
+                        return Future.failedFuture(new NullPointerException("There is nothing in this commendid"));
+                    }
+                });
     }
 
     @Override
-    public Future<Void> update(UUID commentid) {
-        return null;
+    public Future<Void> update(Comment comment) {
+        SqlClient client = PgPool.client(vertx,connectOptions, poolOptions);
+        return client
+                .preparedQuery("UPDATE comments" +
+                                   "SET comment=($2), updatedate=($3)" +
+                                   "WHERE commentid=($1)")
+                .execute(Tuple.of(comment.getCommentid(),comment.getComment(), LocalDateTime.now()))
+                .onFailure(e -> {
+                    e.printStackTrace();
+                })
+                .compose(q -> {
+                    return client.close();
+                });
     }
 
     @Override
-    public Future<Void> delete(UUID commentid) {
-        return null;
+    public Future<Void> deleteById(UUID commentid) {
+        SqlClient client = PgPool.client(vertx,connectOptions, poolOptions);
+        return client
+                .preparedQuery("DELETE comments WHERE commentid=($1)")
+                .execute(Tuple.of(commentid))
+                .compose(q -> {
+                    return client.close();
+                });
     }
 
     @Override
-    public Future<Void> deleteFromPost(Post post) {
-        return null;
+    public Future<Void> deleteByPost(UUID postid) {
+        SqlClient client = PgPool.client(vertx,connectOptions, poolOptions);
+        return client
+                .preparedQuery("DELETE FROM comments WHERE postid=($1)")
+                .execute(Tuple.of(postid))
+                .compose(q -> {
+                    return client.close();
+                });
+    }
+    @Override
+    public Future<List<Comment>> readById(UUID commentid){
+        SqlClient client = PgPool.client(vertx,connectOptions, poolOptions);
+        return client
+                .preparedQuery("SELECT commentid, createdate, updatedate, comment, userid, postid" +
+                                   "FROM comments WHERE commentid=($1)")
+                .execute(Tuple.of(commentid))
+                .compose(rows -> {
+                    List<Comment> listComment = new ArrayList<>();
+                    for (Row row : rows){
+                        listComment.add(new Comment(row.getUUID(0),
+                                row.getLocalDateTime(1),
+                                row.getLocalDateTime(2),
+                                row.getString(3),
+                                row.getUUID(4),
+                                row.getUUID(5))
+                        );
+                    }
+                    return Future.succeededFuture(listComment);
+                });
     }
 
 

@@ -11,14 +11,14 @@ public class UserService {
 
 
     public Future<Void> register(String username, String password){
-        return usersStore.findUser(username)
+        return usersStore.findUserByUsername(username)
                 .onFailure(e -> {
                     System.out.println(e);
                 })
                 .otherwiseEmpty()
                 .compose(user -> {
                     if (user == null){
-                        return usersStore.insert(new User(username,password));
+                        return usersStore.insert(new UUID(username,password));
                     }else {
                         return Future.failedFuture(new IllegalArgumentException("User exists!"));
                     }
@@ -26,8 +26,8 @@ public class UserService {
     }
 
 
-    public Future<User> login(String username, String password){
-        return usersStore.findUser(username)
+    public Future<UUID> login(String username, String password){
+        return usersStore.findUserByUsername(username)
                 .onFailure(e -> {
                     System.out.println(e);
                 })
@@ -41,7 +41,7 @@ public class UserService {
     }
 
     public Future<Void> delete(String username){
-        return usersStore.findUser(username)
+        return usersStore.findUserByUsername(username)
                 .onFailure(e ->{
                     System.out.println(e);
                 })
@@ -57,7 +57,7 @@ public class UserService {
 
 
     public Future<Void> changePassword(String username, String currentPassword, String newPassword){
-        return usersStore.findUser(username)
+        return usersStore.findUserByUsername(username)
                 .onFailure(e -> {
                     System.out.println(e);
                 })
