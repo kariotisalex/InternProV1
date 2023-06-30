@@ -6,7 +6,9 @@ import com.itsaur.internship.user.UsersStore;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import java.util.List;
-import java.util.stream.IntStream;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PostService {
 
@@ -15,8 +17,7 @@ public class PostService {
     private UsersStore usersStore;
     private CommentStore commentStore;
 
-    public PostService(Vertx vertx, PostStore postStore, UsersStore usersStore, CommentStore commentStore) {
-        this.vertx = vertx;
+    public PostService( PostStore postStore, UsersStore usersStore, CommentStore commentStore) {
         this.postStore = postStore;
         this.usersStore = usersStore;
         this.commentStore = commentStore;
@@ -44,12 +45,12 @@ public class PostService {
                 .compose(user -> {
                     return this.postStore.retrieveAll(user.getUserid())
                         .compose(res -> {
-                            res.stream().forEach(o -> {
-                                this.postStore.findPostByFilename(o)
+                            return res.stream().map(o -> {
+                                return this.postStore.findPostByFilename(o)
                                     .compose(w -> {
                                         return this.commentStore.deleteByPost(w.getPostid());
                                     });
-                            });
+                            }).collect(Collectors.toList()).get(0);
                         });
                 });
     }

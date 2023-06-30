@@ -4,9 +4,9 @@ import io.vertx.core.Future;
 
 public interface UsersStore {
 
-    Future<Void> insert(UUID user);
+    Future<Void> insert(User user);
 
-    Future<UUID> findUserByUsername(String username);
+    Future<User> findUserByUsername(String username);
 
     Future<Void> delete(String username);
 

@@ -4,6 +4,7 @@ import com.itsaur.internship.post.PostStore;
 import com.itsaur.internship.user.UsersStore;
 import io.vertx.core.Future;
 
+import java.util.List;
 import java.util.UUID;
 
 public class CommentService {
@@ -34,7 +35,7 @@ public class CommentService {
    }
 
 
-   public Future<Void> retrieveAll(UUID commentid){
-        return this.commentStore.readAllById();
+   public Future<List<Comment>> retrieveAll(UUID commentid){
+        return this.commentStore.readAllById(commentid);
     }
 }

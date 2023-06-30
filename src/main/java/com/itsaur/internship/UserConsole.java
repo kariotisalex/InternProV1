@@ -27,7 +27,7 @@ public class UserConsole {
                         v.printStackTrace();
                     }).mapEmpty();
         } else if (args[1].equals("--delete")) {
-            return this.userService.delete(args[2])
+            return this.userService.deleteByUsername(args[2])
                     .onSuccess(v -> System.out.println("User deleted!"))
                     .onFailure(v -> {
                         System.out.println("Failed to delete user");

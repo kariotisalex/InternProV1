@@ -15,12 +15,13 @@ import java.util.UUID;
 public class PostgresCommentStore implements CommentStore{
     private final Vertx vertx;
     private final PgConnectOptions connectOptions;
-    private final PoolOptions poolOptions = new PoolOptions()
-            .setMaxSize(5);
 
-    public PostgresCommentStore(Vertx vertx, PgConnectOptions connectOptions) {
+    private final PoolOptions poolOptions;
+
+    public PostgresCommentStore(Vertx vertx, PgConnectOptions connectOptions, PoolOptions poolOptions) {
         this.vertx = vertx;
         this.connectOptions = connectOptions;
+        this.poolOptions = poolOptions;
     }
 
 

@@ -19,14 +19,12 @@ public class PostgresPostStore implements PostStore{
 
     private final Vertx vertx;
     private final PgConnectOptions connectOptions;
-    private final PoolOptions poolOptions = new PoolOptions()
-            .setMaxSize(5);
-    private CommentStore commentStore;
+    private final PoolOptions poolOptions;
 
-    public PostgresPostStore(Vertx vertx, PgConnectOptions connectOptions, CommentStore commentStore) {
+    public PostgresPostStore(Vertx vertx, PgConnectOptions connectOptions, PoolOptions poolOptions) {
         this.vertx = vertx;
         this.connectOptions = connectOptions;
-        this.commentStore = commentStore;
+        this.poolOptions = poolOptions;
     }
 
     @Override

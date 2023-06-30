@@ -13,14 +13,15 @@ public class PostgresUsersStore implements UsersStore {
     private PoolOptions poolOptions = new PoolOptions()
             .setMaxSize(5);
 
-    public PostgresUsersStore(Vertx vertx, PgConnectOptions postgresOptions) {
+    public PostgresUsersStore(Vertx vertx, PgConnectOptions postgresOptions, PoolOptions poolOptions) {
         this.vertx = vertx;
         this.connectOptions = postgresOptions;
+        this.poolOptions = poolOptions;
     }
 
 
     @Override
-    public Future<Void> insert(UUID user) {
+    public Future<Void> insert(User user) {
         SqlClient client = PgPool.client(vertx, connectOptions, poolOptions);
         return this.findUserByUsername(user.getUsername())
                 .recover(q -> {
@@ -40,7 +41,7 @@ public class PostgresUsersStore implements UsersStore {
 
 
     @Override
-    public Future<UUID> findUserByUsername(String username) {
+    public Future<User> findUserByUsername(String username) {
         SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
         return client
                 .preparedQuery("SELECT personid, createdate, username,password FROM users WHERE username=($1)")
@@ -51,7 +52,7 @@ public class PostgresUsersStore implements UsersStore {
                 .compose(res2 ->{
                     if(res2.iterator().hasNext()){
                         return Future.succeededFuture(
-                                new UUID(res2.iterator().next().getUUID("personid"),
+                                new User(res2.iterator().next().getUUID("personid"),
                                          res2.iterator().next().getLocalDateTime("createdate"),
                                          res2.iterator().next().getString("username"),
                                          res2.iterator().next().getString("password")));

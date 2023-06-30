@@ -1,8 +1,10 @@
 package com.itsaur.internship;
 
 
+import com.itsaur.internship.comment.CommentService;
+import com.itsaur.internship.post.PostService;
+import com.itsaur.internship.post.PostStore;
 import com.itsaur.internship.user.UserService;
-import com.itsaur.internship.content.ContentService;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServer;
@@ -12,17 +14,19 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.handler.BodyHandler;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 public class VerticleApi extends AbstractVerticle {
-    private final UserService service;
-    private ContentService contentService;
 
-    public VerticleApi(UserService service) {
-        this.service = service;
-    }
-    public VerticleApi(UserService service, ContentService contentService) {
-        this.service = service;
-        this.contentService = contentService;
+    final private UserService userService;
+    final private CommentService commentService;
+    final private PostService postService;
+
+
+    public VerticleApi(UserService userService, CommentService commentService, PostService postService) {
+        this.userService = userService;
+        this.commentService = commentService;
+        this.postService = postService;
     }
 
     @Override
@@ -35,12 +39,14 @@ public class VerticleApi extends AbstractVerticle {
 
 
 
+
+
         router
-                .post("/login")
+                .post("/user/login")
                 .handler(BodyHandler.create())
                 .handler(ctx -> {
                     final JsonObject body = ctx.body().asJsonObject();
-                    this.service.login(body.getString("username"),
+                    this.userService.login(body.getString("username"),
                                     body.getString("password"))
                             .onSuccess(v -> {
                                 System.out.println("Successful Login");
@@ -52,11 +58,11 @@ public class VerticleApi extends AbstractVerticle {
                             });
                 });
         router
-                .post("/register")
+                .post("/user/register")
                 .handler(BodyHandler.create())
                 .handler(ctx -> {
                     final JsonObject body = ctx.body().asJsonObject();
-                    this.service.register(body.getString("username"),
+                    this.userService.register(body.getString("username"),
                                     body.getString("password"))
                             .onSuccess(v -> {
                                 System.out.println("Your registration is successful");
@@ -71,7 +77,7 @@ public class VerticleApi extends AbstractVerticle {
                 .delete("/users/:username")
                 .handler(ctx -> {
                     System.out.println(ctx.pathParam("username"));
-                    this.service.delete(ctx.pathParam("username"))
+                    this.userService.deleteByUsername(ctx.pathParam("username"))
                             .onSuccess(v -> {
                                 System.out.println("User :" + ctx.pathParam("username") + " deleted successfully");
                                 ctx.response().setStatusCode(200).end();
@@ -82,7 +88,7 @@ public class VerticleApi extends AbstractVerticle {
                             });
                 });
         router
-                .put("/users/:username/password")
+                .put("/user/:username/password")
                 .handler(BodyHandler.create())
                 .handler(ctx ->{
                     final JsonObject body = ctx.body().asJsonObject();
@@ -91,7 +97,7 @@ public class VerticleApi extends AbstractVerticle {
                     final String currentPassword = body.getString("currentPassword");
                     final String newPassword = body.getString("newPassword");
 
-                    this.service.changePassword(username, currentPassword, newPassword)
+                    this.userService.changePassword(username, currentPassword, newPassword)
                             .onSuccess(v -> {
                                 System.out.println("Password changes successfully from user " + ctx.pathParam("username"));
                                 ctx.response().setStatusCode(200).end();
@@ -103,23 +109,55 @@ public class VerticleApi extends AbstractVerticle {
                 });
 
         router
-                .post("/upload/post/:username")
-                //.consumes("image/png")
+                .delete("/user/:username/")
+                .handler(ctx -> {
+                    this.userService.deleteByUsername(ctx.pathParam("username"))
+                            .onSuccess(suc -> {
+                                ctx.response().setStatusCode(200).end();
+                            })
+                            .onFailure(e -> {
+                                ctx.response().setStatusCode(400).end();
+                            });
+                });
+
+
+
+
+
+        router
+                .post("/test")
+                        .handler(BodyHandler.create().setUploadsDirectory(String.valueOf(Paths.get("images").toAbsolutePath())))
+                        .handler(ctx -> {
+                            FileUpload file = ctx.fileUploads().get(0);
+                            System.out.println(file.uploadedFileName());
+                            System.out.println(file.contentType());
+                            System.out.println(file);
+
+                        });
+
+
+
+
+
+
+
+        router
+                .post("/user/:username/post/")
                 .handler(BodyHandler
                         .create()
                         .setBodyLimit(5000000)
-                        .setUploadsDirectory(String.valueOf(Paths.get("src/main/java/com/itsaur/internship/images").toAbsolutePath())))
-                .produces("application/json")
+                        .setUploadsDirectory(String.valueOf(Paths.get("images").toAbsolutePath())))
                 .handler(ctx->{
                     FileUpload file = ctx.fileUploads().get(0);
-                    System.out.println(file.contentType());
                     if(file.contentType().split("/")[0].equals("image")){
-                        String fileExt = "." + file.fileName().split("[.]")[file.fileName().split("[.]").length-1];
-                        String savedFileName = file.uploadedFileName().split("/")[file.uploadedFileName().split("/").length-1]+fileExt;
+                        final String fileExt = "." + file.fileName().split("[.]")[file.fileName().split("[.]").length-1];
+                        final String savedFileName = file.uploadedFileName().split("/")[file.uploadedFileName().split("/").length-1]+fileExt;
+
+
                         vertx.fileSystem().move(file.uploadedFileName(),
                                                 file.uploadedFileName() + fileExt)
                                 .compose(w -> {
-                                    return contentService.addPost(ctx.pathParam("username"),savedFileName,"description")
+                                    return postService.addPost(ctx.pathParam("username"),savedFileName,"description")
                                             .onSuccess(f ->{
                                                 ctx.response().setStatusCode(200).end(savedFileName);
                                             })
@@ -135,13 +173,14 @@ public class VerticleApi extends AbstractVerticle {
 
 
         router
-                .post("/upload/comment/:filename")
+                .post("/user/:username/comment/:filename")
                 .handler(BodyHandler.create())
                 .handler(ctx -> {
                     String filename = ctx.pathParam("filename");
                     String comment = ctx.body().asJsonObject().getString("comment");
+                    String username = ctx.pathParam("username");
 
-                    contentService.addComment(filename,comment)
+                    commentService.addComment(comment, username, filename)
                             .onFailure(e -> {
                                 ctx.response().setStatusCode(400).end();
                             })
@@ -152,10 +191,11 @@ public class VerticleApi extends AbstractVerticle {
                 });
 
         router
-                .delete("/delete/post/:filename")
+                .delete("user/:username/post/:filename")
                 .handler(ctx -> {
                     String filename = ctx.pathParam("filename");
-                    contentService.deletePost(filename)
+                    String username = ctx.pathParam("username");
+                    postService.deletePost(username,filename)
                             .onSuccess(s -> {
                                 ctx.response().setStatusCode(200).end();
                             })
@@ -169,7 +209,7 @@ public class VerticleApi extends AbstractVerticle {
                 .get("/load/post/:username")
                 .handler(ctx -> {
                     String username = ctx.pathParam("username");
-                    contentService.retrieveAllPosts(username)
+                    postService.retrieveAllPosts(username)
                             .onSuccess(q -> {
                                 System.out.println(q);
                                 System.out.println();
@@ -186,7 +226,7 @@ public class VerticleApi extends AbstractVerticle {
                 .delete("/delete/comment/:commentid")
                 .handler(ctx -> {
                     String cid = ctx.pathParam("commentid");
-                    contentService.deleteCommment(cid)
+                    commentService.deleteComment(UUID.fromString(cid))
                             .onFailure(e -> {
                                 ctx.response().setStatusCode(400).end();
                             })

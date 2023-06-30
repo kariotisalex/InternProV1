@@ -1,12 +1,18 @@
 package com.itsaur.internship.user;
+import com.itsaur.internship.comment.CommentStore;
+import com.itsaur.internship.post.PostService;
+import com.itsaur.internship.post.PostStore;
 import io.vertx.core.Future;
 
 public class UserService {
 
-    public UsersStore usersStore;
-
-    public UserService(UsersStore usersStore) {
+    private PostStore postStore;
+    private UsersStore usersStore;
+    private CommentStore commentStore;
+    public UserService( PostStore postStore, UsersStore usersStore, CommentStore commentStore) {
+        this.postStore = postStore;
         this.usersStore = usersStore;
+        this.commentStore = commentStore;
     }
 
 
@@ -18,7 +24,7 @@ public class UserService {
                 .otherwiseEmpty()
                 .compose(user -> {
                     if (user == null){
-                        return usersStore.insert(new UUID(username,password));
+                        return usersStore.insert(new User(username,password));
                     }else {
                         return Future.failedFuture(new IllegalArgumentException("User exists!"));
                     }
@@ -26,29 +32,31 @@ public class UserService {
     }
 
 
-    public Future<UUID> login(String username, String password){
+    public Future<User> login(String username, String password){
         return usersStore.findUserByUsername(username)
                 .onFailure(e -> {
                     System.out.println(e);
                 })
                 .compose(user -> {
                     if (user.isPasswordEqual(password)){
-                        return Future.succeededFuture();
+                        return Future.succeededFuture(user);
                     } else {
                         return Future.failedFuture(new IllegalArgumentException("Invalid Password"));
                     }
                 });
     }
 
-    public Future<Void> delete(String username){
+    public Future<Void> deleteByUsername(String username){
         return usersStore.findUserByUsername(username)
                 .onFailure(e ->{
                     System.out.println(e);
                 })
                 .compose(user -> {
                     if(user.isUsernameEqual(username)){
-                        usersStore.delete(username);
-                        return Future.succeededFuture();
+                        return new PostService(postStore,usersStore,commentStore).deleteAllPosts(username)
+                                .compose(q -> {
+                                    return usersStore.delete(username);
+                                });
                     } else {
                         return Future.failedFuture(new IllegalArgumentException("User doesn't exist."));
                     }
@@ -68,6 +76,5 @@ public class UserService {
                         return Future.failedFuture(new IllegalArgumentException("The password is wrong."));
                     }
                 });
-
     }
 }

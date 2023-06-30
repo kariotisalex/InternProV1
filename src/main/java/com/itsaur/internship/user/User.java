@@ -1,30 +1,31 @@
 package com.itsaur.internship.user;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-public class UUID {
+public class User {
 
     private java.util.UUID personid;
     private LocalDateTime createdate;
     private String username;
     private String password;
 
-    public UUID() {
+    public User() {
     }
 
-    public UUID(String username, String password) {
+    public User(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    public UUID(java.util.UUID personid, LocalDateTime createdate, String username, String password) {
+    public User(UUID personid, LocalDateTime createdate, String username, String password) {
         this.personid = personid;
         this.createdate = createdate;
         this.username = username;
         this.password = password;
     }
 
-    public UUID(java.util.UUID personid, String username, String password) {
+    public User(java.util.UUID personid, String username, String password) {
         this.personid = personid;
         this.username = username;
         this.password = password;
@@ -38,7 +39,7 @@ public class UUID {
         this.createdate = createdate;
     }
 
-    public java.util.UUID getUserid() {
+    public UUID getUserid() {
         return personid;
     }
 
