@@ -4,15 +4,18 @@ package com.itsaur.internship;
 import com.itsaur.internship.comment.CommentService;
 import com.itsaur.internship.post.PostService;
 import com.itsaur.internship.post.PostStore;
+import com.itsaur.internship.post.PostgresPostStore;
 import com.itsaur.internship.user.UserService;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
+import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.Router;
-import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.pgclient.PgConnectOptions;
+
 import java.nio.file.Paths;
 import java.util.UUID;
 
@@ -29,25 +32,22 @@ public class VerticleApi extends AbstractVerticle {
         this.postService = postService;
     }
 
+
     @Override
     public void start(Promise<Void> startPromise) throws Exception {
 
         HttpServer server = vertx.createHttpServer();
         Router router = Router.router(vertx);
 
-        WebClient client = WebClient.create(vertx);
-
-
-
-
-
         router
                 .post("/user/login")
                 .handler(BodyHandler.create())
                 .handler(ctx -> {
                     final JsonObject body = ctx.body().asJsonObject();
-                    this.userService.login(body.getString("username"),
-                                    body.getString("password"))
+                    String username = body.getString("username");
+                    String password = body.getString("password");
+
+                    this.userService.login(username, password)
                             .onSuccess(v -> {
                                 System.out.println("Successful Login");
                                 ctx.response().setStatusCode(200).end();
@@ -62,8 +62,10 @@ public class VerticleApi extends AbstractVerticle {
                 .handler(BodyHandler.create())
                 .handler(ctx -> {
                     final JsonObject body = ctx.body().asJsonObject();
-                    this.userService.register(body.getString("username"),
-                                    body.getString("password"))
+                    String username = body.getString("username");
+                    String password = body.getString("password");
+
+                    this.userService.register(username, password)
                             .onSuccess(v -> {
                                 System.out.println("Your registration is successful");
                                 ctx.response().setStatusCode(200).end();
@@ -209,17 +211,17 @@ public class VerticleApi extends AbstractVerticle {
                 .get("/load/post/:username")
                 .handler(ctx -> {
                     String username = ctx.pathParam("username");
-                    postService.retrieveAllPosts(username)
-                            .onSuccess(q -> {
-                                System.out.println(q);
-                                System.out.println();
-                                for (String str : q){
-                                    System.out.println(str);
-                                }
-                                ctx.end();
-                            }).onFailure(e -> {
-                                ctx.response().setStatusCode(400).end();
-                            });
+//                    postService.retrieveAllPosts(username)
+//                            .onSuccess(q -> {
+//                                System.out.println(q);
+//                                System.out.println();
+//                                for (String str : q){
+//                                    System.out.println(str);
+//                                }
+//                                ctx.end();
+//                            }).onFailure(e -> {
+//                                ctx.response().setStatusCode(400).end();
+//                            });
                 });
 
         router

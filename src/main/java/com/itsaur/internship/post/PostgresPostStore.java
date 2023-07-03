@@ -20,12 +20,14 @@ public class PostgresPostStore implements PostStore{
 
     private final Vertx vertx;
     private final PgConnectOptions connectOptions;
-    private final PoolOptions poolOptions;
 
-    public PostgresPostStore(Vertx vertx, PgConnectOptions connectOptions, PoolOptions poolOptions) {
+    final PoolOptions poolOptions = new PoolOptions()
+            .setMaxSize(5);
+
+    public PostgresPostStore(Vertx vertx, PgConnectOptions connectOptions) {
         this.vertx = vertx;
         this.connectOptions = connectOptions;
-        this.poolOptions = poolOptions;
+        ;
     }
 
     @Override
@@ -74,8 +76,6 @@ public class PostgresPostStore implements PostStore{
                 });
     }
 
-
-
     @Override
     public Future<Void> updatePost(Post post) {
         SqlClient client = PgPool.client(vertx, connectOptions, poolOptions);
@@ -98,10 +98,6 @@ public class PostgresPostStore implements PostStore{
                     return client.close();
                 });
     }
-
-
-
-
 
     @Override
     public Future<List<Post>> retrieveAllByUserid(UUID userid){
@@ -132,7 +128,6 @@ public class PostgresPostStore implements PostStore{
                     }
                 });
     }
-
 
 
 }

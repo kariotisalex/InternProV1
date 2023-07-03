@@ -20,8 +20,7 @@ public class Application {
     public static void main(String[] args) {
         Vertx vertx = Vertx.vertx();
         PostgresOptions postgresOptions = new PostgresOptions();
-        final PoolOptions poolOptions = new PoolOptions()
-                .setMaxSize(5);
+
 
         try{
             JCommander.newBuilder()
@@ -31,9 +30,9 @@ public class Application {
         }catch (ParameterException e){
             System.out.println(e.getMessage());
         }
-        PostgresPostStore postgresPostStore = new PostgresPostStore(vertx, postgresOptions.getPgConnectOptions(), poolOptions);
-        PostgresUsersStore postgresUsersStore = new PostgresUsersStore(vertx, postgresOptions.getPgConnectOptions(),poolOptions);
-        PostgresCommentStore postgresCommentStore = new PostgresCommentStore(vertx, postgresOptions.getPgConnectOptions(), poolOptions);
+        PostgresPostStore postgresPostStore = new PostgresPostStore(vertx, postgresOptions.getPgConnectOptions());
+        PostgresUsersStore postgresUsersStore = new PostgresUsersStore(vertx, postgresOptions.getPgConnectOptions());
+        PostgresCommentStore postgresCommentStore = new PostgresCommentStore(vertx, postgresOptions.getPgConnectOptions());
 
 
 
@@ -44,9 +43,9 @@ public class Application {
         );
 
         if (postgresOptions.getService().equals("serverdb")){
-            PostStore postStore = new PostgresPostStore(vertx,postgresOptions.getPgConnectOptions(),poolOptions);
-            CommentStore commentStore = new PostgresCommentStore(vertx, postgresOptions.getPgConnectOptions(),poolOptions);
-            UsersStore userStore = new PostgresUsersStore(vertx, postgresOptions.getPgConnectOptions(),poolOptions);
+            PostStore postStore = new PostgresPostStore(vertx,postgresOptions.getPgConnectOptions());
+            CommentStore commentStore = new PostgresCommentStore(vertx, postgresOptions.getPgConnectOptions());
+            UsersStore userStore = new PostgresUsersStore(vertx, postgresOptions.getPgConnectOptions());
 
             vertx.deployVerticle(
                     new VerticleApi(

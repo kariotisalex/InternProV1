@@ -48,7 +48,8 @@ public class CreateUserInPostgreSQL {
 
     private static Future<Void> insertRandomUsers(SqlClient client, int records){
         return client
-                .preparedQuery("INSERT INTO users (personid, createdate, username, password) VALUES ($1, $2, $3, $4)")
+                .preparedQuery("INSERT INTO users (userid, createdate, username, password) " +
+                        "VALUES ($1, $2, $3, $4)")
                 .executeBatch(tupleFiller(records))
                 .mapEmpty();
     }

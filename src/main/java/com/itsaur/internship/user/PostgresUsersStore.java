@@ -13,10 +13,9 @@ public class PostgresUsersStore implements UsersStore {
     private PoolOptions poolOptions = new PoolOptions()
             .setMaxSize(5);
 
-    public PostgresUsersStore(Vertx vertx, PgConnectOptions postgresOptions, PoolOptions poolOptions) {
+    public PostgresUsersStore(Vertx vertx, PgConnectOptions postgresOptions) {
         this.vertx = vertx;
         this.connectOptions = postgresOptions;
-        this.poolOptions = poolOptions;
     }
 
 
@@ -44,7 +43,7 @@ public class PostgresUsersStore implements UsersStore {
     public Future<User> findUserByUsername(String username) {
         SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
         return client
-                .preparedQuery("SELECT personid, createdate, username,password FROM users WHERE username=($1)")
+                .preparedQuery("SELECT userid, createdate, username,password FROM users WHERE username=($1)")
                 .execute(Tuple.of(username))
                 .onFailure(e ->{
                     System.out.println(e);

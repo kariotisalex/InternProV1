@@ -17,7 +17,7 @@ public class PostService {
     private UsersStore usersStore;
     private CommentStore commentStore;
 
-    public PostService( PostStore postStore, UsersStore usersStore, CommentStore commentStore) {
+    public PostService(PostStore postStore, UsersStore usersStore, CommentStore commentStore) {
         this.postStore = postStore;
         this.usersStore = usersStore;
         this.commentStore = commentStore;
