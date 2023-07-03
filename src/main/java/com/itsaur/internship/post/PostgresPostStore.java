@@ -6,6 +6,7 @@ import io.vertx.core.Vertx;
 import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.pgclient.PgPool;
 import io.vertx.sqlclient.PoolOptions;
+import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.SqlClient;
 import io.vertx.sqlclient.Tuple;
 
@@ -73,6 +74,8 @@ public class PostgresPostStore implements PostStore{
                 });
     }
 
+
+
     @Override
     public Future<Void> updatePost(Post post) {
         SqlClient client = PgPool.client(vertx, connectOptions, poolOptions);
@@ -92,33 +95,42 @@ public class PostgresPostStore implements PostStore{
                 .preparedQuery("DELETE FROM posts WHERE filename=($1)")
                 .execute(Tuple.of(filename))
                 .compose(w -> {
-                    return client
-                            .close()
-                            .compose(r-> {
-                                return vertx.fileSystem().delete(String.valueOf(
-                                        Paths.get("images",filename).toAbsolutePath()));
-                            });
+                    return client.close();
                 });
     }
 
+
+
+
+
     @Override
-    public Future<List<String>> retrieveAll(UUID user){
-//        SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
-//        return client
-//                .preparedQuery("SELECT image FROM images WHERE personid=($1)\n" +
-//                                   "WHERE personid=($1)")
-//                .execute(Tuple.of(user.getPersonid()))
-//                .compose(rows -> {
-//                    List<String> posts = new ArrayList<>();
-//                    if (rows.iterator().hasNext()){
-//                        for (Row row : rows)
-//                            posts.add(row.getString("image"));
-//                    }
-//                    client.close();
-//                    return Future.succeededFuture(posts);
-//                });
-        List<String> a = new ArrayList<String>();
-        return Future.succeededFuture(a);
+    public Future<List<Post>> retrieveAllByUserid(UUID userid){
+        SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
+        return client
+                .preparedQuery("SELECT postid, createdate, updatedate, filename" +
+                        "description, userid " +
+                        "FROM posts " +
+                        "WHERE userid=($1)")
+                .execute(Tuple.of(userid))
+                .compose(rows -> {
+                    List<Post> allPostsByUser = new ArrayList<>();
+                    if (rows.iterator().hasNext()) {
+                        for (Row row : rows) {
+                            UUID postid = rows.iterator().next().getUUID(0);
+                            LocalDateTime createdate = rows.iterator().next().getLocalDateTime(1);
+                            LocalDateTime updatedate = rows.iterator().next().getLocalDateTime(2);
+                            String filename = rows.iterator().next().getString(3);
+                            String description = rows.iterator().next().getString(4);
+                            allPostsByUser.add(new Post(postid, createdate, updatedate, filename, description, userid));
+                        }
+
+                        client.close();
+                        return Future.succeededFuture(allPostsByUser);
+                    }else {
+                        client.close();
+                        return Future.failedFuture(new NullPointerException());
+                    }
+                });
     }
 
 

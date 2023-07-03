@@ -14,6 +14,6 @@ public interface PostStore {
 
     public Future<Void> deleteByFilename(String filename);
 
-    public Future<List<String>> retrieveAll(UUID user);
+    public Future<List<Post>> retrieveAllByUserid(UUID userid);
 
 }
