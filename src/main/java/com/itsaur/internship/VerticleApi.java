@@ -77,12 +77,26 @@ public class VerticleApi extends AbstractVerticle {
                                 ctx.response().setStatusCode(200).end();
                             })
                             .onFailure(v -> {
-                                System.out.println("Your registration fails " + v);
+                                v.printStackTrace();
                                 ctx.response().setStatusCode(400).end();
                             });
                 });
 
 
+        router
+                .delete("/user/:userid")
+                .handler(ctx -> {
+                    System.out.println(ctx.pathParam("username"));
+                    this.userService.deleteByUsername(ctx.pathParam("username"))
+                            .onSuccess(v -> {
+                                System.out.println("User :" + ctx.pathParam("username") + " deleted successfully");
+                                ctx.response().setStatusCode(200).end();
+                            })
+                            .onFailure(v -> {
+                                System.out.println("The delete operation fails " + v);
+                                ctx.response().setStatusCode(400).end();
+                            });
+                });
 
 
 

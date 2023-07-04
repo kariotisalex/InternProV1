@@ -26,9 +26,9 @@ public class PostgresUsersStore implements UsersStore {
     public Future<Void> insert(User user) {
         SqlClient client = PgPool.client(vertx, connectOptions, poolOptions);
         return client
-                    .preparedQuery("INSERT INTO users (userid, createdate username,password) " +
+                    .preparedQuery("INSERT INTO users (userid, createdate, username, password) " +
                                        "VALUES ($1, $2, $3, $4)")
-                    .execute(Tuple.of(UUID.randomUUID(), LocalDateTime.now(),
+                    .execute(Tuple.of(user.getUserid(), user.getCreatedate(),
                                       user.getUsername(), user.getPassword()))
                     .compose(w -> {
                         client.close();
@@ -43,18 +43,22 @@ public class PostgresUsersStore implements UsersStore {
     public Future<User> findUserByUsername(String username) {
         SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
         return client
-                .preparedQuery("SELECT userid, createdate, username,password FROM users WHERE username=($1)")
+                .preparedQuery("SELECT userid, createdate, updatedate, username, password FROM users WHERE username=($1)")
                 .execute(Tuple.of(username))
                 .onFailure(e ->{
                     System.out.println(e);
                 })
                 .compose(res2 ->{
                     if(res2.iterator().hasNext()){
+                        Row row = res2.iterator().next();
                         return Future.succeededFuture(
-                                new User(res2.iterator().next().getUUID(0),
-                                         res2.iterator().next().getLocalDateTime(1),
-                                         res2.iterator().next().getString(2),
-                                         res2.iterator().next().getString(3)));
+                                new User(row.getUUID(0),
+                                        row.getLocalDateTime(1),
+                                        row.getLocalDateTime(2),
+                                        row.getString(3),
+                                        row.getString(4)
+                                )
+                        );
                     }else {
                         return Future.failedFuture(new IllegalArgumentException());
                     }

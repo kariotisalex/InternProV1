@@ -4,6 +4,9 @@ import com.itsaur.internship.post.PostService;
 import com.itsaur.internship.post.PostStore;
 import io.vertx.core.Future;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 public class UserService {
 
     private PostStore postStore;
@@ -18,10 +21,12 @@ public class UserService {
 
     public Future<Void> register(String username, String password) {
          return usersStore.findUserByUsername(username)
-                .recover(q -> {
-                    return usersStore.insert(new User(username, password));
-                }).eventually(q -> {
-                    return Future.succeededFuture();
+                 .otherwiseEmpty()
+                 .compose(q -> {
+                    if (q == null)
+                        return usersStore.insert(new User(UUID.randomUUID(), LocalDateTime.now(), username, password));
+                    else
+                        return Future.failedFuture(new IllegalArgumentException("User exists!"));
                  });
     }
 

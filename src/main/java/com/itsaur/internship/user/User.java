@@ -5,8 +5,9 @@ import java.util.UUID;
 
 public class User {
 
-    private java.util.UUID userid;
+    private UUID userid;
     private LocalDateTime createdate;
+    private LocalDateTime updatedate;
     private String username;
     private String password;
 
@@ -14,6 +15,14 @@ public class User {
     }
 
     public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public User(UUID userid, LocalDateTime createdate, LocalDateTime updatedate, String username, String password) {
+        this.userid = userid;
+        this.createdate = createdate;
+        this.updatedate = updatedate;
         this.username = username;
         this.password = password;
     }
@@ -31,6 +40,13 @@ public class User {
         this.password = password;
     }
 
+    public LocalDateTime getUpdatedate() {
+        return updatedate;
+    }
+
+    public void setUpdatedate(LocalDateTime updatedate) {
+        this.updatedate = updatedate;
+    }
 
     public LocalDateTime getCreatedate() {
         return createdate;
