@@ -8,6 +8,7 @@ import io.vertx.core.Vertx;
 
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class PostService {
@@ -39,12 +40,15 @@ public class PostService {
                 });
     }
 
-    public Future<Void> deleteAllPosts(String username){
-        return this.usersStore.findUserByUsername(username)
-                .compose(user -> {
-                    return this.postStore.retrieveAllByUserid(user.getUserid())
-                        .compose(res -> {
-                            return Future.all(
+    public Future<Void> deleteAllPosts(UUID userid){
+        return this.postStore.retrieveAllByUserid(userid)
+                .otherwiseEmpty()
+                .compose(res -> {
+                    if (res == null) {
+                        System.out.println("null");
+                        return Future.succeededFuture();
+                    } else {
+                        return Future.all(
                                 res
                                     .stream()
                                     .map(w -> {
@@ -54,13 +58,14 @@ public class PostService {
                                                 });
                                     })
                                     .collect(Collectors.toList())
-                                )
-                                .compose(re -> {
-                                    return re.resultAt(0);
-                                });
+                        )
+                        .compose(re -> {
+                            return re.resultAt(0);
                         });
+                    }
                 });
     }
+
 
 
     public Future<Void> deletePost(String username, String filename){

@@ -45,16 +45,17 @@ public class UserService {
                 });
     }
 
-    public Future<Void> deleteByUsername(String username){
-        return usersStore.findUserByUsername(username)
+    public Future<Void> deleteByUserid(String userid){
+        UUID useridUUID = UUID.fromString(userid);
+        return usersStore.findUserByUserid(useridUUID)
                 .onFailure(e ->{
                     System.out.println(e);
                 })
                 .compose(user -> {
-                    if(user.isUsernameEqual(username)){
-                        return new PostService(postStore,usersStore,commentStore).deleteAllPosts(username)
+                    if(user.isUseridEqual(useridUUID)){
+                        return new PostService(postStore,usersStore,commentStore).deleteAllPosts(useridUUID)
                                 .compose(q -> {
-                                    return usersStore.delete(username);
+                                    return usersStore.delete(useridUUID);
                                 });
                     } else {
                         return Future.failedFuture(new IllegalArgumentException("User doesn't exist."));
@@ -63,14 +64,17 @@ public class UserService {
     }
 
 
-    public Future<Void> changePassword(String username, String currentPassword, String newPassword){
-        return usersStore.findUserByUsername(username)
+    public Future<Void> changePassword(UUID userid, String currentPassword, String newPassword){
+        return usersStore.findUserByUserid(userid)
                 .onFailure(e -> {
-                    System.out.println(e);
+                    e.printStackTrace();
                 })
                 .compose(user -> {
                     if (user.isPasswordEqual(currentPassword)){
-                        return usersStore.changePassword(username, newPassword);
+                        user.setUpdatedate(LocalDateTime.now());
+                        user.setPassword(newPassword);
+
+                        return usersStore.update(user);
                     }else {
                         return Future.failedFuture(new IllegalArgumentException("The password is wrong."));
                     }

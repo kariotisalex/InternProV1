@@ -4,6 +4,8 @@ package com.itsaur.internship;
 import com.itsaur.internship.user.UserService;
 import io.vertx.core.Future;
 
+import java.util.UUID;
+
 public class UserConsole {
 
     private final UserService userService;
@@ -27,14 +29,14 @@ public class UserConsole {
                         v.printStackTrace();
                     }).mapEmpty();
         } else if (args[1].equals("--delete")) {
-            return this.userService.deleteByUsername(args[2])
+            return this.userService.deleteByUserid(args[2])
                     .onSuccess(v -> System.out.println("User deleted!"))
                     .onFailure(v -> {
                         System.out.println("Failed to delete user");
                         v.printStackTrace();
                     }).mapEmpty();
         } else if (args[1].equals("--chpasswd")) {
-            return this.userService.changePassword(args[2], args[3],args[4])
+            return this.userService.changePassword(UUID.fromString(args[2]), args[3],args[4])
                     .onSuccess(v -> System.out.println("User changed password!"))
                     .onFailure(v -> {
                         System.out.println("Failed to change password from user " + args[2]);

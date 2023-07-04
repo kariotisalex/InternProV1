@@ -3,20 +3,14 @@ package com.itsaur.internship;
 
 import com.itsaur.internship.comment.CommentService;
 import com.itsaur.internship.post.PostService;
-import com.itsaur.internship.post.PostStore;
-import com.itsaur.internship.post.PostgresPostStore;
 import com.itsaur.internship.user.UserService;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
-import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
-import io.vertx.pgclient.PgConnectOptions;
 
-import java.nio.file.Paths;
 import java.util.UUID;
 
 public class VerticleApi extends AbstractVerticle {
@@ -84,19 +78,43 @@ public class VerticleApi extends AbstractVerticle {
 
 
         router
-                .delete("/user/:userid")
-                .handler(ctx -> {
-                    System.out.println(ctx.pathParam("username"));
-                    this.userService.deleteByUsername(ctx.pathParam("username"))
+                .put("/user/:userid/password")
+                .handler(BodyHandler.create())
+                .handler(ctx ->{
+                    final JsonObject body = ctx.body().asJsonObject();
+
+                    final UUID userid = UUID.fromString(ctx.pathParam("userid"));
+                    final String currentPw = body.getString("current");
+                    final String newPw = body.getString("new");
+
+                    this.userService.changePassword(userid, currentPw, newPw)
                             .onSuccess(v -> {
-                                System.out.println("User :" + ctx.pathParam("username") + " deleted successfully");
+                                System.out.println("Password changes successfully from user " + ctx.pathParam("userid"));
                                 ctx.response().setStatusCode(200).end();
                             })
-                            .onFailure(v -> {
-                                System.out.println("The delete operation fails " + v);
+                            .onFailure(e -> {
+                                System.out.println("Password changing operation fails from user " + ctx.pathParam("userid"));
                                 ctx.response().setStatusCode(400).end();
                             });
                 });
+
+
+        router
+                .delete("/user/:userid")
+                .handler(ctx -> {
+                    System.out.println(ctx.pathParam("userid"));
+                    this.userService.deleteByUserid(ctx.pathParam("userid"))
+                            .onSuccess(v -> {
+                                System.out.println("User :" + ctx.pathParam("userid") + " deleted successfully");
+                                ctx.response().setStatusCode(200).end();
+                            })
+                            .onFailure(v -> {
+                                v.printStackTrace();
+                                ctx.response().setStatusCode(400).end();
+                            });
+                });
+
+
 
 
 

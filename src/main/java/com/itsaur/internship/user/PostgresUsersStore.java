@@ -66,23 +66,49 @@ public class PostgresUsersStore implements UsersStore {
     }
 
     @Override
-    public Future<Void> delete(String username) {
+    public Future<User> findUserByUserid(UUID userid) {
         SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
         return client
-                .preparedQuery("DELETE FROM users WHERE username=($1)")
-                .execute(Tuple.of(username))
+                .preparedQuery("SELECT userid, createdate, updatedate, username, password FROM users WHERE userid=($1)")
+                .execute(Tuple.of(userid))
+                .onFailure(e ->{
+                    System.out.println(e);
+                })
+                .compose(res3 ->{
+                    if(res3.iterator().hasNext()){
+                        Row row = res3.iterator().next();
+                        return Future.succeededFuture(
+                                new User(row.getUUID(0),
+                                        row.getLocalDateTime(1),
+                                        row.getLocalDateTime(2),
+                                        row.getString(3),
+                                        row.getString(4)
+                                )
+                        );
+                    }else {
+                        return Future.failedFuture(new IllegalArgumentException("User doesn't exists!"));
+                    }
+                });
+    }
+
+    @Override
+    public Future<Void> delete(UUID userid) {
+        SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
+        return client
+                .preparedQuery("DELETE FROM users WHERE userid=($1)")
+                .execute(Tuple.of(userid))
                 .compose(res2 ->{
                     return client.close();
                 });
     }
 
     @Override
-    public Future<Void> changePassword(String username, String newPassword) {
+    public Future<Void> update(User user) {
         SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
 
         return client
-                .preparedQuery("UPDATE users SET password=($2) WHERE username=($1)")
-                .execute(Tuple.of(username,newPassword))
+                .preparedQuery("UPDATE users SET createdate=($2) , updatedate = ($3), username= ($4),password=($5) WHERE userid=($1)")
+                .execute(Tuple.of(user.getUserid(), user.getCreatedate(), user.getUpdatedate(),user.getUsername(), user.getPassword()))
                 .compose(res2 ->{
                     return client.close();
         });

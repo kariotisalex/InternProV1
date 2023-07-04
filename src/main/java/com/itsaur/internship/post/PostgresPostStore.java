@@ -105,12 +105,12 @@ public class PostgresPostStore implements PostStore{
     public Future<List<Post>> retrieveAllByUserid(UUID userid){
         SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
         return client
-                .preparedQuery("SELECT postid, createdate, updatedate, filename" +
-                        "description, userid " +
+                .preparedQuery("SELECT postid, createdate, updatedate, filename, description, userid " +
                         "FROM posts " +
                         "WHERE userid=($1)")
                 .execute(Tuple.of(userid))
                 .compose(rows -> {
+                    System.out.println(rows);
                     List<Post> allPostsByUser = new ArrayList<>();
                     if (rows.iterator().hasNext()) {
                         for (Row row : rows) {

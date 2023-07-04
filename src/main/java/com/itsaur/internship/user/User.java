@@ -88,6 +88,9 @@ public class User {
         return (this.password.equals(password));
     }
 
+    public boolean isUseridEqual(UUID userid){
+        return this.userid.equals(userid);
+    }
 
     @Override
     public String toString() {
