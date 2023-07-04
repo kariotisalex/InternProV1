@@ -16,19 +16,13 @@ public class UserService {
     }
 
 
-    public Future<Void> register(String username, String password){
-        return usersStore.findUserByUsername(username)
-                .onFailure(e -> {
-                    System.out.println(e);
-                })
-                .otherwiseEmpty()
-                .compose(user -> {
-                    if (user == null){
-                        return usersStore.insert(new User(username,password));
-                    }else {
-                        return Future.failedFuture(new IllegalArgumentException("User exists!"));
-                    }
-                });
+    public Future<Void> register(String username, String password) {
+         return usersStore.findUserByUsername(username)
+                .recover(q -> {
+                    return usersStore.insert(new User(username, password));
+                }).eventually(q -> {
+                    return Future.succeededFuture();
+                 });
     }
 
 

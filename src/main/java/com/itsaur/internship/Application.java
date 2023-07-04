@@ -12,15 +12,34 @@ import com.itsaur.internship.user.PostgresUsersStore;
 import com.itsaur.internship.user.UserService;
 import com.itsaur.internship.user.UsersStore;
 import io.vertx.core.Vertx;
-import io.vertx.sqlclient.PoolOptions;
 
 public class Application {
 
+
+    final UserService service;
+    final CommentService commentService;
+    final PostService postService;
+
+
+    public Application(PostService postService,  UserService service, CommentService commentService) {
+        this.service = service;
+        this.commentService = commentService;
+        this.postService = postService;
+    }
 
     public static void main(String[] args) {
         Vertx vertx = Vertx.vertx();
         PostgresOptions postgresOptions = new PostgresOptions();
 
+        PostgresPostStore postgresPostStore = new PostgresPostStore(vertx, postgresOptions.getPgConnectOptions());
+        PostgresUsersStore postgresUsersStore = new PostgresUsersStore(vertx, postgresOptions.getPgConnectOptions());
+        PostgresCommentStore postgresCommentStore = new PostgresCommentStore(vertx, postgresOptions.getPgConnectOptions());
+
+        Application application = new Application(
+                new PostService(postgresPostStore, postgresUsersStore, postgresCommentStore),
+                new UserService(postgresPostStore, postgresUsersStore, postgresCommentStore),
+                new CommentService(postgresCommentStore)
+        );
 
         try{
             JCommander.newBuilder()
@@ -30,33 +49,25 @@ public class Application {
         }catch (ParameterException e){
             System.out.println(e.getMessage());
         }
-        PostgresPostStore postgresPostStore = new PostgresPostStore(vertx, postgresOptions.getPgConnectOptions());
-        PostgresUsersStore postgresUsersStore = new PostgresUsersStore(vertx, postgresOptions.getPgConnectOptions());
-        PostgresCommentStore postgresCommentStore = new PostgresCommentStore(vertx, postgresOptions.getPgConnectOptions());
 
 
 
-        final UserService service = new UserService(
-                postgresPostStore,
-                postgresUsersStore,
-                postgresCommentStore
-        );
+
+
 
         if (postgresOptions.getService().equals("serverdb")){
-            PostStore postStore = new PostgresPostStore(vertx,postgresOptions.getPgConnectOptions());
-            CommentStore commentStore = new PostgresCommentStore(vertx, postgresOptions.getPgConnectOptions());
-            UsersStore userStore = new PostgresUsersStore(vertx, postgresOptions.getPgConnectOptions());
 
+            System.out.println("hrtha edw");
             vertx.deployVerticle(
                     new VerticleApi(
-                        new UserService(postStore,userStore,commentStore),
-                        new CommentService(commentStore),
-                        new PostService(postStore, userStore, commentStore)
+                        application.service,
+                        application.commentService,
+                        application.postService
                     )
             );
 
         }else if (postgresOptions.getService().equals("console")) {
-            new UserConsole(service).executeCommand(args)
+            new UserConsole(application.service).executeCommand(args)
                     .onComplete(v -> System.exit(0));
         } else {
             System.out.println("Something went wrong!");

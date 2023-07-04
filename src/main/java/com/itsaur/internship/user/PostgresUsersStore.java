@@ -6,6 +6,9 @@ import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.pgclient.PgPool;
 import io.vertx.sqlclient.*;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 public class PostgresUsersStore implements UsersStore {
 
     private Vertx vertx;
@@ -22,18 +25,15 @@ public class PostgresUsersStore implements UsersStore {
     @Override
     public Future<Void> insert(User user) {
         SqlClient client = PgPool.client(vertx, connectOptions, poolOptions);
-        return this.findUserByUsername(user.getUsername())
-                .recover(q -> {
-                    return client
-                            .preparedQuery("INSERT INTO users (personid, createdate username,password) " +
-                                               "VALUES ($1, $2, $3, $4)")
-                            .execute(Tuple.of(java.util.UUID.randomUUID(), user.initCreateDate(),
-                                              user.getUsername(), user.getPassword()))
-                            .compose(w -> {
-                                client.close();
-                                return Future.succeededFuture();
-                            });
-                }).mapEmpty();
+        return client
+                    .preparedQuery("INSERT INTO users (userid, createdate username,password) " +
+                                       "VALUES ($1, $2, $3, $4)")
+                    .execute(Tuple.of(UUID.randomUUID(), LocalDateTime.now(),
+                                      user.getUsername(), user.getPassword()))
+                    .compose(w -> {
+                        client.close();
+                        return Future.succeededFuture();
+                    });
 
     }
 
@@ -51,10 +51,10 @@ public class PostgresUsersStore implements UsersStore {
                 .compose(res2 ->{
                     if(res2.iterator().hasNext()){
                         return Future.succeededFuture(
-                                new User(res2.iterator().next().getUUID("personid"),
-                                         res2.iterator().next().getLocalDateTime("createdate"),
-                                         res2.iterator().next().getString("username"),
-                                         res2.iterator().next().getString("password")));
+                                new User(res2.iterator().next().getUUID(0),
+                                         res2.iterator().next().getLocalDateTime(1),
+                                         res2.iterator().next().getString(2),
+                                         res2.iterator().next().getString(3)));
                     }else {
                         return Future.failedFuture(new IllegalArgumentException());
                     }

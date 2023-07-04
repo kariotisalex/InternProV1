@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public class User {
 
-    private java.util.UUID personid;
+    private java.util.UUID userid;
     private LocalDateTime createdate;
     private String username;
     private String password;
@@ -18,18 +18,19 @@ public class User {
         this.password = password;
     }
 
-    public User(UUID personid, LocalDateTime createdate, String username, String password) {
-        this.personid = personid;
+    public User(UUID userid, LocalDateTime createdate, String username, String password) {
+        this.userid = userid;
         this.createdate = createdate;
         this.username = username;
         this.password = password;
     }
 
-    public User(java.util.UUID personid, String username, String password) {
-        this.personid = personid;
+    public User(UUID userid, String username, String password) {
+        this.userid = userid;
         this.username = username;
         this.password = password;
     }
+
 
     public LocalDateTime getCreatedate() {
         return createdate;
@@ -40,11 +41,11 @@ public class User {
     }
 
     public UUID getUserid() {
-        return personid;
+        return userid;
     }
 
-    public void setPersonid(java.util.UUID personid) {
-        this.personid = personid;
+    public void setUserid(java.util.UUID userid) {
+        this.userid = userid;
     }
 
     public String getUsername() {
@@ -71,15 +72,11 @@ public class User {
         return (this.password.equals(password));
     }
 
-    public LocalDateTime initCreateDate(){
-        this.createdate = LocalDateTime.now();
-        return this.createdate;
-    }
 
     @Override
     public String toString() {
         return "User {" +
-                "personid= " + personid + "\n" +
+                "userid= " + userid + "\n" +
                 " username= ' " + username + " \'\n" +
                 " password= ' " + password + " \'\n" +
                 '}';

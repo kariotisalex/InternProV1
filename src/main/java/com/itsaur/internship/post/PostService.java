@@ -23,9 +23,6 @@ public class PostService {
         this.commentStore = commentStore;
     }
 
-    public static void main(String[] args) {
-
-    }
     public Future<Void> addPost(String username, String filename, String description) {
         return this.usersStore.findUserByUsername(username)
                 .compose(user -> {

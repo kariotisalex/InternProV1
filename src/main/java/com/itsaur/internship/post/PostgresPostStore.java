@@ -1,5 +1,6 @@
 package com.itsaur.internship.post;
 
+import com.itsaur.internship.PostgresOptions;
 import com.itsaur.internship.comment.CommentStore;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
@@ -24,10 +25,11 @@ public class PostgresPostStore implements PostStore{
     final PoolOptions poolOptions = new PoolOptions()
             .setMaxSize(5);
 
+
     public PostgresPostStore(Vertx vertx, PgConnectOptions connectOptions) {
         this.vertx = vertx;
         this.connectOptions = connectOptions;
-        ;
+
     }
 
     @Override
