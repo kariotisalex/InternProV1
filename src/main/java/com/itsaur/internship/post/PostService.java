@@ -18,14 +18,18 @@ public class PostService {
     private UsersStore usersStore;
     private CommentStore commentStore;
 
-    public PostService(PostStore postStore, UsersStore usersStore, CommentStore commentStore) {
+    public PostService(Vertx vertx, PostStore postStore, UsersStore usersStore, CommentStore commentStore) {
+        this.vertx = vertx;
         this.postStore = postStore;
         this.usersStore = usersStore;
         this.commentStore = commentStore;
     }
 
-    public Future<Void> addPost(String username, String filename, String description) {
-        return this.usersStore.findUserByUsername(username)
+    public Future<Void> addPost(UUID userid, String filename, String description) {
+        return this.usersStore.findUserByUserid(userid)
+                .onFailure(e -> {
+                    e.printStackTrace();
+                })
                 .compose(user -> {
                     Post post = new Post(filename, description,user.getUserid());
                     return this.postStore.insert(post);
@@ -45,38 +49,43 @@ public class PostService {
                 .otherwiseEmpty()
                 .compose(res -> {
                     if (res == null) {
-                        System.out.println("null");
+                        System.out.println("There is no posts in this userid");
                         return Future.succeededFuture();
                     } else {
-                        return Future.all(
-                                res
-                                    .stream()
-                                    .map(w -> {
-                                        return this.commentStore.deleteByPost(w.getPostid())
-                                                .compose(t -> {
-                                                    return this.postStore.deleteByFilename(w.getFilename());
-                                                });
-                                    })
-                                    .collect(Collectors.toList())
-                        )
-                        .compose(re -> {
-                            return re.resultAt(0);
-                        });
+                        List<Future<Void>> futureList = res
+                                .stream()
+                                .map(w -> {
+                                    System.out.println("asd "+w.getFilename());
+                                    return deletePost(w.getUserid(),w.getPostid());
+                                }).collect(Collectors.toList());
+                    System.out.println(futureList);
+                        return Future.all(futureList)
+                                .onFailure(e -> {
+                                    e.printStackTrace();
+                                }).compose(q -> {
+                                    System.out.println(q);
+                                    return Future.succeededFuture();
+                                });
+
                     }
                 });
     }
 
 
 
-    public Future<Void> deletePost(String username, String filename){
-        return this.usersStore.findUserByUsername(username)
-                .compose(res -> {
-                    return this.commentStore.deleteByPost(res.getUserid())
-                            .compose(q ->{
-                                return this.postStore.deleteByFilename(filename)
+    public Future<Void> deletePost(UUID userid, UUID postid){
+        String filename;
+        return this.usersStore.findUserByUserid(userid)
+                .compose(res ->{
+                    return this.commentStore.deleteByPostid(postid)
+                            .compose(q -> {
+                                return this.postStore.findPostByPostid(postid)
                                         .compose(w -> {
-                                            return vertx.fileSystem().delete(String.valueOf(
-                                                    Paths.get("images",filename).toAbsolutePath()));
+                                            return this.postStore.delete(postid)
+                                                    .compose(re -> {
+                                                        return vertx.fileSystem().delete(String.valueOf(
+                                                               Paths.get("images", w.getFilename()).toAbsolutePath()));
+                                            });
                                         });
                             });
                 });

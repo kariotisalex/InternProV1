@@ -8,9 +8,11 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 
+import java.nio.file.Paths;
 import java.util.UUID;
 
 public class VerticleApi extends AbstractVerticle {
@@ -103,7 +105,7 @@ public class VerticleApi extends AbstractVerticle {
                 .delete("/user/:userid")
                 .handler(ctx -> {
                     System.out.println(ctx.pathParam("userid"));
-                    this.userService.deleteByUserid(ctx.pathParam("userid"))
+                    this.userService.deleteByUserid(UUID.fromString(ctx.pathParam("userid")))
                             .onSuccess(v -> {
                                 System.out.println("User :" + ctx.pathParam("userid") + " deleted successfully");
                                 ctx.response().setStatusCode(200).end();
@@ -114,8 +116,40 @@ public class VerticleApi extends AbstractVerticle {
                             });
                 });
 
+        router
+                .post("/user/:userid/post/")
+                .handler(BodyHandler
+                        .create()
+                        .setBodyLimit(5000000)
+                        .setUploadsDirectory(String.valueOf(Paths.get("images").toAbsolutePath())))
+                .handler(ctx->{
+                    FileUpload file = ctx.fileUploads().get(0);
+                    System.out.println(file.contentType());
+                    if(file.contentType().split("/")[0].equals("image")){
+                        final String fileExt = "." + file.fileName()
+                                                         .split("[.]")[file.fileName()
+                                                         .split("[.]").length-1];
+                        final String savedFileName = file.uploadedFileName()
+                                                         .split("/")[file.uploadedFileName()
+                                                         .split("/").length-1]+fileExt;
 
 
+                        vertx.fileSystem().move(file.uploadedFileName(),
+                                                file.uploadedFileName() + fileExt)
+                                .compose(w -> {
+                                    return postService.addPost(UUID.fromString(ctx.pathParam("userid")),savedFileName,"description")
+                                            .onSuccess(f ->{
+                                                ctx.response().setStatusCode(200).end(savedFileName);
+                                            })
+                                            .onFailure(e -> {
+                                                ctx.response().setStatusCode(400).end();
+                                            });
+                                });
+                    } else {
+                        vertx.fileSystem().delete(file.uploadedFileName());
+                        ctx.response().setStatusCode(400).end();
+                    }
+                });
 
 
         server.requestHandler(router).listen(8080);

@@ -51,7 +51,9 @@ public class CreateUserInPostgreSQL {
                 .preparedQuery("INSERT INTO users (userid, createdate, username, password) " +
                         "VALUES ($1, $2, $3, $4)")
                 .executeBatch(tupleFiller(records))
-                .mapEmpty();
+                .compose(q -> {
+                    return client.close();
+                });
     }
     private static List<Tuple> tupleFiller(int records){
 

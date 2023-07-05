@@ -1,7 +1,7 @@
 package com.itsaur.internship.post;
 
-import com.itsaur.internship.PostgresOptions;
-import com.itsaur.internship.comment.CommentStore;
+import com.itsaur.internship.post.Post;
+import com.itsaur.internship.post.PostStore;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.pgclient.PgConnectOptions;
@@ -11,13 +11,12 @@ import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.SqlClient;
 import io.vertx.sqlclient.Tuple;
 
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class PostgresPostStore implements PostStore{
+public class PostgresPostStore implements PostStore {
 
     private final Vertx vertx;
     private final PgConnectOptions connectOptions;
@@ -55,7 +54,7 @@ public class PostgresPostStore implements PostStore{
         SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
         return client
                 .preparedQuery("SELECT postid, createdate, updatedate," +
-                                          "description, personid " +
+                                          "description, userid " +
                                     "FROM posts " +
                                     "WHERE filename=($1)")
                 .execute(Tuple.of(filename))
@@ -79,6 +78,34 @@ public class PostgresPostStore implements PostStore{
     }
 
     @Override
+    public Future<Post> findPostByPostid(UUID postid) {
+        SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
+        return client
+                .preparedQuery("SELECT postid, createdate, updatedate, filename, description, userid " +
+                        "FROM posts " +
+                        "WHERE postid=($1)")
+                .execute(Tuple.of(postid))
+                .compose(rows -> {
+                    if (rows.iterator().hasNext()){
+                        Row row = rows.iterator().next();
+
+                        LocalDateTime createdate = row.getLocalDateTime(1);
+                        LocalDateTime updatedate = row.getLocalDateTime(2);
+                        String filename = row.getString(3);
+                        String description = row.getString(4);
+                        UUID userid = row.getUUID(5);
+                        final Post post = new Post(postid, createdate, updatedate, filename, description, userid);
+
+                        client.close();
+                        return Future.succeededFuture(post);
+                    }else {
+                        client.close();
+                        return Future.failedFuture(new NullPointerException());
+                    }
+                });
+    }
+
+    @Override
     public Future<Void> updatePost(Post post) {
         SqlClient client = PgPool.client(vertx, connectOptions, poolOptions);
         return client
@@ -91,11 +118,11 @@ public class PostgresPostStore implements PostStore{
     }
 
     @Override
-    public Future<Void> deleteByFilename(String filename){
+    public Future<Void> delete(UUID postid){
         SqlClient client = PgPool.client(vertx, connectOptions,poolOptions);
         return client
-                .preparedQuery("DELETE FROM posts WHERE filename=($1)")
-                .execute(Tuple.of(filename))
+                .preparedQuery("DELETE FROM posts WHERE postid=($1)")
+                .execute(Tuple.of(postid))
                 .compose(w -> {
                     return client.close();
                 });
@@ -110,15 +137,14 @@ public class PostgresPostStore implements PostStore{
                         "WHERE userid=($1)")
                 .execute(Tuple.of(userid))
                 .compose(rows -> {
-                    System.out.println(rows);
                     List<Post> allPostsByUser = new ArrayList<>();
                     if (rows.iterator().hasNext()) {
                         for (Row row : rows) {
-                            UUID postid = rows.iterator().next().getUUID(0);
-                            LocalDateTime createdate = rows.iterator().next().getLocalDateTime(1);
-                            LocalDateTime updatedate = rows.iterator().next().getLocalDateTime(2);
-                            String filename = rows.iterator().next().getString(3);
-                            String description = rows.iterator().next().getString(4);
+                            UUID postid = row.getUUID(0);
+                            LocalDateTime createdate = row.getLocalDateTime(1);
+                            LocalDateTime updatedate = row.getLocalDateTime(2);
+                            String filename = row.getString(3);
+                            String description = row.getString(4);
                             allPostsByUser.add(new Post(postid, createdate, updatedate, filename, description, userid));
                         }
 

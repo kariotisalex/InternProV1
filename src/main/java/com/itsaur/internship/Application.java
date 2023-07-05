@@ -36,9 +36,9 @@ public class Application {
         PostgresCommentStore postgresCommentStore = new PostgresCommentStore(vertx, postgresOptions.getPgConnectOptions());
 
         Application application = new Application(
-                new PostService(postgresPostStore, postgresUsersStore, postgresCommentStore),
-                new UserService(postgresPostStore, postgresUsersStore, postgresCommentStore),
-                new CommentService(postgresCommentStore)
+                new PostService(vertx, postgresPostStore, postgresUsersStore, postgresCommentStore),
+                new UserService(vertx, postgresPostStore, postgresUsersStore, postgresCommentStore),
+                new CommentService(vertx, postgresCommentStore)
         );
 
         try{

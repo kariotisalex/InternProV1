@@ -90,7 +90,7 @@ public class PostgresCommentStore implements CommentStore{
     }
 
     @Override
-    public Future<Void> deleteByPost(UUID postid) {
+    public Future<Void> deleteByPostid(UUID postid) {
         SqlClient client = PgPool.client(vertx,connectOptions, poolOptions);
         return client
                 .preparedQuery("DELETE FROM comments WHERE postid=($1)")

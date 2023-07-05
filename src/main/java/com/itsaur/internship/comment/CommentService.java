@@ -3,6 +3,7 @@ package com.itsaur.internship.comment;
 import com.itsaur.internship.post.PostStore;
 import com.itsaur.internship.user.UsersStore;
 import io.vertx.core.Future;
+import io.vertx.core.Vertx;
 
 import java.util.List;
 import java.util.UUID;
@@ -11,8 +12,10 @@ public class CommentService {
     private CommentStore commentStore;
     private PostStore postStore;
     private UsersStore usersStore;
+    Vertx vertx;
 
-    public CommentService(CommentStore commentStore) {
+    public CommentService(Vertx vertx, CommentStore commentStore) {
+        this.vertx = vertx;
         this.commentStore = commentStore;
     }
 

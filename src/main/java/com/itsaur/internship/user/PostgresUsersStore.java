@@ -1,12 +1,16 @@
 package com.itsaur.internship.user;
 
+import com.itsaur.internship.user.User;
+import com.itsaur.internship.user.UsersStore;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.pgclient.PgPool;
-import io.vertx.sqlclient.*;
+import io.vertx.sqlclient.PoolOptions;
+import io.vertx.sqlclient.Row;
+import io.vertx.sqlclient.SqlClient;
+import io.vertx.sqlclient.Tuple;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class PostgresUsersStore implements UsersStore {
@@ -16,9 +20,14 @@ public class PostgresUsersStore implements UsersStore {
     private PoolOptions poolOptions = new PoolOptions()
             .setMaxSize(5);
 
+    PgPool pool;
     public PostgresUsersStore(Vertx vertx, PgConnectOptions postgresOptions) {
         this.vertx = vertx;
         this.connectOptions = postgresOptions;
+        this.pool = PgPool.pool(vertx,
+                                connectOptions,
+                                new PoolOptions()
+                                    .setMaxSize(5));
     }
 
 
@@ -41,7 +50,7 @@ public class PostgresUsersStore implements UsersStore {
 
     @Override
     public Future<User> findUserByUsername(String username) {
-        SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
+        SqlClient client = PgPool.client(vertx, connectOptions, poolOptions);
         return client
                 .preparedQuery("SELECT userid, createdate, updatedate, username, password FROM users WHERE username=($1)")
                 .execute(Tuple.of(username))
@@ -51,6 +60,7 @@ public class PostgresUsersStore implements UsersStore {
                 .compose(res2 ->{
                     if(res2.iterator().hasNext()){
                         Row row = res2.iterator().next();
+                        client.close();
                         return Future.succeededFuture(
                                 new User(row.getUUID(0),
                                         row.getLocalDateTime(1),
@@ -60,6 +70,7 @@ public class PostgresUsersStore implements UsersStore {
                                 )
                         );
                     }else {
+                        client.close();
                         return Future.failedFuture(new IllegalArgumentException());
                     }
                 });
@@ -77,6 +88,7 @@ public class PostgresUsersStore implements UsersStore {
                 .compose(res3 ->{
                     if(res3.iterator().hasNext()){
                         Row row = res3.iterator().next();
+                        client.close();
                         return Future.succeededFuture(
                                 new User(row.getUUID(0),
                                         row.getLocalDateTime(1),
@@ -86,6 +98,7 @@ public class PostgresUsersStore implements UsersStore {
                                 )
                         );
                     }else {
+                        client.close();
                         return Future.failedFuture(new IllegalArgumentException("User doesn't exists!"));
                     }
                 });

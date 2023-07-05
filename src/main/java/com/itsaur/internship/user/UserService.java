@@ -3,16 +3,20 @@ import com.itsaur.internship.comment.CommentStore;
 import com.itsaur.internship.post.PostService;
 import com.itsaur.internship.post.PostStore;
 import io.vertx.core.Future;
+import io.vertx.core.Vertx;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class UserService {
 
+    Vertx vertx;
     private PostStore postStore;
     private UsersStore usersStore;
     private CommentStore commentStore;
-    public UserService( PostStore postStore, UsersStore usersStore, CommentStore commentStore) {
+
+    public UserService( Vertx vertx, PostStore postStore, UsersStore usersStore, CommentStore commentStore) {
+        this.vertx = vertx;
         this.postStore = postStore;
         this.usersStore = usersStore;
         this.commentStore = commentStore;
@@ -45,21 +49,19 @@ public class UserService {
                 });
     }
 
-    public Future<Void> deleteByUserid(String userid){
-        UUID useridUUID = UUID.fromString(userid);
-        return usersStore.findUserByUserid(useridUUID)
+    public Future<Void> deleteByUserid(UUID userid){
+
+        return usersStore.findUserByUserid(userid)
                 .onFailure(e ->{
                     System.out.println(e);
                 })
                 .compose(user -> {
-                    if(user.isUseridEqual(useridUUID)){
-                        return new PostService(postStore,usersStore,commentStore).deleteAllPosts(useridUUID)
+
+                        return new PostService(vertx, postStore,usersStore,commentStore)
+                                .deleteAllPosts(userid)
                                 .compose(q -> {
-                                    return usersStore.delete(useridUUID);
+                                    return usersStore.delete(userid);
                                 });
-                    } else {
-                        return Future.failedFuture(new IllegalArgumentException("User doesn't exist."));
-                    }
                 });
     }
 

@@ -15,7 +15,7 @@ public interface CommentStore {
 
     public Future<Void> deleteById(UUID commentid);
 
-    public Future<Void> deleteByPost(UUID imageid);
+    public Future<Void> deleteByPostid(UUID postid);
 
     public Future<List<Comment>> readAllById(UUID commentid);
 
