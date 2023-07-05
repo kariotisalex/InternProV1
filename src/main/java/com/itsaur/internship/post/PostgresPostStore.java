@@ -91,9 +91,9 @@ public class PostgresPostStore implements PostStore {
 
                         LocalDateTime createdate = row.getLocalDateTime(1);
                         LocalDateTime updatedate = row.getLocalDateTime(2);
-                        String filename = row.getString(3);
-                        String description = row.getString(4);
-                        UUID userid = row.getUUID(5);
+                        String filename          = row.getString(3);
+                        String description       = row.getString(4);
+                        UUID userid              = row.getUUID(5);
                         final Post post = new Post(postid, createdate, updatedate, filename, description, userid);
 
                         client.close();
@@ -109,11 +109,10 @@ public class PostgresPostStore implements PostStore {
     public Future<Void> updatePost(Post post) {
         SqlClient client = PgPool.client(vertx, connectOptions, poolOptions);
         return client
-                .preparedQuery("UPDATE posts SET updatedate=($2), description=($3)  WHERE postid=($1)")
-                .execute(Tuple.of(post.getPostid(), LocalDateTime.now(), post.getDescription()))
+                .preparedQuery("UPDATE posts SET createdate=($2), updatedate=($3), filename=($4), description=($5)  WHERE postid=($1)")
+                .execute(Tuple.of(post.getPostid(), post.getCreatedDate(), post.getUpdatedDate(),post.getFilename(), post.getDescription()))
                 .compose(q -> {
-                    client.close();
-                    return Future.succeededFuture();
+                    return client.close();
                 });
     }
 

@@ -7,6 +7,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -36,11 +37,15 @@ public class PostService {
                 });
     }
 
-    public Future<Void> updatePost(String username, String filename, String description){
-        return this.usersStore.findUserByUsername(username)
+    public Future<Void> updatePost(UUID userid, UUID postid, String description){
+        return this.usersStore.findUserByUserid(userid)
                 .compose(user -> {
-                    return this.postStore.updatePost(
-                            new Post(filename, description, user.getUserid()));
+                    return this.postStore.findPostByPostid(postid)
+                            .compose(post -> {
+                                post.setUpdatedDate(LocalDateTime.now());
+                                post.setDescription(description);
+                                return this.postStore.updatePost(post);
+                            });
                 });
     }
 
@@ -83,8 +88,12 @@ public class PostService {
                                         .compose(w -> {
                                             return this.postStore.delete(postid)
                                                     .compose(re -> {
-                                                        return vertx.fileSystem().delete(String.valueOf(
-                                                               Paths.get("images", w.getFilename()).toAbsolutePath()));
+                                                        return vertx
+                                                                .fileSystem()
+                                                                .delete(String.valueOf(Paths.get("images", w.getFilename()).toAbsolutePath()))
+                                                                .onFailure(e -> {
+                                                                    e.printStackTrace();
+                                                                });
                                             });
                                         });
                             });

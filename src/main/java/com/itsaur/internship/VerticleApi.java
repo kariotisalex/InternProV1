@@ -11,6 +11,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.StaticHandler;
 
 import java.nio.file.Paths;
 import java.util.UUID;
@@ -117,14 +118,15 @@ public class VerticleApi extends AbstractVerticle {
                 });
 
         router
-                .post("/user/:userid/post/")
+                .post("/user/:userid/post")
                 .handler(BodyHandler
                         .create()
                         .setBodyLimit(5000000)
-                        .setUploadsDirectory(String.valueOf(Paths.get("images").toAbsolutePath())))
+                        .setUploadsDirectory(String.valueOf(Paths.get("images").toAbsolutePath()))
+                )
                 .handler(ctx->{
                     FileUpload file = ctx.fileUploads().get(0);
-                    System.out.println(file.contentType());
+                    String description = ctx.request().getParam("desc");
                     if(file.contentType().split("/")[0].equals("image")){
                         final String fileExt = "." + file.fileName()
                                                          .split("[.]")[file.fileName()
@@ -137,7 +139,7 @@ public class VerticleApi extends AbstractVerticle {
                         vertx.fileSystem().move(file.uploadedFileName(),
                                                 file.uploadedFileName() + fileExt)
                                 .compose(w -> {
-                                    return postService.addPost(UUID.fromString(ctx.pathParam("userid")),savedFileName,"description")
+                                    return postService.addPost(UUID.fromString(ctx.pathParam("userid")),savedFileName,description)
                                             .onSuccess(f ->{
                                                 ctx.response().setStatusCode(200).end(savedFileName);
                                             })
@@ -151,6 +153,22 @@ public class VerticleApi extends AbstractVerticle {
                     }
                 });
 
+        router
+                .put("/user/:userid/post/:post")
+                .handler(BodyHandler.create())
+                .handler(ctx -> {
+                    UUID userid = UUID.fromString(ctx.pathParam("userid"));
+                    UUID postid = UUID.fromString(ctx.pathParam("postid"));
+                    String description = ctx.body().asJsonObject().getString("desc");
+
+                    this.postService.updatePost(userid, postid,description)
+                            .onSuccess(s -> {
+                                ctx.response().setStatusCode(200).end();
+                            })
+                            .onFailure(e -> {
+                                ctx.response().setStatusCode(400).end();
+                            });
+                });
 
         server.requestHandler(router).listen(8080);
     }
