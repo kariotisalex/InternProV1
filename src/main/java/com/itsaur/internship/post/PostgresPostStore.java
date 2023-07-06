@@ -34,19 +34,16 @@ public class PostgresPostStore implements PostStore {
     @Override
     public Future<Void> insert(Post post) {
         SqlClient client = PgPool.client(vertx, connectOptions, poolOptions);
-        return Future.succeededFuture()
-                .compose(q -> {
-                    return client
-                            .preparedQuery("INSERT INTO posts(postid, createdate, filename, description, userid)\n" +
-                                    "SELECT ($1) , ($2) , ($3), ($4), userid FROM users WHERE userid=($5)")
-                            .execute(Tuple.of(UUID.randomUUID(), LocalDateTime.now(), post.getFilename(), post.getDescription(), post.getUserid()))
-                            .onFailure(e -> {
-                                e.printStackTrace();
-                            })
-                            .compose(w -> {
-                                return client.close();
-                            });
-                });
+        return client
+                    .preparedQuery("INSERT INTO posts(postid, createdate, filename, description, userid)\n" +
+                            "SELECT ($1) , ($2) , ($3), ($4), userid FROM users WHERE userid=($5)")
+                    .execute(Tuple.of(UUID.randomUUID(), LocalDateTime.now(), post.getFilename(), post.getDescription(), post.getUserid()))
+                    .onFailure(e -> {
+                        e.printStackTrace();
+                    })
+                    .compose(w -> {
+                        return client.close();
+                    });
     }
 
     @Override
