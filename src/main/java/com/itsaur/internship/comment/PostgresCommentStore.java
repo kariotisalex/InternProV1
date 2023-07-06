@@ -104,12 +104,12 @@ public class PostgresCommentStore implements CommentStore{
                 });
     }
     @Override
-    public Future<List<Comment>> readAllById(UUID commentid){
+    public Future<List<Comment>> readAllByPostid(UUID postid){
         SqlClient client = PgPool.client(vertx,connectOptions, poolOptions);
         return client
                 .preparedQuery("SELECT commentid, createdate, updatedate, comment, userid, postid" +
-                                   "FROM comments WHERE commentid=($1)")
-                .execute(Tuple.of(commentid))
+                                   "FROM comments WHERE postid=($1)")
+                .execute(Tuple.of(postid))
                 .compose(rows -> {
                     List<Comment> listComment = new ArrayList<>();
                     for (Row row : rows){

@@ -125,7 +125,7 @@ public class PostgresPostStore implements PostStore {
     }
 
     @Override
-    public Future<List<Post>> retrieveAllByUserid(UUID userid){
+    public Future<List<Post>> readAllByUserid(UUID userid){
         SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
         return client
                 .preparedQuery("SELECT postid, createdate, updatedate, filename, description, userid " +

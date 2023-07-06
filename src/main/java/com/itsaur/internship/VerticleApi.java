@@ -223,8 +223,6 @@ public class VerticleApi extends AbstractVerticle {
 
                             });
                 });
-        server.requestHandler(router).listen(8080);
-
         router
                 .delete("/user/:userid/comment/:commentid")
                 .handler(ctx -> {
@@ -239,6 +237,50 @@ public class VerticleApi extends AbstractVerticle {
                                 ctx.response().setStatusCode(200).end();
                             });
                 });
+
+        // Retrieve
+
+
+        router
+                .get("/test")
+                .handler(ctx -> {
+                    ctx.response().sendFile("/home/kariotis@ad.itsaur.com/IdeaProjects/kariotis-internship/images/16c44987-ca8c-4ecb-99d1-ec26d7dadb5f.png");
+
+                    ctx.end();
+                });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        server.requestHandler(router).listen(8080);
+
+
     }
 }
 

@@ -56,7 +56,7 @@ public class PostService {
     }
 
     public Future<Void> deleteAllPosts(UUID userid){
-        return this.postStore.retrieveAllByUserid(userid)
+        return this.postStore.readAllByUserid(userid)
                 .otherwiseEmpty()
                 .compose(res -> {
                     if (res == null) {
@@ -105,6 +105,20 @@ public class PostService {
                             });
                 });
 
+    }
+
+
+
+
+
+    public Future<List<Post>> retrieveAll(UUID userid){
+        return this.postStore.readAllByUserid(userid)
+                .onFailure(e -> {
+                    e.printStackTrace();
+                })
+                .compose(c -> {
+                    return this.postStore.readAllByUserid(userid);
+                });
     }
 
 }

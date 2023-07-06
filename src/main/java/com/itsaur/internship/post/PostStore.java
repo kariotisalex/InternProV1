@@ -15,6 +15,6 @@ public interface PostStore {
 
     public Future<Void> delete(UUID postid);
 
-    public Future<List<Post>> retrieveAllByUserid(UUID userid);
+    public Future<List<Post>> readAllByUserid(UUID userid);
 
 }

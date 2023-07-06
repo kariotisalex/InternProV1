@@ -78,6 +78,6 @@ public class CommentService {
 
 
    public Future<List<Comment>> retrieveAll(UUID commentid){
-        return this.commentStore.readAllById(commentid);
+        return this.commentStore.readAllByPostid(commentid);
     }
 }
