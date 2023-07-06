@@ -38,7 +38,7 @@ public class Application {
         Application application = new Application(
                 new PostService(vertx, postgresPostStore, postgresUsersStore, postgresCommentStore),
                 new UserService(vertx, postgresPostStore, postgresUsersStore, postgresCommentStore),
-                new CommentService(vertx, postgresCommentStore)
+                new CommentService(vertx, postgresPostStore, postgresUsersStore, postgresCommentStore)
         );
 
         try{
@@ -64,7 +64,9 @@ public class Application {
                         application.commentService,
                         application.postService
                     )
-            );
+            ).onFailure(e -> {
+                e.printStackTrace();
+            });
 
         }else if (postgresOptions.getService().equals("console")) {
             new UserConsole(application.service).executeCommand(args)

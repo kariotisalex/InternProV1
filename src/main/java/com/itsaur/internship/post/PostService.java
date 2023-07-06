@@ -2,6 +2,7 @@ package com.itsaur.internship.post;
 
 
 import com.itsaur.internship.comment.CommentStore;
+import com.itsaur.internship.user.User;
 import com.itsaur.internship.user.UsersStore;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
@@ -38,14 +39,19 @@ public class PostService {
     }
 
     public Future<Void> updatePost(UUID userid, UUID postid, String description){
-        return this.usersStore.findUserByUserid(userid)
-                .compose(user -> {
-                    return this.postStore.findPostByPostid(postid)
-                            .compose(post -> {
-                                post.setUpdatedDate(LocalDateTime.now());
-                                post.setDescription(description);
-                                return this.postStore.updatePost(post);
-                            });
+        return Future.all(this.usersStore.findUserByUserid(userid),this.postStore.findPostByPostid(postid))
+                .compose(res -> {
+                    User user = res.resultAt(0);
+                    Post post = res.resultAt(1);
+                    if (post.getUserid().equals(user.getUserid())){
+                        post.setUpdatedDate(LocalDateTime.now());
+                        post.setDescription(description);
+                        return this.postStore.updatePost(post);
+                    }else{
+                        System.out.println("There is no match between user and post!");
+                        return Future.failedFuture(new IllegalArgumentException("There is no match between user and post!"));
+                    }
+
                 });
     }
 

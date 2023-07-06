@@ -154,7 +154,7 @@ public class VerticleApi extends AbstractVerticle {
                 });
 
         router
-                .put("/user/:userid/post/:post")
+                .put("/user/:userid/post/:postid")
                 .handler(BodyHandler.create())
                 .handler(ctx -> {
                     UUID userid = UUID.fromString(ctx.pathParam("userid"));
@@ -166,11 +166,79 @@ public class VerticleApi extends AbstractVerticle {
                                 ctx.response().setStatusCode(200).end();
                             })
                             .onFailure(e -> {
+                                System.out.println(e);
                                 ctx.response().setStatusCode(400).end();
                             });
                 });
 
+
+        router
+                .delete("/user/:userid/post/:postid")
+                .handler(ctx -> {
+                    UUID userid = UUID.fromString(ctx.pathParam("userid"));
+                    UUID postid = UUID.fromString(ctx.pathParam("postid"));
+
+                    this.postService.deletePost(userid,postid)
+                            .onFailure(e -> {
+                                ctx.response().setStatusCode(400).end();
+                            })
+                            .onSuccess(s -> {
+                                ctx.response().setStatusCode(200).end();
+                            });
+
+                });
+
+        router
+                .post("/user/:userid/comment/:postid")
+                .handler(BodyHandler.create())
+                .handler(ctx ->{
+                    UUID userid = UUID.fromString(ctx.pathParam("userid"));
+                    UUID postid = UUID.fromString(ctx.pathParam("postid"));
+                    String comment = ctx.body().asJsonObject().getString("comment");
+
+                    this.commentService.addComment(userid, postid,comment)
+                            .onSuccess(s -> {
+                                ctx.response().setStatusCode(200).end(comment);
+                            })
+                            .onFailure(e -> {
+                                ctx.response().setStatusCode(400).end();
+                            });
+
+                });
+
+        router
+                .put("/user/:userid/comment/:commentid")
+                .handler(BodyHandler.create())
+                .handler(ctx -> {
+                    UUID userid = UUID.fromString(ctx.pathParam("userid"));
+                    UUID commentid = UUID.fromString(ctx.pathParam("commentid"));
+                    String comment = ctx.body().asJsonObject().getString("comment");
+                    this.commentService.changeComment(userid, commentid, comment)
+                            .onSuccess(s ->{
+                                ctx.response().setStatusCode(200).end();
+                            })
+                            .onFailure(e -> {
+                                e.printStackTrace();
+                                ctx.response().setStatusCode(400).end();
+
+                            });
+                });
         server.requestHandler(router).listen(8080);
+
+        router
+                .delete("/user/:userid/comment/:commentid")
+                .handler(ctx -> {
+                    UUID userid = UUID.fromString(ctx.pathParam("userid"));
+                    UUID commentid = UUID.fromString(ctx.pathParam("commentid"));
+
+                    this.commentService.deleteComment(userid, commentid)
+                            .onFailure(e -> {
+                                ctx.response().setStatusCode(400).end();
+                            })
+                            .onSuccess(s -> {
+                                ctx.response().setStatusCode(200).end();
+                            });
+                });
     }
 }
 

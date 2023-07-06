@@ -44,18 +44,19 @@ public class PostgresCommentStore implements CommentStore{
     public Future<Comment> findById(UUID commentid) {
         SqlClient client = PgPool.client(vertx,connectOptions, poolOptions);
         return client
-                .preparedQuery("SELECT commentid, createdate, updatedate, comment, userid, postid" +
-                                   "FROM comments WHERE commentid=($1)")
+                .preparedQuery("SELECT commentid, createdate, updatedate, comment, userid, postid " +
+                        "FROM comments WHERE commentid = ($1)")
                 .execute(Tuple.of(commentid))
                 .compose(rows -> {
                     if (rows.iterator().hasNext()){
+                        Row row = rows.iterator().next();
                         return Future.succeededFuture( new Comment(
-                                rows.iterator().next().getUUID(0),
-                                rows.iterator().next().getLocalDateTime(1),
-                                rows.iterator().next().getLocalDateTime(2),
-                                rows.iterator().next().getString(3),
-                                rows.iterator().next().getUUID(4),
-                                rows.iterator().next().getUUID(5)));
+                                row.getUUID(0),
+                                row.getLocalDateTime(1),
+                                row.getLocalDateTime(2),
+                                row.getString(3),
+                                row.getUUID(4),
+                                row.getUUID(5)));
                     }else {
                         return Future.failedFuture(new NullPointerException("There is nothing in this commendid"));
                     }
@@ -66,11 +67,11 @@ public class PostgresCommentStore implements CommentStore{
     public Future<Void> update(Comment comment) {
         SqlClient client = PgPool.client(vertx,connectOptions, poolOptions);
         return client
-                .preparedQuery("UPDATE comments" +
-                                   "SET comment=($2), updatedate=($3)" +
+                .preparedQuery("UPDATE comments SET createdate=($2), updatedate=($3), comment=($4), userid=($5), postid=($6)" +
                                    "WHERE commentid=($1)")
-                .execute(Tuple.of(comment.getCommentid(),comment.getComment(), LocalDateTime.now()))
+                .execute(Tuple.of(comment.getCommentid(),comment.getCreatedate(), comment.getUpdatedate(), comment.getComment(), comment.getUserid(), comment.getPostid()))
                 .onFailure(e -> {
+                    System.out.println("update, Comment Store");
                     e.printStackTrace();
                 })
                 .compose(q -> {
@@ -82,8 +83,11 @@ public class PostgresCommentStore implements CommentStore{
     public Future<Void> deleteById(UUID commentid) {
         SqlClient client = PgPool.client(vertx,connectOptions, poolOptions);
         return client
-                .preparedQuery("DELETE comments WHERE commentid=($1)")
+                .preparedQuery("DELETE FROM comments WHERE commentid=($1)")
                 .execute(Tuple.of(commentid))
+                .onFailure(e -> {
+                    e.printStackTrace();
+                })
                 .compose(q -> {
                     return client.close();
                 });

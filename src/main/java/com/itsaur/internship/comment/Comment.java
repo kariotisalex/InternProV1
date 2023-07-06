@@ -29,7 +29,9 @@ public class Comment {
         this.postid = postid;
     }
 
-    public Comment(String comment, UUID userid, UUID postid) {
+    public Comment(UUID commentid, LocalDateTime createdate, String comment, UUID userid, UUID postid) {
+        this.commentid = commentid;
+        this.createdate = createdate;
         this.comment = comment;
         this.userid = userid;
         this.postid = postid;
