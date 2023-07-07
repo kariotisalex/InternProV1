@@ -3,14 +3,11 @@ package com.itsaur.internship;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import com.itsaur.internship.comment.CommentService;
-import com.itsaur.internship.comment.CommentStore;
 import com.itsaur.internship.comment.PostgresCommentStore;
 import com.itsaur.internship.post.PostService;
-import com.itsaur.internship.post.PostStore;
 import com.itsaur.internship.post.PostgresPostStore;
 import com.itsaur.internship.user.PostgresUsersStore;
 import com.itsaur.internship.user.UserService;
-import com.itsaur.internship.user.UsersStore;
 import io.vertx.core.Vertx;
 
 public class Application {
@@ -62,8 +59,8 @@ public class Application {
                     new VerticleApi(
                         application.service,
                         application.commentService,
-                        application.postService
-                    )
+                        application.postService,
+                            postQueryModelStore)
             ).onFailure(e -> {
                 e.printStackTrace();
             });

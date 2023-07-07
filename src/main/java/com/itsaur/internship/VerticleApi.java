@@ -3,15 +3,16 @@ package com.itsaur.internship;
 
 import com.itsaur.internship.comment.CommentService;
 import com.itsaur.internship.post.PostService;
+import com.itsaur.internship.query.PostQueryModelStore;
 import com.itsaur.internship.user.UserService;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServer;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
-import io.vertx.ext.web.handler.StaticHandler;
 
 import java.nio.file.Paths;
 import java.util.UUID;
@@ -21,12 +22,14 @@ public class VerticleApi extends AbstractVerticle {
     final private UserService userService;
     final private CommentService commentService;
     final private PostService postService;
+    final private PostQueryModelStore postQueryModelStore;
 
 
-    public VerticleApi(UserService userService, CommentService commentService, PostService postService) {
+    public VerticleApi(UserService userService, CommentService commentService, PostService postService, PostQueryModelStore postQueryModelStore) {
         this.userService = userService;
         this.commentService = commentService;
         this.postService = postService;
+        this.postQueryModelStore = postQueryModelStore;
         System.out.println("mpika kai edw");
     }
 
@@ -240,6 +243,12 @@ public class VerticleApi extends AbstractVerticle {
 
         // Retrieve
 
+        router.get("/users/:userId/posts").handler(ctx -> {
+            postQueryModelStore.findByUserId(UUID.fromString(ctx.pathParam("userId")))
+                    .onSuccess(posts -> {
+                        ctx.response().end(Json.encode(posts));
+                    });
+        });
 
         router
                 .get("/test")
