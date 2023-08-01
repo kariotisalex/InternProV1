@@ -17,10 +17,10 @@ public class PostgresOptions {
     @Parameter(names = {"--user", "-u"}, description = "Specify username for PostgreSQL")
     private String user = "postgres";
 
-    @Parameter(names = {"--password", "-passwd"}, description = "Specify password for PostgreSQL", password = true)
+    @Parameter(names = {"--password", "-P"}, description = "Specify password for PostgreSQL", password = true)
     private String password = "password";
 
-    @Parameter(names = {"--service", "-srv"}, description = "Specify \"console\" or \"server\"")
+    @Parameter(names = {"--service", "-s"}, description = "Specify \"console\" or \"server\"")
     private String service = "serverdb";
 
     public PostgresOptions() {

@@ -68,8 +68,9 @@ public class PostService {
                                 .map(w -> {
                                     System.out.println("asd "+w.getFilename());
                                     return deletePost(w.getUserid(),w.getPostid());
-                                }).collect(Collectors.toList());
-                    System.out.println(futureList);
+                                })
+                                .collect(Collectors.toList());
+                    //System.out.println(futureList);
                         return Future.all(futureList)
                                 .onFailure(e -> {
                                     e.printStackTrace();
@@ -77,7 +78,6 @@ public class PostService {
                                     System.out.println(q);
                                     return Future.succeededFuture();
                                 });
-
                     }
                 });
     }
