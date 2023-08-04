@@ -1,0 +1,60 @@
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 50% 50% ;
+  margin: 5%;
+  border-radius: 15px;
+  background-color: white;
+}
+.grid-item {
+  padding: auto;
+  font-size: 30px;
+  border-radius: 15px;
+  margin: 3%;
+}
+.secondColumn{
+  padding-left: 6%;
+  background-color: white;
+}
+.captionp{
+  font-size: large;
+  color: grey;
+  padding-bottom: 5%;
+}
+#first{
+  margin-bottom: 1%
+}
+.captionp2{
+  margin-bottom: 0%;
+  font-size: large;
+  color: gray;
+  padding-bottom: 2%;
+}
+input{
+  padding: 2%;
+  border: 1px solid rgba(150, 150, 150, 0.5);
+  border-radius: 5px;
+}
+.inputs{
+  display: grid;
+  font-size: large;
+  width: 85%;
+  align: left;
+}
+.inputButton{
+  background-color: lightcyan;
+  margin: 5% auto;
+  width: 90%;
+  font-size: medium;
+  padding: 3%;
+  margin-top: 8%;
+
+}
+.inputButton:hover{
+  background-color: lightblue;
+}
+.inputButton:active{
+  background-color: lightblue;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px)
+}
