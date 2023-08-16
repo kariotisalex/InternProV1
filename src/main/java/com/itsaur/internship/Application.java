@@ -59,8 +59,9 @@ public class Application {
                     new VerticleApi(
                         application.service,
                         application.commentService,
-                        application.postService,
-                            postQueryModelStore)
+                        application.postService
+                            //postQueryModelStore
+                    )
             ).onFailure(e -> {
                 e.printStackTrace();
             });

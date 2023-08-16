@@ -1,12 +1,20 @@
 <div class="grid-container">
-  <div class="grid-item"></div>
-  <div class="grid-item secondColumn">
-    <h5 id="first">Welcome to Alexgram</h5>
-    <p class="captionp">Place your credentials !</p>
-    <p class="captionp2">Username</p>
-    <input type="text" class="inputs">
-    <p class="captionp2">Password</p>
-    <input type="password" class="inputs">
-    <input type="button"  value="Login" class="inputButton">
+  <div class="grid-item">
+    <h2 #firstColumn>{{loginHandling.value.username}}</h2>
+
+
   </div>
-</div>
+
+    <div class="grid-item secondColumn">
+      <form [formGroup]="loginHandling"
+                (ngSubmit)="onSubmit()">
+        <h5 id="first">Welcome to Alexgram&trade;</h5>
+        <p class="captionp">Place your credentials !</p>
+        <label for="usernmIn" class="captionp2">Username</label>
+        <input type="text" class="inputs" id="usernmIn" formControlName="username" >
+        <label for="passwdIn" class="captionp2" id="passwdP">Password</label>
+        <input type="password" id="passwdIn" class="inputs" formControlName="password">
+        <input id="inputButton" type="submit" [disabled]="!loginHandling.valid" value="Log In" >
+      </form>
+    </div>
+  </div>
