@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
+import {User} from "./user";
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class AlexgramService {
     console.log("come here!")
     const body = { username: username,
                    password: password }
-    const result = this.http.post("/api/user/login", body);
-    return result;
+
+    return this.http.post<User>("/api/user/login", body);
   }
 }

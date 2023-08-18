@@ -2,21 +2,27 @@ import { Component } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { FormControl } from "@angular/forms";
 import { AlexgramService } from "../alexgram.service";
+import { Router} from "@angular/router";
+import { CommonModule} from "@angular/common";
 
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CommonModule
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
 
+  error : String = "";
+
   constructor(
-    private alexgramService : AlexgramService
+    private alexgramService : AlexgramService,
+    private route : Router
   ) {}
 
   loginHandling = new FormGroup({
@@ -30,16 +36,15 @@ export class LoginComponent {
     const username : String = this.loginHandling.value.username as String;
     const password : String = this.loginHandling.value.password as String;
     const result = this.alexgramService.isLoggedIn(username,password);
-    if(result){
-      result
-        .subscribe(v => {
-          console.log(v)
-          },error => {console.log("wrong")})
-    }else{
-      console.log("Gone wrong!");
-
-    }
+    result.subscribe( x => {
+        console.log(x.uid);
+        this.route.navigateByUrl("/testing");
+      },err => {
+        this.error="Invalid Credentials"
+      });
   }
-
+  changing(){
+    this.error="";
+  }
 }
 

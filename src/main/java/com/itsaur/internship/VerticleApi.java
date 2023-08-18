@@ -55,11 +55,17 @@ public class VerticleApi extends AbstractVerticle {
                 this.userService.login(username, password)
                         .onSuccess(v -> {
                             System.out.println("Successful Login");
-                            ctx.response().setStatusCode(200).end();
+
+                            JsonObject jsonObject = new JsonObject();
+                            jsonObject.put("uid" , String.valueOf(v.getUserid()));
+                            jsonObject.put("username" , v.getUsername());
+                            System.out.println(jsonObject);
+
+                            ctx.response().setStatusCode(200).end(jsonObject.encode());
                         })
                         .onFailure(v -> {
                             System.out.println("Login fails : " + v);
-                            ctx.response().setStatusCode(400).end();
+                            ctx.response().setStatusCode(400).end(v.getMessage());
                         });
     });
 

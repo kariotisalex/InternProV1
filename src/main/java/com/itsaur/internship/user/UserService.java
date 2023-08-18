@@ -39,13 +39,18 @@ public class UserService {
         return usersStore.findUserByUsername(username)
                 .onFailure(e -> {
                     System.out.println(e);
-                })
+                }).otherwiseEmpty()
                 .compose(user -> {
-                    if (user.isPasswordEqual(password)){
-                        return Future.succeededFuture(user);
-                    } else {
-                        return Future.failedFuture(new IllegalArgumentException("Invalid Password"));
+                    if (user == null){
+                        return Future.failedFuture(new IllegalArgumentException("Invalid Username!"));
+                    }else{
+                        if (user.isPasswordEqual(password)){
+                            return Future.succeededFuture(user);
+                        } else {
+                            return Future.failedFuture(new IllegalArgumentException("Invalid Password!"));
+                        }
                     }
+
                 });
     }
 

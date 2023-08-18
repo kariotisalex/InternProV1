@@ -7,10 +7,12 @@ import { LoginComponent } from './login/login.component';
 import { TestingComponent } from './testing/testing.component';
 import { RouterOutlet } from "@angular/router";
 import {HttpClientModule} from "@angular/common/http";
+import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    PagenotfoundComponent,
 
   ],
   imports: [

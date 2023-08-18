@@ -1,10 +1,13 @@
 
 .grid-container {
   display: grid;
-  grid-template-columns: 50% 50% ;
-  margin: 5%;
+  grid-template-columns: 50% 50%;
+
+  margin: 5% auto;
+  margin-left: 5% auto;
   border-radius: 15px;
   background-color: white;
+  max-width: 1000px;
 }
 .grid-item {
   padding: auto;
@@ -66,4 +69,19 @@ input{
 
 #usernmIn{
   margin-bottom: 4%;
+}
+#passwdP{
+  flex-grow: 8;
+}
+#inv{
+  flex-grow: 2;
+  color: rgba(255, 0, 0, 0.64);
+}
+@media screen and (max-width: 500px){
+  #firstColumn{
+    display: none;
+  }
+  .grid-container{
+    grid-template-columns: 100%;
+  }
 }
