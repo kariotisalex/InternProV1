@@ -4,6 +4,7 @@ import { FormControl } from "@angular/forms";
 import { AlexgramService } from "../alexgram.service";
 import { Router} from "@angular/router";
 import { CommonModule} from "@angular/common";
+import {HttpErrorResponse} from "@angular/common/http";
 
 
 @Component({
@@ -39,8 +40,8 @@ export class LoginComponent {
     result.subscribe( x => {
         console.log(x.uid);
         this.route.navigateByUrl("/testing");
-      },err => {
-        this.error="Invalid Credentials"
+      },(err: HttpErrorResponse) => {
+        this.error=err.error;
       });
   }
   changing(){
