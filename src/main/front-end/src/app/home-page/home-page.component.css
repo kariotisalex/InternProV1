@@ -1,0 +1,55 @@
+html{
+  background-color: lightsteelblue;
+
+}
+.grid-container {
+  display: grid;
+  grid-template-columns: 25% 50% 25%;
+  max-width: 1000px;
+  margin: auto;
+  margin-top: 4%;
+}
+
+.grid-item {
+  border-radius: 15px;
+  font-size: 30px;
+  min-height: 550px;
+}
+
+.special{
+  margin: 3%;
+  /* From https://css.glass */
+  background: rgba(255, 255, 255, 0.38);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+
+}
+
+.wrapper{
+  display: grid;
+  grid-template-rows: 25% 75%;
+  margin: 1.5%;
+}
+.nasted{
+  /* From https://css.glass */
+
+
+  border-radius: 15px;
+}
+.three{
+  background: rgba(255, 255, 255, 0.38);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.two{
+  margin-bottom: 2%;
+}
+h5{
+  padding-left: 10%;
+}

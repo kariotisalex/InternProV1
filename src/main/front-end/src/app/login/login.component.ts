@@ -5,6 +5,8 @@ import { AlexgramService } from "../alexgram.service";
 import { Router} from "@angular/router";
 import { CommonModule} from "@angular/common";
 import {HttpErrorResponse} from "@angular/common/http";
+import { HomePageComponent } from "../home-page/home-page.component";
+import {UserService} from "../user.service";
 
 
 @Component({
@@ -23,7 +25,8 @@ export class LoginComponent {
 
   constructor(
     private alexgramService : AlexgramService,
-    private route : Router
+    private router : Router,
+    private userService:UserService
   ) {}
 
   loginHandling = new FormGroup({
@@ -31,19 +34,22 @@ export class LoginComponent {
     password : new FormControl('', Validators.required),
   });
 
-
-
   onSubmit(){
     const username : String = this.loginHandling.value.username as String;
     const password : String = this.loginHandling.value.password as String;
-    const result = this.alexgramService.isLoggedIn(username,password);
-    result.subscribe( x => {
-        console.log(x.uid);
-        this.route.navigateByUrl("/testing");
-      },(err: HttpErrorResponse) => {
-        this.error=err.error;
-      });
+    this.userService.logIn(username,password)
+    .subscribe( {
+      next: x => {
+        this.userService.loggedinUser(x);
+        this.router.navigateByUrl("/home");
+      },
+      error: (err: HttpErrorResponse) => {
+        this.error = err.error;
+      }
+    });
   }
+
+
   changing(){
     this.error="";
   }

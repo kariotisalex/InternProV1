@@ -1,4 +1,4 @@
 export interface User {
-  uid: String,
-  username: String
+  uid: string,
+  username: string
 }

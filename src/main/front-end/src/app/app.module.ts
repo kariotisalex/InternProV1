@@ -8,11 +8,13 @@ import { TestingComponent } from './testing/testing.component';
 import { RouterOutlet } from "@angular/router";
 import {HttpClientModule} from "@angular/common/http";
 import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
+import { HomePageComponent } from './home-page/home-page.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     PagenotfoundComponent,
+    HomePageComponent,
 
   ],
   imports: [

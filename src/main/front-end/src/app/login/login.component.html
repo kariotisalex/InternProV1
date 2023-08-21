@@ -1,6 +1,6 @@
 <div class="grid-container">
   <div class="grid-item" id="firstColumn">
-    <h4 #firstColumn id="as">{{loginHandling.value.username}}</h4>
+    <h4 id="as">{{loginHandling.value.username}}</h4>
     <h4>{{loginHandling.value.password}}</h4>
 
   </div>
@@ -14,7 +14,7 @@
         <input type="text" class="inputs" id="usernmIn" formControlName="username" >
         <div style="display: flex;">
           <div class="captionp2" id="passwdP">Password</div>
-          <div class="captionp2" id="inv" #inv >{{error}}</div>
+          <div class="captionp2" id="inv" *ngIf="error" >{{error}}</div>
         </div>
 
         <input type="password" id="passwdIn" class="inputs" (focus)="changing()" formControlName="password">
