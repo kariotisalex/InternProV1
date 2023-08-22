@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import {UserService} from "../user.service";
+import { UserService } from "../user.service";
+import { User } from "../user";
 
 @Component({
   selector: 'app-home-page',
@@ -8,18 +9,12 @@ import {UserService} from "../user.service";
 })
 export class HomePageComponent {
 
-  get userID(): string{
-    return this.userService.user.uid;
-  }
-  get usernameU(): string{
-    return this.userService.user.username;
-  }
-
   constructor(
     private userService : UserService
   ) {}
 
-
-
+  get user(): User{
+    return this.userService.getUser();
+  }
 
 }

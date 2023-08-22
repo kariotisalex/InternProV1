@@ -9,7 +9,10 @@ import {HttpClient} from "@angular/common/http";
 })
 export class UserService {
 
-  user!: User;
+  user: User = {
+    uid:"000",
+    username:"user"
+  };
 
   constructor(
     private http: HttpClient
@@ -29,5 +32,8 @@ export class UserService {
   }
   getUsername(){
     return this.user.username;
+  }
+  getUser(){
+    return this.user;
   }
 }

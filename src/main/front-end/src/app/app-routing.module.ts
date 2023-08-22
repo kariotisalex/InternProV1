@@ -11,7 +11,9 @@ const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full'},
   { path: 'login', component: LoginComponent },
   { path: 'testing', component: TestingComponent },
-  { path: 'home', component: HomePageComponent, canActivate: [homeGuard] },
+  { path: 'home', component: HomePageComponent,
+    canActivate: [homeGuard]
+  },
   { path: '**', component: PagenotfoundComponent }
 ]
 @NgModule({
