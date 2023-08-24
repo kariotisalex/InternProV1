@@ -1,52 +1,31 @@
 <div class="grid-container">
 
-  <div class="grid-item special left">
-    <div class="leftNasted">
+<!--Left Column-->
+  <div class="grid-item left">
+    <div class="leftNested alexgramLogo">
       <span id="logo">Alexgram&trade;</span>
     </div>
-
-    <div class="leftNasted navButtons" >
-      <div class="navButtonsNasted" id="homeButton">
-        <button class="buttons"><img class="images" src="../../assets/homeLogo.png">Home</button>
+    <div class="leftNested navButtons" >
+      <div class="navButtonsNested" id="homeButton" >
+        <button class="buttons" [routerLink]="'/home'"><img class="images" src="assets/homeLogo.png">Home</button>
       </div>
-      <div class="navButtonsNasted" id="searchButton">
-        <button class="buttons"><img class="images" src="../../assets/searchLogo.png">Search</button>
+      <div class="navButtonsNested" id="searchButton" >
+        <button class="buttons" [routerLink]="'/home/search'"><img class="images" src="assets/searchLogo.png">Search</button>
       </div>
-      <div class="navButtonsNasted" id="notificationButton">
-        <button class="buttons"><img class="images" src="../../assets/heartLogo.png">Notification</button>
-      </div>
-      <div class="navButtonsNasted" id="profileButton">
-        <button class="buttons"><img class="imageNavLogo" src="../../assets/DemoProfilePic.jpg">Profile</button>
-
+      <div class="navButtonsNested" id="profileButton" >
+        <button class="buttons" [routerLink]="'/home/profile'"><img class="imageNavLogo" src="assets/DemoProfilePic.jpg">Profile</button>
       </div>
     </div>
-
-    <div class="leftNasted logoutDiv" >
+    <div class="leftNested logoutDiv" >
       <input type="button" id="logout" value="logout">
     </div>
-
-
   </div>
 
-  <div class="grid-item wrapper">
-    <div class="nasted two"></div>
-    <div class="nasted three"></div>
-  </div>
-
-
-  <div class="grid-item special right">
-    <div class="rightNasted">
-      <div class="getin">
-        <span id="photoProfCircle"></span>
-      </div>
-
-      <div class="getin" id="profName">Alexander Kariotis</div>
+<!--Center Column-->
+  <div class="grid-item center">
+    <div>
+      <router-outlet></router-outlet>
     </div>
-    <div class="rightNasted" >
-
-    </div>
-
-
-
   </div>
+
 </div>

@@ -11,7 +11,7 @@ export class UserService {
 
   user: User = {
     uid:"000",
-    username:"user"
+    username:"Alex Mock User"
   };
 
   constructor(

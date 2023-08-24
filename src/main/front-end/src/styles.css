@@ -1,5 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 html{
-  background-color: rgba(188, 194, 203,0.6);
+  /*background-color: rgba(188, 194, 203,0.6);*/
+  background-color: lightsteelblue;
   font-family: Lato;
+  padding: 0 1% 0 1%;
 }
+

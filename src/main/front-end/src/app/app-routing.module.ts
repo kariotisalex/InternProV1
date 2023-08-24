@@ -6,13 +6,16 @@ import { TestingComponent } from "./testing/testing.component";
 import { PagenotfoundComponent } from "./pagenotfound/pagenotfound.component";
 import { HomePageComponent } from "./home-page/home-page.component";
 import { homeGuard } from "./home.guard";
+import {ProfileComponent} from "./profile/profile.component";
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full'},
   { path: 'login', component: LoginComponent },
-  { path: 'testing', component: TestingComponent },
+  { path: 'testing', component: ProfileComponent },
   { path: 'home', component: HomePageComponent,
-    canActivate: [homeGuard]
+    canActivate: [homeGuard], children:[
+      {path: 'profile',component: ProfileComponent}
+    ]
   },
   { path: '**', component: PagenotfoundComponent }
 ]

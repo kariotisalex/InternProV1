@@ -1,25 +1,15 @@
-html{
-  background-color: lightsteelblue;
-
-}
 .grid-container {
   display: grid;
-  grid-template-columns: 20% 60% 20%;
-  min-width: 1300px;
-  max-width: 1540px;
-  margin: auto;
+  grid-template-columns: 20% 79%;
   margin-top: 1%;
+  border: 1px solid black;
+  grid-column-gap: 1%;
+
 }
 
 .grid-item {
-  border-radius: 15px;
-  font-size: 30px;
+
   min-height: 600px;
-
-}
-
-.special{
-  margin: 3%;
   background: rgba(255, 255, 255, 0.38);
   border-radius: 16px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -28,68 +18,6 @@ html{
   border: 1px solid rgba(255, 255, 255, 0.3);
 
 }
-
-.wrapper{
-  display: grid;
-  grid-template-rows: 25% 75%;
-  margin: 1.5%;
-}
-.nasted{
-  border-radius: 15px;
-}
-.three{
-  background: rgba(255, 255, 255, 0.38);
-  border-radius: 16px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-.two{
-  margin-bottom: 2%;
-}
-h5{
-  padding-left: 10%;
-}
-
-
-
-
-.right{
-  display: grid;
-  grid-template-rows: 15% 85%;
-  padding: 10% 4% 4% 4%;
-
-}
-.rightNasted{
-  display: grid;
-  grid-template-columns: 40% 60%;
-  /*border: 1px solid black;*/
-
-}
-.getin{
-  /*border: 1px solid black;*/
-
-}
-#photoProfCircle{
-  background-image: url("src/assets/DemoProfilePic.jpg");
-  background-size: contain;
-  height: 80px;
-  width: 80px;
-  border-radius: 50%;
-  margin: 3% auto;
-  display: flow;
-}
-#profName{
-  font-size: medium;
-
-  margin: auto auto auto 5%;
-
-}
-
-
-
-
 .left{
   border: 1px solid black;
   display: grid;
@@ -97,7 +25,7 @@ h5{
   padding: 4%;
 }
 
-.leftNasted{
+.leftNested{
   border: 1px solid black;
 }
 .navButtons{
@@ -105,9 +33,9 @@ h5{
   display: grid;
   grid-template-rows: 12% 12% 12% 12%;
   padding: 5%;
+
 }
-.navButtonsNasted{
-  border: 1px solid black;
+.navButtonsNested{
   display: grid;
   margin: 4% 4% 4% 0%;
 
@@ -118,10 +46,9 @@ h5{
 
 }
 #logo{
-  display: flex;
   margin: auto;
-
-
+  font-size: 30px;
+  font-family: Delius;
 }
 .logoutDiv{
   display: grid;
@@ -139,5 +66,73 @@ h5{
   height: 20px;
   border-radius: 50%;
   margin: 0% 5% 0% 2%;
+}
+.alexgramLogo{
+  /*border: 1px solid black;*/
+  text-align: left;
+  padding-top: 10%;
+  padding-left: 8%;
+}
+
+
+
+
+
+
+
+
+.right{
+  display: grid;
+  grid-template-rows: 15% 85%;
+  padding: 10% 4% 4% 4%;
+
+
+}
+.rightNasted{
+  display: grid;
+  grid-template-columns: 40% 60%;
+  /*border: 1px solid black;*/
+}
+#photoProfCircle{
+  object-fit: cover;
+  height: 80px;
+  width: 80px;
+  border-radius: 50%;
+  margin: 3% auto;
+  display: flow;
+}
+#profName{
+  font-size: medium;
+  margin: auto auto auto 5%;
+}
+
+
+
+@media screen and (max-width:1300px) {
+  .right{
+    display: none;
+  }
+  .grid-container {
+    display: grid;
+    grid-template-columns: 20% 80%;
+  }
+  .center{
+    margin-right: 1%;
+  }
+
+}
+@media screen and (max-width: 1000px){
+  .left{
+    display: none;
+  }
+  .grid-container{
+    display: grid;
+    grid-template-columns: 100%;
+
+  }
+  .center{
+
+  }
+
 }
 
