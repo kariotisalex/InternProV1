@@ -1,7 +1,6 @@
 <div class="grid-container">
   <div class="grid-item" id="firstColumn">
-    <h4 id="as">{{loginHandling.value.username}}</h4>
-    <h4>{{loginHandling.value.password}}</h4>
+
 
   </div>
 
@@ -18,7 +17,9 @@
         </div>
 
         <input type="password" id="passwdIn" class="inputs" (focus)="changing()" formControlName="password">
-        <input id="inputButton" type="submit" [disabled]="!loginHandling.valid" value="Log In" >
+        <input id="inputButton" type="submit" [ngClass]="loginHandling.valid ? 'disabledClass' : 'non'" [disabled]="!loginHandling.valid" value="Log In" >
       </form>
+      <p class="signup">Don't you have an account? <a [routerLink]="'/signup'">Signup!</a></p>
     </div>
+
   </div>

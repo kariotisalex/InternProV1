@@ -1,0 +1,16 @@
+<div class="settingWrapper">
+  <h4>Username : {{user.username}}</h4>
+<form [formGroup]="updateHandling">
+  <div style="display: flex;">
+    <div class="captionp2" id="passwdP">Current Password</div>
+    <div class="captionp2" id="invV" *ngIf="error" >{{error}}</div>
+  </div>
+    <input type="password" class="inputs"  formControlName="currentPassword">
+  <div class="captionp2" >New Password</div>
+    <input type="password"  class="inputs"  formControlName="newPassword">
+  <div class="captionp2" >Retype New Password</div>
+    <input type="password" class="inputs" formControlName="retypeNewPassword">
+  <button id="inputButton" type="submit">Update</button>
+</form>
+
+</div>

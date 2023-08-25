@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { FormControl } from "@angular/forms";
 import { AlexgramService } from "../alexgram.service";
-import { Router} from "@angular/router";
+import {Router, RouterLink} from "@angular/router";
 import { CommonModule} from "@angular/common";
 import {HttpErrorResponse} from "@angular/common/http";
 import { HomePageComponent } from "../home-page/home-page.component";
@@ -12,10 +12,11 @@ import {UserService} from "../user.service";
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    CommonModule
-  ],
+    imports: [
+        ReactiveFormsModule,
+        CommonModule,
+        RouterLink
+    ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -24,14 +25,13 @@ export class LoginComponent {
   error : String = "";
 
   constructor(
-    private alexgramService : AlexgramService,
     private router : Router,
     private userService:UserService
   ) {}
 
   loginHandling = new FormGroup({
-    username : new FormControl('',[Validators.required ]),
-    password : new FormControl('', Validators.required),
+    username : new FormControl('',[Validators.required]),
+    password : new FormControl('', [Validators.required])
   });
 
   onSubmit(){
@@ -48,7 +48,6 @@ export class LoginComponent {
       }
     });
   }
-
 
   changing(){
     this.error="";

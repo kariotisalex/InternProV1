@@ -5,13 +5,12 @@
   grid-template-columns: 50% 50%;
 
   margin: 5% auto;
-  margin-left: 5% auto;
+  margin-left: 5%;
   border-radius: 15px;
   background-color: white;
   max-width: 1000px;
 }
 .grid-item {
-  padding: auto;
   font-size: 35px;
   border-radius: 15px;
   margin: 3%;
@@ -57,11 +56,11 @@ input{
   border-radius: 9px;
 }
 #inputButton:hover{
-   background-color: rgba(60, 55, 255, 1);
-   transform: translateY(2px);
-   color: white;
-   font-weight: bold;
- }
+  background-color: rgba(60, 55, 255, 1);
+  transform: translateY(2px);
+  color: white;
+  font-weight: bold;
+}
 #inputButton:active{
   background-color: white;
   color: rgba(60, 55, 255, 1);
@@ -78,6 +77,17 @@ input{
   flex-grow: 2;
   color: rgba(255, 0, 0, 0.64);
 }
+
+#passwdPV{
+  flex-grow: 8;
+}
+#invV{
+  flex-grow: 2;
+  color: rgba(255, 0, 0, 0.64);
+}
+#passwdIn{
+  margin-bottom: 4%;
+}
 @media screen and (max-width: 500px){
   #firstColumn{
     display: none;
@@ -86,10 +96,16 @@ input{
     grid-template-columns: 100%;
   }
 }
-.signup{
+input:focus{
+  outline: 0;
+}
+.redClass{
+  border: 1px solid red;
+}
+.greenClass{
+  border: 1px solid lightgreen;
+}
+.login{
   text-align: center;
   font-size: small;
-}
-.disabled{
-  background-color: rgb(51, 49, 49);
 }

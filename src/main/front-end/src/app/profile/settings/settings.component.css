@@ -1,0 +1,32 @@
+.settingWrapper{
+  border: 1px solid black;
+
+  margin: 10%auto auto auto;
+  max-width: 350px;
+}
+.captionp2{
+  margin-bottom: 2%;
+  font-size: medium;
+}
+
+#inputButton{
+  background-color: rgba(60, 55, 255, 1);
+  margin: 5% auto;
+  width: 210px;
+  font-size: medium;
+  padding: 3%;
+  margin-top: 10%;
+  color: white;
+  border-radius: 9px;
+}
+#inputButton:hover{
+  background-color: rgba(60, 55, 255, 1);
+  transform: translateY(2px);
+  color: white;
+  font-weight: bold;
+}
+#inputButton:active{
+  background-color: white;
+  color: rgba(60, 55, 255, 1);
+  border: 1px solid rgba(60, 55, 255, 1);
+}

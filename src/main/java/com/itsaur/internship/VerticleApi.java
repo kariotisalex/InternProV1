@@ -79,15 +79,22 @@ public class VerticleApi extends AbstractVerticle {
                     String password = body.getString("password");
                     System.out.println(password);
 
-                    this.userService.register(username, password)
+                    if (username ==""){
+                        ctx.response().setStatusCode(400).end("Empty username");
+                    } else if (password == "") {
+                        ctx.response().setStatusCode(400).end("Empty password");
+
+                    }else {
+                        this.userService.register(username, password)
                             .onSuccess(v -> {
                                 System.out.println("Your registration is successful");
                                 ctx.response().setStatusCode(200).end();
                             })
                             .onFailure(v -> {
-                                v.printStackTrace();
-                                ctx.response().setStatusCode(400).end();
+                                ctx.response().setStatusCode(400).end(v.getMessage());
                             });
+                    }
+
                 });
 
 

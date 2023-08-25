@@ -27,6 +27,24 @@ export class UserService {
   loggedinUser(x : User){
     this.user = x;
   }
+
+
+  signup(username: String, password: String){
+    const body = { username: username,
+                   password: password }
+    return this.http.post("/api/user/register", body);
+  }
+
+  logout(): boolean{
+    this.user = {
+      uid:'',
+      username:''
+    };
+    return true;
+  }
+
+
+
   getUid(){
     return this.user.uid;
   }
@@ -36,4 +54,5 @@ export class UserService {
   getUser(){
     return this.user;
   }
+
 }

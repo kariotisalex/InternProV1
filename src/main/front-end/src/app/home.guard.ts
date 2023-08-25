@@ -5,6 +5,7 @@ import {UserService} from "./user.service";
 
 export const homeGuard: CanActivateFn = (route, state) => {
 
+
   if (inject(UserService).user) {
 
     return true;

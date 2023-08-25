@@ -1,4 +1,7 @@
 import {Component, Input} from '@angular/core';
+import {User} from "../user";
+import {UserService} from "../user.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-profile',
@@ -6,5 +9,18 @@ import {Component, Input} from '@angular/core';
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent {
- // @Input() posts ;
+
+  constructor(
+    private userService : UserService,
+    private router : Router
+  ) {
+  }
+  get user() : User {
+    return this.userService.getUser();
+  }
+  routing(){
+    this.router.navigateByUrl('/home/profile/settings');
+  }
+
 }
+

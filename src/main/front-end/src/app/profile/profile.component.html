@@ -1,6 +1,16 @@
 <div class="profileWrapper">
-    <div class="profileNestedA">
+  <div class="profileNestedA">
 
+      <img id="photoProfCircle" src="assets/DemoProfilePic.jpg" alt="">
+
+    <div id="profName">{{user.username}}</div>
+    <div class="settingButtonDiv">
+      <button id="settingButton" (click)="routing()">. . .</button>
     </div>
-    <div class="profileNestedB"></div>
+  </div>
+
+
+  <div class="profileNestedB">
+    <router-outlet></router-outlet>
+  </div>
 </div>

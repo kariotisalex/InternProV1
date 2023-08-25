@@ -1,10 +1,9 @@
 .grid-container {
   display: grid;
-  grid-template-columns: 20% 79%;
-  margin-top: 1%;
-  border: 1px solid black;
-  grid-column-gap: 1%;
-
+  grid-template-columns: 300px auto;
+  margin-top: 5px;
+  grid-column-gap: 5px;
+  /*border: 1px solid black;*/
 }
 
 .grid-item {
@@ -19,7 +18,7 @@
 
 }
 .left{
-  border: 1px solid black;
+  /*border: 1px solid black;*/
   display: grid;
   grid-template-rows: 10% 80% 10%;
   padding: 4%;
@@ -52,7 +51,8 @@
 }
 .logoutDiv{
   display: grid;
-  padding: 5% 5% 5% 0%;
+
+
 
 }
 
@@ -74,65 +74,22 @@
   padding-left: 8%;
 }
 
-
-
-
-
-
-
-
-.right{
-  display: grid;
-  grid-template-rows: 15% 85%;
-  padding: 10% 4% 4% 4%;
-
-
-}
-.rightNasted{
-  display: grid;
-  grid-template-columns: 40% 60%;
-  /*border: 1px solid black;*/
-}
-#photoProfCircle{
-  object-fit: cover;
-  height: 80px;
-  width: 80px;
-  border-radius: 50%;
-  margin: 3% auto;
-  display: flow;
-}
-#profName{
-  font-size: medium;
-  margin: auto auto auto 5%;
+.centerNested{
+  margin: auto;
+  max-width: 800px;
 }
 
-
-
-@media screen and (max-width:1300px) {
-  .right{
-    display: none;
-  }
-  .grid-container {
-    display: grid;
-    grid-template-columns: 20% 80%;
-  }
-  .center{
-    margin-right: 1%;
-  }
-
-}
 @media screen and (max-width: 1000px){
   .left{
     display: none;
   }
   .grid-container{
+    min-height: 630px;
     display: grid;
     grid-template-columns: 100%;
 
   }
-  .center{
 
-  }
 
 }
 

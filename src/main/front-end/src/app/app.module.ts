@@ -13,6 +13,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
 import { ProfileComponent } from './profile/profile.component';
+import { SignupComponent } from './login/signup/signup.component';
+import { SettingsComponent } from './profile/settings/settings.component';
+import { PostsComponent } from './profile/posts/posts.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +23,7 @@ import { ProfileComponent } from './profile/profile.component';
     PagenotfoundComponent,
     HomePageComponent,
     ProfileComponent,
-
+    PostsComponent,
   ],
     imports: [
         BrowserModule,
@@ -29,8 +32,7 @@ import { ProfileComponent } from './profile/profile.component';
         HttpClientModule,
         BrowserAnimationsModule,
         MatIconModule,
-      MatButtonModule
-
+        MatButtonModule
     ],
   providers: [],
   bootstrap: [AppComponent]

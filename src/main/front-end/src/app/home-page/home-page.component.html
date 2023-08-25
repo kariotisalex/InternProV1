@@ -13,19 +13,20 @@
         <button class="buttons" [routerLink]="'/home/search'"><img class="images" src="assets/searchLogo.png">Search</button>
       </div>
       <div class="navButtonsNested" id="profileButton" >
-        <button class="buttons" [routerLink]="'/home/profile'"><img class="imageNavLogo" src="assets/DemoProfilePic.jpg">Profile</button>
+        <button class="buttons" [routerLink]="'/home/profile/posts'"><img class="imageNavLogo" src="assets/DemoProfilePic.jpg">Profile</button>
       </div>
     </div>
     <div class="leftNested logoutDiv" >
-      <input type="button" id="logout" value="logout">
+      <button id="logout" (click)="logout">Logout</button>
     </div>
   </div>
 
 <!--Center Column-->
   <div class="grid-item center">
-    <div>
+    <div class="centerNested">
       <router-outlet></router-outlet>
     </div>
+
   </div>
 
 </div>

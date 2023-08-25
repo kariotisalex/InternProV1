@@ -1,0 +1,32 @@
+<div class="grid-container">
+  <div class="grid-item" id="firstColumn">
+
+
+  </div>
+
+  <div class="grid-item secondColumn">
+    <form [formGroup]="signupHandling"
+          (ngSubmit)="onSubmit()">
+      <h1 id="first">Welcome to Alexgram&trade;</h1>
+      <p class="captionp">Fill the gaps with your details !</p>
+
+      <label for="usernmIn" class="captionp2">Username</label>
+      <input type="text" class="inputs" id="usernmIn" formControlName="username" >
+
+      <div style="display: flex;">
+        <div class="captionp2" id="passwdP">Password</div>
+        <div class="captionp2" id="invV" *ngIf="error" >{{error}}</div>
+      </div>
+      <input type="password" [(ngModel)]="value" id="passwdIn" class="inputs" (focus)="changing()" formControlName="password">
+      <div style="display: flex;">
+        <div class="captionp2" id="passwdPV">Rewrite password for verification</div>
+      </div>
+
+      <input type="password" id="passwdInV" [(ngModel)]="valueV" class="inputs" [ngClass]="checking() ? 'greenClass' : 'redClass'" (focus)="changing()" formControlName="passwordV">
+      <input id="inputButton" type="submit" [disabled]="!signupHandling.valid && checking()" value="Sign Up" >
+    </form>
+    <p class="login">Do you have an account? <a [routerLink]="'/login'">Login!</a></p>
+
+  </div>
+
+</div>
