@@ -1,15 +1,19 @@
 import { Component } from '@angular/core';
-import {Router} from "@angular/router";
+import {Router, RouterLink} from "@angular/router";
 import {UserService} from "../../user.service";
 import {User} from "../../user";
 import {FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
+import {CommonModule} from "@angular/common";
+import { Location } from "@angular/common";
 
 
 @Component({
   selector: 'app-settings',
   standalone: true,
   imports:[
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CommonModule,
+    RouterLink
   ],
 
   templateUrl: './settings.component.html',
@@ -21,7 +25,8 @@ export class SettingsComponent{
 
   constructor(
     private router : Router,
-    private userService : UserService
+    private userService : UserService,
+    private location : Location
   ) {}
 
   get user(): User{
@@ -32,5 +37,16 @@ export class SettingsComponent{
     currentPassword : new FormControl(),
     newPassword : new FormControl()
   });
+  onSubmit(){
+
+  }
+
+  changing(){
+    this.error="";
+  }
+  backButtonNav(){
+    this.location.back();
+  }
+
 }
 

@@ -57,11 +57,11 @@ input{
   border-radius: 9px;
 }
 #inputButton:hover{
-   background-color: rgba(60, 55, 255, 1);
-   transform: translateY(2px);
-   color: white;
-   font-weight: bold;
- }
+  background-color: rgba(60, 55, 255, 1);
+  transform: translateY(2px);
+  color: white;
+  font-weight: bold;
+}
 #inputButton:active{
   background-color: white;
   color: rgba(60, 55, 255, 1);

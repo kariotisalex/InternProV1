@@ -4,22 +4,22 @@
 
   </div>
 
-    <div class="grid-item secondColumn">
-      <form [formGroup]="loginHandling"
-                (ngSubmit)="onSubmit()">
-        <h1 id="first">Welcome to Alexgram&trade;</h1>
-        <p class="captionp">Place your credentials !</p>
-        <label for="usernmIn" class="captionp2">Username</label>
-        <input type="text" class="inputs" id="usernmIn" formControlName="username" >
-        <div style="display: flex;">
-          <div class="captionp2" id="passwdP">Password</div>
-          <div class="captionp2" id="inv" *ngIf="error" >{{error}}</div>
-        </div>
+  <div class="grid-item secondColumn">
+    <form [formGroup]="loginHandling"
+          (ngSubmit)="onSubmit()">
+      <h1 id="first">Welcome to Alexgram&trade;</h1>
+      <p class="captionp">Place your credentials !</p>
+      <label for="usernmIn" class="captionp2">Username</label>
+      <input type="text" class="inputs" id="usernmIn" formControlName="username" >
+      <div style="display: flex;">
+        <div class="captionp2" id="passwdP">Password</div>
+        <div class="captionp2" id="inv" *ngIf="error" >{{error}}</div>
+      </div>
 
-        <input type="password" id="passwdIn" class="inputs" (focus)="changing()" formControlName="password">
-        <input id="inputButton" type="submit" [ngClass]="loginHandling.valid ? 'disabledClass' : 'non'" [disabled]="!loginHandling.valid" value="Log In" >
-      </form>
-      <p class="signup">Don't you have an account? <a [routerLink]="'/signup'">Signup!</a></p>
-    </div>
-
+      <input type="password" id="passwdIn" class="inputs" (focus)="changing()" formControlName="password">
+      <input id="inputButton" type="submit" [ngClass]="loginHandling.valid ? 'disabledClass' : 'non'" [disabled]="!loginHandling.valid" value="Log In" >
+    </form>
+    <p class="signup">Don't you have an account? <a [routerLink]="'/signup'">Signup!</a></p>
   </div>
+
+</div>

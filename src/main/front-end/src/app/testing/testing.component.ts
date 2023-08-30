@@ -7,8 +7,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
   imports:[
     ReactiveFormsModule
   ],
-  template: `Favorite Color: <input type="text" [formControl]="favoriteColorControl">
-  <p>{{favoriteColorControl.value}}</p>`,
+  template: './testing.component.html',
   styleUrls: ['./testing.component.css']
 })
 export class TestingComponent {

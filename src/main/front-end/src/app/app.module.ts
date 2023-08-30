@@ -24,6 +24,7 @@ import { PostsComponent } from './profile/posts/posts.component';
     HomePageComponent,
     ProfileComponent,
     PostsComponent,
+
   ],
     imports: [
         BrowserModule,

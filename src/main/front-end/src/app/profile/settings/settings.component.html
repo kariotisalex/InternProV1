@@ -1,16 +1,42 @@
-<div class="settingWrapper">
-  <h4>Username : {{user.username}}</h4>
-<form [formGroup]="updateHandling">
-  <div style="display: flex;">
-    <div class="captionp2" id="passwdP">Current Password</div>
-    <div class="captionp2" id="invV" *ngIf="error" >{{error}}</div>
+<div class="grid-container">
+<div class="grid-item">
+  <button id="backButton" (click)="backButtonNav()"><</button>
+</div>
+  <div class="grid-item wrapperDelUpdate">
+    <div class="tabBarWrapper">
+      <div class="buttons">
+        <button class="updateButtonClass buttonClass" >Update</button>
+      </div>
+      <div class="buttons">
+        <button class="deleteButtonClass buttonClass">Delete</button>
+      </div>
+    </div>
+
+    <div class="updateDivWrapper">
+      <form [formGroup]="updateHandling"
+            (ngSubmit)="onSubmit()" >
+        <label for="currentPasswd" class="caption">Current Password</label>
+        <input type="password" class="inputs" id="currentPasswd" formControlName="currentPassword" >
+
+        <div class="newPasswdWrapper" >
+          <div class="caption" id="passwdP">New Password</div>
+          <div class="caption" id="inv" *ngIf="error" >{{error}}</div>
+        </div>
+        <input type="password" id="passwdIn" class="inputs" (focus)="changing()" formControlName="newPassword">
+
+        <div for="confirmNewPasswd" class="caption">Retype New Password</div>
+        <input type="password" class="inputs" id="confirmNewPasswd" formControlName="confirmNewPassword" >
+
+        <button id="inputButton" type="submit"
+                [ngClass]="updateHandling.valid ? 'disabledClass' : 'non'"
+                [disabled]="!updateHandling.valid" >Update</button>
+      </form>
+
+    </div>
+    <div class="delDivWrapper">
+
+    </div>
+
   </div>
-    <input type="password" class="inputs"  formControlName="currentPassword">
-  <div class="captionp2" >New Password</div>
-    <input type="password"  class="inputs"  formControlName="newPassword">
-  <div class="captionp2" >Retype New Password</div>
-    <input type="password" class="inputs" formControlName="retypeNewPassword">
-  <button id="inputButton" type="submit">Update</button>
-</form>
 
 </div>
