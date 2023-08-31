@@ -5,35 +5,57 @@
   <div class="grid-item wrapperDelUpdate">
     <div class="tabBarWrapper">
       <div class="buttons">
-        <button class="updateButtonClass buttonClass" >Update</button>
+        <button class=" buttonClass" (click)="this.updater()" [ngClass]="this.update ?
+                       'updateButtonClass':''">Update</button>
       </div>
       <div class="buttons">
-        <button class="deleteButtonClass buttonClass">Delete</button>
+        <button class=" buttonClass" [ngClass]="!this.update ?
+                      'deleteButtonClass':''" (click)="deleter()">Delete</button>
       </div>
     </div>
 
     <div class="updateDivWrapper">
       <form [formGroup]="updateHandling"
-            (ngSubmit)="onSubmit()" >
+            (ngSubmit)="onSubmitUpdate()" [ngClass]="this.update ? '':'switchUpdate'" *ngIf="update">
         <label for="currentPasswd" class="caption">Current Password</label>
-        <input type="password" class="inputs" id="currentPasswd" formControlName="currentPassword" >
+        <input type="password" class="inputs" id="currentPasswd"
+               [(ngModel)]="currentPswd" (focus)="changing()"
+               formControlName="currentPassword" >
 
         <div class="newPasswdWrapper" >
           <div class="caption" id="passwdP">New Password</div>
-          <div class="caption" id="inv" *ngIf="error" >{{error}}</div>
+          <div class="caption" id="inv" [ngClass]="succeededornot()" *ngIf="error" >{{error}}</div>
         </div>
-        <input type="password" id="passwdIn" class="inputs" (focus)="changing()" formControlName="newPassword">
+        <input type="password" id="passwdIn" class="inputs"
+               [(ngModel)]="newPswd" (focus)="changing()" value=""
+               formControlName="newPassword">
 
         <div for="confirmNewPasswd" class="caption">Retype New Password</div>
-        <input type="password" class="inputs" id="confirmNewPasswd" formControlName="confirmNewPassword" >
+        <input type="password" class="inputs" id="confirmNewPasswd"
+               [(ngModel)]="confirmNewPswd" (focus)="changing()"
+               [ngClass]="checkingEmpty()"
+               formControlName="confirmNewPassword" >
 
-        <button id="inputButton" type="submit"
-                [ngClass]="updateHandling.valid ? 'disabledClass' : 'non'"
+        <button class="inputButtonUpdate" type="submit"
                 [disabled]="!updateHandling.valid" >Update</button>
       </form>
 
-    </div>
-    <div class="delDivWrapper">
+
+
+
+
+      <div
+            [ngClass]="this.update ? 'switchDelete' : '' " *ngIf="!update" >
+
+        <button class="inputButtonDelete" (click)="delete()"
+                 >Delete</button>
+
+        <div class="caption" id="inv" [ngClass]="succeededornot()" *ngIf="error" >{{error}}</div>
+      </div>
+
+
+
+
 
     </div>
 

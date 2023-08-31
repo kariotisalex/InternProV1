@@ -11,19 +11,22 @@ import {User} from "./user";
 import {SignupComponent} from "./login/signup/signup.component";
 import {SettingsComponent} from "./profile/settings/settings.component";
 import {PostsComponent} from "./profile/posts/posts.component";
+import {SearchComponent} from "./search/search.component";
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full'},
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent},
   { path: 'testing', component: ProfileComponent },
+
   { path: 'home', component: HomePageComponent,
     canActivate: [homeGuard], children:[
       {path: 'profile', component: ProfileComponent,
       children:[
         { path: 'settings', component: SettingsComponent },
         { path: 'posts', component: PostsComponent }
-      ]}
+      ]},
+      { path: 'search', component: SearchComponent },
     ]
   },
   { path: '**', component: PagenotfoundComponent }

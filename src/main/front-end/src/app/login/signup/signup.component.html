@@ -17,13 +17,16 @@
         <div class="captionp2" id="passwdP">Password</div>
         <div class="captionp2" id="invV" *ngIf="error" >{{error}}</div>
       </div>
-      <input type="password" [(ngModel)]="value" id="passwdIn" class="inputs" (focus)="changing()" formControlName="password">
+      <input type="password" [(ngModel)]="value" id="passwdIn" class="inputs"
+             (focus)="changing()" formControlName="password">
       <div style="display: flex;">
         <div class="captionp2" id="passwdPV">Rewrite password for verification</div>
       </div>
 
-      <input type="password" id="passwdInV" [(ngModel)]="valueV" class="inputs" [ngClass]="checking() ? 'greenClass' : 'redClass'" (focus)="changing()" formControlName="passwordV">
-      <input id="inputButton" type="submit" [disabled]="!signupHandling.valid && checking()" value="Sign Up" >
+      <input type="password" id="passwdInV" [(ngModel)]="valueV" class="inputs"
+             [ngClass]="checking()" (focus)="changing()" formControlName="passwordV">
+      <input id="inputButton" type="submit"
+             [disabled]="!signupHandling.valid && checking()" value="Sign Up" >
     </form>
     <p class="login">Do you have an account? <a [routerLink]="'/login'">Login!</a></p>
   </div>

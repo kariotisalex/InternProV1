@@ -115,7 +115,7 @@ public class VerticleApi extends AbstractVerticle {
                             })
                             .onFailure(e -> {
                                 System.out.println("Password changing operation fails from user " + ctx.pathParam("userid"));
-                                ctx.response().setStatusCode(400).end();
+                                ctx.response().setStatusCode(400).end(e.getMessage());
                             });
                 });
 
@@ -123,15 +123,18 @@ public class VerticleApi extends AbstractVerticle {
         router
                 .delete("/user/:userid")
                 .handler(ctx -> {
+                    final JsonObject body = ctx.body().asJsonObject();
+                    final String password = body.getString("password");
                     System.out.println(ctx.pathParam("userid"));
+
                     this.userService.deleteByUserid(UUID.fromString(ctx.pathParam("userid")))
                             .onSuccess(v -> {
                                 System.out.println("User :" + ctx.pathParam("userid") + " deleted successfully");
                                 ctx.response().setStatusCode(200).end();
                             })
                             .onFailure(v -> {
-                                v.printStackTrace();
-                                ctx.response().setStatusCode(400).end();
+                                //v.printStackTrace();
+                                ctx.response().setStatusCode(400).end(v.getMessage());
                             });
                 });
 
@@ -162,7 +165,7 @@ public class VerticleApi extends AbstractVerticle {
                                                 ctx.response().setStatusCode(200).end(savedFileName);
                                             })
                                             .onFailure(e -> {
-                                                ctx.response().setStatusCode(400).end();
+                                                ctx.response().setStatusCode(400).end(e.getMessage());
                                             });
                                 });
                     } else {
@@ -185,7 +188,7 @@ public class VerticleApi extends AbstractVerticle {
                             })
                             .onFailure(e -> {
                                 System.out.println(e);
-                                ctx.response().setStatusCode(400).end();
+                                ctx.response().setStatusCode(400).end(e.getMessage());
                             });
                 });
 

@@ -18,7 +18,7 @@
 
 .wrapperDelUpdate{
    display: grid;
-   grid-template-rows: 10% 90% ;
+   grid-template-rows: 30px 290px ;
  }
 .tabBarWrapper{
   display: grid;
@@ -30,6 +30,7 @@
 .buttonClass{
   background-color: white;
   border: none;
+  border-radius: 4px;
 }
 .buttonClass:hover{
   background-color: rgba(176,196,222,0.4);
@@ -74,10 +75,35 @@ input {
 }
 #inv{
   flex-grow: 2;
-  color: rgba(255, 0, 0, 0.64);
+
 }
 
-#inputButton{
+.inputButtonUpdate{
+  border: 1px solid rgba(150, 150, 150, 0.5);
+  background-color: rgba(60, 55, 255, 1);
+  margin: 15px 0 10px 100px;
+  height: 75px;
+  width: 75px;
+  font-size: medium;
+  padding: 10px;
+  color: white;
+  border-radius: 50%;
+}
+
+.inputButtonUpdate:hover{
+  background-color: rgba(60, 55, 255, 1);
+  color: white;
+  font-weight: bold;
+  transform: translateY(1px);
+}
+
+.inputButtonUpdate:active{
+  background-color: white;
+  color: rgba(60, 55, 255, 1);
+  border: 1px solid rgba(60, 55, 255, 1);
+
+}
+.inputButtonDelete{
   border: 1px solid rgba(150, 150, 150, 0.5);
 
   background-color: rgba(60, 55, 255, 1);
@@ -91,20 +117,19 @@ input {
   border-radius: 50%;
 }
 
-#inputButton:hover{
+.inputButtonDelete:hover{
   background-color: rgba(60, 55, 255, 1);
   color: white;
   font-weight: bold;
   transform: translateY(1px);
 }
 
-#inputButton:active{
+.inputButtonDelete:active{
   background-color: white;
   color: rgba(60, 55, 255, 1);
   border: 1px solid rgba(60, 55, 255, 1);
 
 }
-
 
 .disabled{
   background-color: rgb(51, 49, 49);
@@ -128,4 +153,28 @@ input {
 #backButton:active{
   color: white;
   background-color: rgba(150, 150, 150, 0.5);
+}
+.switchUpdate{
+  display:none;
+}
+.switchDelete{
+  display: none;
+}
+.updateButtonClass{
+  background-color: rgba(176,196,222,0.8);
+}
+.deleteButtonClass{
+  background-color: rgba(176,196,222,0.8);
+}
+.redClassBorder{
+  border: 1px solid red;
+}
+.greenClassBorder{
+  border: 1px solid lightgreen;
+}
+.redClassFont{
+  color: rgba(255, 0, 0, 0.64);
+}
+.greenClassFont{
+  color: rgba(0,180,22,0.81);
 }

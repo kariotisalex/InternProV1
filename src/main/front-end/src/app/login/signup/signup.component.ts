@@ -23,7 +23,7 @@ export class SignupComponent {
   valueV: String = "";
   constructor(
     private router : Router,
-    private userService:UserService
+    private userService : UserService
   ) {}
 
 
@@ -60,13 +60,17 @@ export class SignupComponent {
   changing(){
     this.error="";
   }
-  checking():boolean{
-
+  checking() : String {
     const password  : String = this.signupHandling.value.password as String;
     const passwordV : String = this.signupHandling.value.passwordV as String;
-    if((passwordV != "") && (passwordV != "")){
-      return password == passwordV;
+    if ((password != "") && (passwordV != "")){
+      if(passwordV == password){
+        return 'greenClass'
+      }else{
+        return 'redClass'
+      }
+    }else {
+      return '';
     }
-    return false;
   }
 }

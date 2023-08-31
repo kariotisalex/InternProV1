@@ -28,11 +28,20 @@ export class UserService {
     this.user = x;
   }
 
-
   signup(username: String, password: String){
     const body = { username: username,
                    password: password }
     return this.http.post("/api/user/register", body);
+  }
+
+  changePassword(uid : String, currentPassword : String, newPassword : String){
+    const body = { current : currentPassword,
+                   new     : newPassword     }
+    return this.http.put(`/api/user/${uid}/password`, body);
+  }
+  delete(uid : String){
+    return this.http.delete(`/api/user/${uid}`);
+
   }
 
   logout(): boolean{

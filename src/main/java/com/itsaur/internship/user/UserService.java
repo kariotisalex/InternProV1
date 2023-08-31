@@ -67,7 +67,7 @@ public class UserService {
                                 .compose(q -> {
                                     return usersStore.delete(userid);
                                 });
-                });
+                    });
     }
 
 
@@ -83,7 +83,7 @@ public class UserService {
 
                         return usersStore.update(user);
                     }else {
-                        return Future.failedFuture(new IllegalArgumentException("The password is wrong."));
+                        return Future.failedFuture(new IllegalArgumentException("Password is wrong."));
                     }
                 });
     }

@@ -9,6 +9,7 @@
   border-radius: 15px;
   background-color: white;
   max-width: 1000px;
+
 }
 .grid-item {
   font-size: 35px;
@@ -99,10 +100,10 @@ input{
 input:focus{
   outline: 0;
 }
-.redClass{
+.redClassBorder{
   border: 1px solid red;
 }
-.greenClass{
+.greenClassBorder{
   border: 1px solid lightgreen;
 }
 .login{
