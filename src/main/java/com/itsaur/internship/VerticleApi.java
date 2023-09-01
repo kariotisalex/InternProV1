@@ -3,12 +3,11 @@ package com.itsaur.internship;
 
 import com.itsaur.internship.comment.CommentService;
 import com.itsaur.internship.post.PostService;
-import com.itsaur.internship.query.PostQueryModelStore;
+
 import com.itsaur.internship.user.UserService;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServer;
-import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.Router;
@@ -22,7 +21,7 @@ public class VerticleApi extends AbstractVerticle {
     final private UserService userService;
     final private CommentService commentService;
     final private PostService postService;
-//    final private PostQueryModelStore postQueryModelStore;
+
 
 
     public VerticleApi(UserService userService, CommentService commentService, PostService postService
@@ -123,8 +122,6 @@ public class VerticleApi extends AbstractVerticle {
         router
                 .delete("/user/:userid")
                 .handler(ctx -> {
-                    final JsonObject body = ctx.body().asJsonObject();
-                    final String password = body.getString("password");
                     System.out.println(ctx.pathParam("userid"));
 
                     this.userService.deleteByUserid(UUID.fromString(ctx.pathParam("userid")))
@@ -133,7 +130,7 @@ public class VerticleApi extends AbstractVerticle {
                                 ctx.response().setStatusCode(200).end();
                             })
                             .onFailure(v -> {
-                                //v.printStackTrace();
+                                v.printStackTrace();
                                 ctx.response().setStatusCode(400).end(v.getMessage());
                             });
                 });

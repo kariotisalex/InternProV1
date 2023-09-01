@@ -1,4 +1,4 @@
-package com.itsaur.internship.query;
+package com.itsaur.internship.post.query;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

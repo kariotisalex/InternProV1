@@ -70,6 +70,7 @@ export class SettingsComponent {
   }
   delete(){
     const uid = this.userService.getUid();
+    console.log(uid);
     this.userService.delete(uid)
       .subscribe({
         next: x =>{
@@ -81,8 +82,9 @@ export class SettingsComponent {
           },1000);
         },
         error: e => {
+
           this.succeed = false;
-          this.error = "Did not deleted !";
+          this.error = "Did not deleted ! " + e.error;
         }
       });
 

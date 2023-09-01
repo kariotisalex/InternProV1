@@ -71,10 +71,10 @@ input{
 #usernmIn{
   margin-bottom: 4%;
 }
-#descriptionId{
+#passwdP{
   flex-grow: 8;
 }
-#monitorId{
+#inv{
   flex-grow: 2;
   color: rgba(255, 0, 0, 0.64);
 }
