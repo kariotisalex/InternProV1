@@ -1,4 +1,3 @@
-
 .grid-container {
   box-shadow: 0px 0px 15px rgba(150,150,150,1);
   display: grid;
@@ -16,10 +15,10 @@
 }
 
 
-.wrapperUploadClass{
-   display: grid;
-   grid-template-rows: 30px 290px ;
- }
+.wrapperDelUpdate{
+  display: grid;
+  grid-template-rows: 30px 290px ;
+}
 .tabBarWrapper{
   display: grid;
   grid-template-columns: 50% 50%;
@@ -43,7 +42,7 @@
 .delDivWrapper{
 
 }
-.wrapper{
+.updateDivWrapper{
   max-width: 280px;
   padding-left: 4%;
   background-color: white;
@@ -66,19 +65,19 @@ input {
   outline: 0;
 }
 
-.descriptionWrapperClass{
+.newPasswdWrapper{
   display: flex;
   margin-top: 0;
 }
-#descriptionId{
+#passwdP{
   flex-grow: 8;
 }
-#monitorId{
+#inv{
   flex-grow: 2;
 
 }
 
-.inputButtonUpload{
+.inputButtonUpdate{
   border: 1px solid rgba(150, 150, 150, 0.5);
   background-color: rgba(60, 55, 255, 1);
   margin: 15px 0 10px 100px;
@@ -90,14 +89,14 @@ input {
   border-radius: 50%;
 }
 
-.inputButtonUpload:hover{
+.inputButtonUpdate:hover{
   background-color: rgba(60, 55, 255, 1);
   color: white;
   font-weight: bold;
   transform: translateY(1px);
 }
 
-.inputButtonUpload:active{
+.inputButtonUpdate:active{
   background-color: white;
   color: rgba(60, 55, 255, 1);
   border: 1px solid rgba(60, 55, 255, 1);

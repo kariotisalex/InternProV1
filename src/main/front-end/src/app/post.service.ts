@@ -10,8 +10,11 @@ export class PostService {
     private http : HttpClient
   ) { }
 
-  addPost(uid : String, data : FormData){
-    this.http.post(`/api/user/${uid}/post`,data)
+  addPost(uid : String, file : File, desc: string){
+    const formObj = new FormData();
+    formObj.append('file', file);
+    formObj.append('desc', desc);
+    this.http.post(`/api/user/${uid}/post`,formObj)
       .subscribe({
         next: x => {
           console.log('this is correct ' + x);

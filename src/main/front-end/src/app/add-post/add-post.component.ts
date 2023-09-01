@@ -28,7 +28,6 @@ export class AddPostComponent {
     private userService : UserService,
     private location    : Location,
     private postService : PostService,
-    private http : HttpClient
   ) {}
 
 
@@ -47,12 +46,7 @@ export class AddPostComponent {
 
     const file = event.currentTarget[0].files[0];
     const desc = this.addPostHandling.value.description as string;
-    console.log(desc);
-    console.log(file);
-    const formObj = new FormData();
-    formObj.append('file', file);
-    formObj.append('desc', desc);
-    this.postService.addPost(uid, formObj);
+    this.postService.addPost(uid, file, desc);
 
 
   }
