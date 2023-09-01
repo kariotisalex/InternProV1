@@ -17,32 +17,10 @@
 
 
 .wrapperUploadClass{
-   display: grid;
-   grid-template-rows: 30px 290px ;
- }
-.tabBarWrapper{
   display: grid;
-  grid-template-columns: 50% 50%;
-}
-.buttons{
-  display: grid;
-}
-.buttonClass{
-  background-color: white;
-  border: none;
-  border-radius: 4px;
-}
-.buttonClass:hover{
-  background-color: rgba(176,196,222,0.4);
-
-}
-.buttonClass:active {
-  background-color: rgba(176,196,222,0.8);
+  grid-template-rows: 30px 290px ;
 }
 
-.delDivWrapper{
-
-}
 .wrapper{
   max-width: 280px;
   padding-left: 4%;
@@ -103,36 +81,21 @@ input {
   border: 1px solid rgba(60, 55, 255, 1);
 
 }
-.inputButtonDelete{
-  border: 1px solid rgba(150, 150, 150, 0.5);
-
-  background-color: rgba(60, 55, 255, 1);
-  margin: 15px 0 10px 100px;
-
-  height: 75px;
-  width: 75px;
-  font-size: medium;
-  padding: 10px;
-  color: white;
-  border-radius: 50%;
-}
-
-.inputButtonDelete:hover{
-  background-color: rgba(60, 55, 255, 1);
-  color: white;
-  font-weight: bold;
-  transform: translateY(1px);
-}
-
-.inputButtonDelete:active{
-  background-color: white;
-  color: rgba(60, 55, 255, 1);
-  border: 1px solid rgba(60, 55, 255, 1);
-
-}
 
 .disabled{
   background-color: rgb(51, 49, 49);
+}
+textarea{
+  resize: none;
+  padding: 2%;
+  border: 1px solid rgba(150, 150, 150, 0.5);
+  border-radius: 5px;
+  display: grid;
+  font-size: large;
+  width: 260px;
+  align: left;
+  outline: 0;
+  height: 100px;
 }
 
 #backButton{
@@ -154,17 +117,8 @@ input {
   color: white;
   background-color: rgba(150, 150, 150, 0.5);
 }
-.switchUpdate{
-  display:none;
-}
-.switchDelete{
-  display: none;
-}
-.updateButtonClass{
-  background-color: rgba(176,196,222,0.8);
-}
-.deleteButtonClass{
-  background-color: rgba(176,196,222,0.8);
+.inputFile{
+  font-size: medium;
 }
 .redClassBorder{
   border: 1px solid red;
@@ -178,3 +132,4 @@ input {
 .greenClassFont{
   color: rgba(0,180,22,0.81);
 }
+

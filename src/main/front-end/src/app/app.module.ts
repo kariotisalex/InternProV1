@@ -17,6 +17,7 @@ import { SignupComponent } from './login/signup/signup.component';
 import { SettingsComponent } from './profile/settings/settings.component';
 import { PostsComponent } from './profile/posts/posts.component';
 import { SearchComponent } from './search/search.component';
+import { AddPostComponent } from './add-post/add-post.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,7 @@ import { SearchComponent } from './search/search.component';
     HomePageComponent,
     ProfileComponent,
     PostsComponent,
-    SearchComponent,
+    SearchComponent
 
   ],
     imports: [

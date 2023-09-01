@@ -12,6 +12,7 @@ import {SignupComponent} from "./login/signup/signup.component";
 import {SettingsComponent} from "./profile/settings/settings.component";
 import {PostsComponent} from "./profile/posts/posts.component";
 import {SearchComponent} from "./search/search.component";
+import {AddPostComponent} from "./add-post/add-post.component";
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full'},
@@ -27,6 +28,7 @@ const routes: Routes = [
         { path: 'posts', component: PostsComponent }
       ]},
       { path: 'search', component: SearchComponent },
+      { path: 'addpost', component: AddPostComponent }
     ]
   },
   { path: '**', component: PagenotfoundComponent }

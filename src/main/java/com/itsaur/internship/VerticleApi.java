@@ -224,7 +224,6 @@ public class VerticleApi extends AbstractVerticle {
                             .onFailure(e -> {
                                 ctx.response().setStatusCode(400).end();
                             });
-
                 });
 
         router

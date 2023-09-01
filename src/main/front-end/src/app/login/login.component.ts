@@ -1,12 +1,10 @@
 import { Component } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { FormControl } from "@angular/forms";
-import { AlexgramService } from "../alexgram.service";
-import {Router, RouterLink} from "@angular/router";
-import { CommonModule} from "@angular/common";
-import {HttpErrorResponse} from "@angular/common/http";
-import { HomePageComponent } from "../home-page/home-page.component";
-import {UserService} from "../user.service";
+import { Router, RouterLink } from "@angular/router";
+import { CommonModule } from "@angular/common";
+import { HttpErrorResponse } from "@angular/common/http";
+import { UserService } from "../user.service";
 
 
 @Component({

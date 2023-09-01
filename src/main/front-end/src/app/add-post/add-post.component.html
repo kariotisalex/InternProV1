@@ -1,0 +1,30 @@
+<div class="grid-container">
+  <div class="grid-item">
+    <button id="backButton" (click)="backButtonNav()"><</button>
+  </div>
+  <div class="grid-item wrapperUploadClass">
+
+
+
+    <div class="wrapper">
+      <form [formGroup]="addPostHandling"
+            (ngSubmit)="onSubmitUpdate($event)" >
+        <label for="currentPasswd" class="caption">Photo Upload</label>
+        <input type="file" class="inputFile" id="currentPasswd"
+               >
+
+        <div class="descriptionWrapperClass" >
+          <div class="caption" id="descriptionId" >Post Description</div>
+          <div class="caption" id="monitorId" [ngClass]="succeededornot()"
+                                      *ngIf="error" >{{error}}</div>
+        </div>
+        <textarea id="passwdIn" class="inputs" maxlength="250"
+                  formControlName="description">
+        </textarea>
+
+        <button class="inputButtonUpload" type="submit"
+                 >Upload</button>
+      </form>
+    </div>
+  </div>
+</div>
