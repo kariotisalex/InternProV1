@@ -85,7 +85,6 @@ public class PostService {
 
 
     public Future<Void> deletePost(UUID userid, UUID postid){
-        String filename;
         return this.usersStore.findUserByUserid(userid)
                 .compose(res ->{
                     return this.commentStore.deleteByPostid(postid)

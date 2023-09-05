@@ -46,33 +46,7 @@ public class PostgresPostStore implements PostStore {
                     });
     }
 
-    @Override
-    public Future<Post> findPostByFilename(String filename) {
-        SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
-        return client
-                .preparedQuery("SELECT postid, createdate, updatedate," +
-                                          "description, userid " +
-                                    "FROM posts " +
-                                    "WHERE filename=($1)")
-                .execute(Tuple.of(filename))
-                .compose(rows -> {
-                    if (rows.iterator().hasNext()){
 
-                        UUID postid = rows.iterator().next().getUUID(0);
-                        LocalDateTime createdate = rows.iterator().next().getLocalDateTime(1);
-                        LocalDateTime updatedate = rows.iterator().next().getLocalDateTime(2);
-                        String description = rows.iterator().next().getString(3);
-                        UUID userid = rows.iterator().next().getUUID(4);
-                        final Post post = new Post(postid, createdate,updatedate, filename, description, userid);
-
-                        client.close();
-                        return Future.succeededFuture(post);
-                    }else {
-                        client.close();
-                        return Future.failedFuture(new NullPointerException());
-                    }
-                });
-    }
 
     @Override
     public Future<Post> findPostByPostid(UUID postid) {
@@ -91,7 +65,9 @@ public class PostgresPostStore implements PostStore {
                         String filename          = row.getString(3);
                         String description       = row.getString(4);
                         UUID userid              = row.getUUID(5);
-                        final Post post = new Post(postid, createdate, updatedate, filename, description, userid);
+
+                        final Post post = new Post(postid, createdate,
+                                updatedate, filename, description, userid);
 
                         client.close();
                         return Future.succeededFuture(post);

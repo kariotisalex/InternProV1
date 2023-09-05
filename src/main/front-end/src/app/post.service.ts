@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
+import {Post} from "./post";
+import {Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +27,7 @@ export class PostService {
       });
   }
 
-  getPostsById(){
-
+  getPostsById(uid : string) : Observable<Post[]>{
+    return this.http.get<Post[]>(`/api/user/${uid}/posts`);
   }
 }

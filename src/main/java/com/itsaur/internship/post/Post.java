@@ -13,11 +13,21 @@ public class Post {
     private String description;
     private UUID userid;
 
-    // For Storing
+    // For Retrieving
     public Post(UUID postid, LocalDateTime createdDate, LocalDateTime updatedDate, String filename, String description, UUID userid) {
         this.postid = postid;
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;
+        this.filename = filename;
+        this.description = description;
+        this.userid = userid;
+    }
+    public Post(
+            UUID postid, LocalDateTime createdDate,
+               String filename, String description, UUID userid
+    ) {
+        this.postid = postid;
+        this.createdDate = createdDate;
         this.filename = filename;
         this.description = description;
         this.userid = userid;

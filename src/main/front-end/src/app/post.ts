@@ -1,5 +1,7 @@
 export interface Post {
-  pid : String,
-  filename : String,
-  description : String
+  pid : string,
+  createdate : string,
+  filename : string,
+  description : string,
+  uid : string
 }
