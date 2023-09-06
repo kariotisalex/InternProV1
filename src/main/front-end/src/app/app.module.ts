@@ -18,6 +18,7 @@ import { SettingsComponent } from './profile/settings/settings.component';
 import { PostsComponent } from './profile/posts/posts.component';
 import { SearchComponent } from './search/search.component';
 import { AddPostComponent } from './add-post/add-post.component';
+import { PostDetailsComponent } from './profile/posts/post-details/post-details.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { AddPostComponent } from './add-post/add-post.component';
     HomePageComponent,
     ProfileComponent,
     PostsComponent,
-    SearchComponent
+    SearchComponent,
+    PostDetailsComponent
 
   ],
     imports: [

@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record PostQueryModel(UUID postid,
-                             LocalDateTime createdDate,
+                             String createdDate,
                              String filename,
                              String description,
                              UUID userid) {

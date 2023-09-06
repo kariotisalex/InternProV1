@@ -1,13 +1,17 @@
 package com.itsaur.internship.post;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Post {
 
     private UUID postid;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:sss")
     private LocalDateTime createdDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:sss")
     private LocalDateTime updatedDate;
     private String filename;
     private String description;

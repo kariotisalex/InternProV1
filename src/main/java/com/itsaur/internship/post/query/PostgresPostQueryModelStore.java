@@ -33,41 +33,81 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
         return client
                 .preparedQuery("SELECT postid, createdate, filename,description,userid  " +
                                   "FROM posts " +
-                                  "WHERE userid=($1) ")
+                                  "WHERE userid=($1)" +
+                        "ORDER BY (createdate) DESC ")
                 .execute(Tuple.of(String.valueOf(uid)))
                 .onFailure(e -> {
+                    client.close();
                     e.printStackTrace();
                 })
                 .compose(rows -> {
 
                     List<PostQueryModel> listofposts = new ArrayList<>();
-
-                    for (Row row : rows){
-
-
-
-                        UUID postid                 = row.getUUID(0);
-                        LocalDateTime createdate    = row.getLocalDateTime(1);
-                        String filename             = row.getString(2);
-                        String description          = row.getString(3);
-                        UUID userid                 = row.getUUID(4);
-
-                        PostQueryModel postQueryModel =
-                                new PostQueryModel(postid, createdate,
-                                        filename,description, userid);
-                        System.out.println(postQueryModel);
-                        listofposts.add(postQueryModel);
-
-
+                    if (rows.iterator().hasNext()){
+                        for (Row row : rows){
+                            UUID postid                 = row.getUUID(0);
+                            String createdate           = String.valueOf(row.getLocalDateTime(1));
+                            String filename             = row.getString(2);
+                            String description          = row.getString(3);
+                            UUID userid                 = row.getUUID(4);
+                            listofposts.add(
+                                    new PostQueryModel(postid, createdate,
+                                            filename,description, userid)
+                            );
+                        }
+                        client.close();
+                        return Future.succeededFuture(listofposts);
+                    }else {
+                        client.close();
+                        return Future.failedFuture(new IllegalArgumentException("There is no post!"));
                     }
-                    return Future.succeededFuture(listofposts);
+
+
                 }).onFailure(e ->{
+                    client.close();
                     e.printStackTrace();
                 });
     }
     @Override
     public Future<PostQueryModel> findById(UUID postId) {
-        return null;
+        SqlClient client = PgPool.client(vertx,connectOptions, poolOptions);
+
+        return client
+                .preparedQuery("SELECT postid, createdate, filename,description,userid  " +
+                        "FROM posts " +
+                        "WHERE postid=($1)")
+                .execute(Tuple.of(String.valueOf(postId)))
+                .onFailure(err ->{
+                    client.close();
+                    err.printStackTrace();
+                })
+                .compose(rows -> {
+
+                    if (rows.iterator().hasNext()){
+
+                        Row row = rows.iterator().next();
+
+                        UUID postid = row.getUUID(0);
+                        String createdate = String.valueOf(row.getLocalDateTime(1));
+                        String filename = row.getString(2);
+                        String description = row.getString(3);
+                        UUID userid = row.getUUID(4);
+
+                        PostQueryModel postQueryModel = new PostQueryModel(postid, createdate,
+                                filename,description, userid);
+                        System.out.println(postQueryModel);
+                        client.close();
+                        return Future.succeededFuture(postQueryModel);
+
+                    }else {
+
+                        client.close();
+                        return Future.failedFuture(new IllegalArgumentException("There is no post!"));
+                    }
+                }).onFailure(err -> {
+                    client.close();
+                    //err.printStackTrace();
+                });
     }
 
     @Override

@@ -278,50 +278,40 @@ public class VerticleApi extends AbstractVerticle {
                                     });
                 });
 
+
+
+
+        router
+                .get("/user/:userId/post/:postid")
+                .handler(ctx -> {
+                    UUID postid = UUID.fromString(ctx.pathParam("postid"));
+                    this.postQueryModelStore.findById(postid)
+                            .onSuccess(res -> {
+                                System.out.println();
+                                ctx.response().setStatusCode(200).end(Json.encode(res));
+                            })
+                            .onFailure(err -> {
+                                ctx.response().setStatusCode(400).end();
+                            });
+
+
+                });
+
+
+
+
+
+
+
+
+
+
+
         router
                 .get("/post/:filename")
                 .handler(ctx -> {
                     ctx.response().sendFile(String.valueOf(Paths.get("images",ctx.pathParam("filename")).toAbsolutePath()));
                 });
-
-
-        router
-                .get("/test")
-                .handler(ctx -> {
-                    ctx.response().sendFile("/home/kariotis@ad.itsaur.com/IdeaProjects/kariotis-internship/images/16c44987-ca8c-4ecb-99d1-ec26d7dadb5f.png");
-
-                    ctx.end();
-                });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         server.requestHandler(router).listen(8080);
 
 

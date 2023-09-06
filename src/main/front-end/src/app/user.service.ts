@@ -9,11 +9,11 @@ import {HttpClient} from "@angular/common/http";
 })
 export class UserService {
 
-  user! : User
-  //   = {
-  //   uid:"000",
-  //   username:"Alex Mock User"
-  // }
+  user : User
+    = {
+    uid:"ef1bf370-c6fd-43a2-963a-df11793b4296",
+    username:"asdf"
+  }
   ;
 
   constructor(

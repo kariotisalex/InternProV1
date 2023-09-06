@@ -1,0 +1,15 @@
+.fullWrapper{
+  display: grid;
+  grid-template-columns: minmax(400px,auto) 200px;
+
+
+}
+.wrapperDetail{
+  margin: auto;
+  border: 1px solid black;
+
+}
+.detailImg{
+  width: 400px;
+  height: 400px;
+}

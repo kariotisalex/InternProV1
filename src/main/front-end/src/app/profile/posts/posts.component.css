@@ -1,6 +1,26 @@
+.results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(235px, auto));
+  column-gap: 5px;
+
+  row-gap: 14px;
+  overflow: scroll;
+  max-height: 100%;
+
+}
+.listing{
+
+  /*border: 1px solid black;*/
+
+}
 .listing-photo {
-  height: 200px;
-  width: 200px;
+  display: flow;
+  height: 230px;
+  width: 230px;
   object-fit: cover;
+
   border-radius: 30px;
+  /*border: 1px solid black;*/
+  margin: auto;
+
 }

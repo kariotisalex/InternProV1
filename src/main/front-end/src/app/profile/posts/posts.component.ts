@@ -11,7 +11,7 @@ import {map} from "rxjs";
   styleUrls: ['./posts.component.css']
 })
 export class PostsComponent implements OnInit{
-  posts! : Post[] ;
+
   constructor(
     private postService : PostService,
     private userService : UserService
@@ -19,6 +19,9 @@ export class PostsComponent implements OnInit{
 
   get user() : User {
     return this.userService.getUser();
+  }
+  get posts() : Post[]{
+    return this.postService.posts;
   }
 
   ngOnInit(){
@@ -31,7 +34,7 @@ export class PostsComponent implements OnInit{
        .subscribe({
          next: x => {
            console.log(x);
-           this.posts = x;
+           this.postService.posts = x ;
          },
          error: err => {
            console.log(err.error);

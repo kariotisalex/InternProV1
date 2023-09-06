@@ -11,7 +11,7 @@
 .profileNestedA{
   /*border: 1px solid black;*/
   display: grid;
-  grid-template-columns: 250px minmax(auto,55%) minmax(50px,auto);
+  grid-template-columns: minmax(auto,250px) minmax(auto,55%) 100px;
 
 }
 .profileNestedB{
@@ -51,6 +51,7 @@
 }
 .settingButtonDiv{
   display: flex;
+  margin-left: 0px;
   /*border: 1px solid black;*/
   text-orientation: mixed;
 }

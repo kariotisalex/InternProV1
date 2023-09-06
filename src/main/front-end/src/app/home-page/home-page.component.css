@@ -4,11 +4,12 @@
   margin-top: 5px;
   grid-column-gap: 5px;
   /*border: 1px solid black;*/
+  min-height: 600px;
+  max-height: 600px;
 }
 
 .grid-item {
 
-  min-height: 600px;
   background: rgba(255, 255, 255, 0.38);
   border-radius: 16px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -20,8 +21,10 @@
 .left{
   /*border: 1px solid black;*/
   display: grid;
-  grid-template-rows: 10% 80% 10%;
+  grid-template-rows: 60px 475px 60px;
   padding: 4%;
+  min-height: 600px;
+  max-height: 600px;
 }
 
 .leftNested{
@@ -91,7 +94,7 @@
   max-width: 800px;
 }
 
-@media screen and (max-width: 1000px){
+@media screen and (max-width: 1080px){
   .left{
     display: none;
   }

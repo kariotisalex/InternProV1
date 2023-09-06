@@ -6,8 +6,11 @@ import {Observable} from "rxjs";
 @Injectable({
   providedIn: 'root'
 })
-export class PostService {
 
+
+
+export class PostService {
+  posts! : Post[] ;
   constructor(
     private http : HttpClient
   ) { }
@@ -29,5 +32,9 @@ export class PostService {
 
   getPostsById(uid : string) : Observable<Post[]>{
     return this.http.get<Post[]>(`/api/user/${uid}/posts`);
+  }
+
+  getPostByPostid(uid : String, postid : String) : Observable<Post> {
+    return this.http.get<Post>(`/api/user/${uid}/post/${postid}`);
   }
 }
