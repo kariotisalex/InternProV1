@@ -1,15 +1,43 @@
 .fullWrapper{
   display: grid;
-  grid-template-columns: minmax(400px,auto) 200px;
-
-
-}
-.wrapperDetail{
-  margin: auto;
+  grid-template-columns: minmax(400px,auto) 280px;
   border: 1px solid black;
+  max-height: 420px;
 
 }
-.detailImg{
-  width: 400px;
-  height: 400px;
+.wrapperImg{
+  margin: auto;
 }
+
+.detailImg{
+  width: 420px;
+  height: 420px;
+  object-fit: contain;
+}
+
+.wrapperSecColumn{
+  display: grid;
+  grid-template-rows: 50px 320px 40px;
+  border: 1px solid black;
+  row-gap: 5px;
+}
+.nestedDesc{
+  border: 1px solid black;
+  padding: 2px;
+  font-size: large;
+  max-height: 200px;
+}
+.nestedComments{
+  border: 1px solid black;
+  overflow: scroll;
+  font-size: medium;
+}
+.usernmClass{
+  list-style-type: none;
+  margin: 0 3px 0 0;
+  padding: 0;
+}
+
+
+
+

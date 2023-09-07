@@ -1,12 +1,15 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Post} from "../../post";
-import {PostService} from "../../post.service";
-import {UserService} from "../../user.service";
-import {User} from "../../user";
+import {Post} from "../../services/interfaces/post";
+import {PostService} from "../../services/post.service";
+import {UserService} from "../../services/user.service";
+import {User} from "../../services/interfaces/user";
 import {map} from "rxjs";
+import {Router, RouterModule} from "@angular/router";
+import {HttpErrorResponse} from "@angular/common/http";
 
 @Component({
   selector: 'app-posts',
+
   templateUrl: './posts.component.html',
   styleUrls: ['./posts.component.css']
 })
@@ -14,7 +17,8 @@ export class PostsComponent implements OnInit{
 
   constructor(
     private postService : PostService,
-    private userService : UserService
+    private userService : UserService,
+    private router      : Router
   ) {}
 
   get user() : User {
@@ -27,21 +31,23 @@ export class PostsComponent implements OnInit{
   ngOnInit(){
      this.postService.getPostsById(this.user.uid)
        .pipe(map(x => x.map(z =>{
-         const y = z.filename;
-         z.filename = `/api/post/${y}`
-          return z;
+         z.filename = `/api/post/${z.filename}`
+         return z;
        })))
        .subscribe({
          next: x => {
-           console.log(x);
+
            this.postService.posts = x ;
          },
-         error: err => {
+         error: (err : HttpErrorResponse) => {
            console.log(err.error);
          }
        });
   }
 
+  postNav(pst : string){
+    this.router.navigateByUrl(`/home/profile/post/${pst}`);
+  }
 
 
 }

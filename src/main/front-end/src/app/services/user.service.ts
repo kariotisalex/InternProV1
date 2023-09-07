@@ -1,5 +1,5 @@
 import {inject, Injectable} from '@angular/core';
-import {User} from "./user";
+import {User} from "./interfaces/user";
 import {HttpClient} from "@angular/common/http";
 
 

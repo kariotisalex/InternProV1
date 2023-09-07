@@ -1,10 +1,32 @@
 <div class="fullWrapper">
-  <div class="wrapperDetail">
+  <div class="wrapperImg lefted">
     <div>
       <img [src]="post.filename" class="detailImg">
     </div>
-    <div>dose kati {{post.pid}}</div>
-
   </div>
+
+
+  <div class="wrapperSecColumn">
+    <div class="nestedDesc">
+      {{post.description}}
+    </div>
+    <div class="nestedComments">
+      <p *ngIf="!commentSwitch">There is no comments </p>
+      <div *ngIf="commentSwitch">
+        <ul  *ngFor="let comment of comments" class="usernmClass">
+          <li class="">{{comment.username}}: {{comment.comment}}</li>
+        </ul>
+      </div>
+
+    </div>
+    <div>
+
+        <textarea></textarea>
+        <button (click)="onSubmit()">Submit</button>
+
+
+    </div>
+  </div>
+
 
 </div>

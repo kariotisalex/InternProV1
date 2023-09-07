@@ -19,6 +19,7 @@ import { PostsComponent } from './profile/posts/posts.component';
 import { SearchComponent } from './search/search.component';
 import { AddPostComponent } from './add-post/add-post.component';
 import { PostDetailsComponent } from './profile/posts/post-details/post-details.component';
+import {ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { PostDetailsComponent } from './profile/posts/post-details/post-details.
         HttpClientModule,
         BrowserAnimationsModule,
         MatIconModule,
-        MatButtonModule
+        MatButtonModule,
+        ReactiveFormsModule
     ],
   providers: [],
   bootstrap: [AppComponent]

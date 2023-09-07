@@ -1,6 +1,8 @@
 <div class="results">
   <div class="listing" *ngFor="let post of posts">
-    <img class="listing-photo" [src]="post.filename" alt="Exterior photo of ">
+    <img class="listing-photo" [src]="post.filename"
+         alt="Exterior photo of {{post.postid}}"
+         (click)="postNav(post.postid)">
   </div>
 </div>
 

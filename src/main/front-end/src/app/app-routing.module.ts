@@ -7,7 +7,7 @@ import { PagenotfoundComponent } from "./pagenotfound/pagenotfound.component";
 import { HomePageComponent } from "./home-page/home-page.component";
 import { homeGuard } from "./home.guard";
 import {ProfileComponent} from "./profile/profile.component";
-import {User} from "./user";
+import {User} from "./services/interfaces/user";
 import {SignupComponent} from "./login/signup/signup.component";
 import {SettingsComponent} from "./profile/settings/settings.component";
 import {PostsComponent} from "./profile/posts/posts.component";

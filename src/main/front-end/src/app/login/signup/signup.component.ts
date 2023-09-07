@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {HttpErrorResponse} from "@angular/common/http";
 import {Router, RouterLink} from "@angular/router";
-import {UserService} from "../../user.service";
+import {UserService} from "../../services/user.service";
 import {CommonModule} from "@angular/common";
 
 @Component({

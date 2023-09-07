@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import {Router, RouterLink} from "@angular/router";
-import {UserService} from "../user.service";
+import {UserService} from "../services/user.service";
 import {CommonModule, Location} from "@angular/common";
-import {User} from "../user";
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {HttpClient, HttpErrorResponse} from "@angular/common/http";
-import {PostService} from "../post.service";
+import {User} from "../services/interfaces/user";
+import {FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
+import {PostService} from "../services/post.service";
 
 @Component({
   selector: 'app-add-post',
@@ -21,7 +20,6 @@ import {PostService} from "../post.service";
 export class AddPostComponent {
   error!          : String;
   succeed         : boolean = false;
-  // file! : File;
 
   constructor(
     private router      : Router,

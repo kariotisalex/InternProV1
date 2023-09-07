@@ -101,10 +101,9 @@
   .grid-container{
     min-height: 630px;
     display: grid;
-    grid-template-columns: 100%;
+    grid-template-columns: minmax(700px, auto);
+    margin: 3px;
 
   }
-
-
 }
 

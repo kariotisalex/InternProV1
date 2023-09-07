@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {Post} from "./post";
+import {HttpClient, HttpErrorResponse} from "@angular/common/http";
+import {Post} from "./interfaces/post";
 import {Observable} from "rxjs";
 
 @Injectable({
@@ -24,7 +24,7 @@ export class PostService {
         next: x => {
           console.log('this is correct ' + x);
         },
-        error: e => {
+        error: (e : HttpErrorResponse) => {
           console.log('This is error ' + e);
         }
       });

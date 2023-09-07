@@ -1,7 +1,7 @@
 export interface Post {
-  pid : string,
-  createdate : string,
+  postid : string,
+  createdDate : string,
   filename : string,
   description : string,
-  uid : string
+  userid : string
 }

@@ -2,6 +2,7 @@ package com.itsaur.internship;
 
 
 import com.itsaur.internship.comment.CommentService;
+import com.itsaur.internship.comment.query.CommentQueryModelStore;
 import com.itsaur.internship.post.PostService;
 import com.itsaur.internship.post.query.PostQueryModelStore;
 import com.itsaur.internship.user.UserService;
@@ -22,16 +23,20 @@ public class VerticleApi extends AbstractVerticle {
     final private CommentService commentService;
     final private PostService postService;
     final private PostQueryModelStore postQueryModelStore;
+    final private CommentQueryModelStore commentQueryModelStore;
 
 
 
     public VerticleApi(
-            UserService userService, CommentService commentService, PostService postService, PostQueryModelStore postQueryModelStore
+            UserService userService, CommentService commentService,
+            PostService postService, PostQueryModelStore postQueryModelStore,
+            CommentQueryModelStore commentQueryModelStore
     ) {
         this.userService = userService;
         this.commentService = commentService;
         this.postService = postService;
         this.postQueryModelStore = postQueryModelStore;
+        this.commentQueryModelStore = commentQueryModelStore;
 
         System.out.println("VerticleAPI : Start! (emerged by constructor)");
     }
@@ -137,6 +142,12 @@ public class VerticleApi extends AbstractVerticle {
                             });
                 });
 
+
+
+
+
+
+
         router
                 .post("/user/:userid/post")
                 .handler(BodyHandler
@@ -208,6 +219,13 @@ public class VerticleApi extends AbstractVerticle {
 
                 });
 
+
+
+
+
+
+        // Comment
+
         router
                 .post("/user/:userid/comment/:postid")
                 .handler(BodyHandler.create())
@@ -264,7 +282,8 @@ public class VerticleApi extends AbstractVerticle {
 
 
 
-//         Retrieve
+//         Retrieve Post
+//         Retrieve Post
 
         router
                 .get("/user/:userId/posts")
@@ -296,6 +315,30 @@ public class VerticleApi extends AbstractVerticle {
 
 
                 });
+
+
+
+//         Retrieve Comments
+//         Retrieve Comments
+
+
+
+        router
+                .get("/post/:postid/comments")
+                .handler(ctx -> {
+                    UUID postid = UUID.fromString(ctx.pathParam("postid"));
+                    this.commentQueryModelStore.findAllByPostId(postid)
+                            .onFailure(err -> {
+                                err.printStackTrace();
+                                ctx.response().setStatusCode(400).end("There is no comments!");
+                            })
+                            .onSuccess(res -> {
+
+                                ctx.response().setStatusCode(200).end(Json.encode(res));
+                            });
+                });
+
+
 
 
 

@@ -9,9 +9,7 @@ import java.util.UUID;
 public interface PostQueryModelStore {
     Future<PostQueryModel> findById(UUID postId);
 
-    Future<List<PostQueryModel>> findByUserId(UUID uid);
 
-    public Future<Post> findPostByFilename(String filename);
 
     public Future<List<PostQueryModel>> findAllByUid(UUID uid);
 }

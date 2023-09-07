@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Router, RouterLink} from "@angular/router";
-import {UserService} from "../../user.service";
-import {User} from "../../user";
+import {UserService} from "../../services/user.service";
+import {User} from "../../services/interfaces/user";
 import {FormControl, FormGroup, ReactiveFormsModule, Validator, Validators} from "@angular/forms";
 import {CommonModule} from "@angular/common";
 import { Location } from "@angular/common";
