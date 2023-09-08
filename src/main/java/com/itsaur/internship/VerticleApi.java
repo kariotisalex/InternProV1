@@ -194,7 +194,7 @@ public class VerticleApi extends AbstractVerticle {
 
                     this.postService.updatePost(userid, postid,description)
                             .onSuccess(s -> {
-                                ctx.response().setStatusCode(200).end();
+                                ctx.response().setStatusCode(200).end("Post description updated!");
                             })
                             .onFailure(e -> {
                                 System.out.println(e);
@@ -239,7 +239,7 @@ public class VerticleApi extends AbstractVerticle {
                                 ctx.response().setStatusCode(200).end(comment);
                             })
                             .onFailure(e -> {
-                                ctx.response().setStatusCode(400).end();
+                                ctx.response().setStatusCode(400).end(e.getMessage());
                             });
                 });
 
@@ -252,11 +252,11 @@ public class VerticleApi extends AbstractVerticle {
                     String comment = ctx.body().asJsonObject().getString("comment");
                     this.commentService.changeComment(userid, commentid, comment)
                             .onSuccess(s ->{
-                                ctx.response().setStatusCode(200).end();
+                                ctx.response().setStatusCode(200).end("The comment updated!");
                             })
                             .onFailure(e -> {
                                 e.printStackTrace();
-                                ctx.response().setStatusCode(400).end();
+                                ctx.response().setStatusCode(400).end("The comment is not updated!");
 
                             });
                 });
@@ -265,13 +265,14 @@ public class VerticleApi extends AbstractVerticle {
                 .handler(ctx -> {
                     UUID userid = UUID.fromString(ctx.pathParam("userid"));
                     UUID commentid = UUID.fromString(ctx.pathParam("commentid"));
-
+                    String success = "Comment deleted!";
+                    String failed = "Comment deleted unsuccessfully!";
                     this.commentService.deleteComment(userid, commentid)
                             .onFailure(e -> {
-                                ctx.response().setStatusCode(400).end();
+                                ctx.response().setStatusCode(400).end(failed);
                             })
                             .onSuccess(s -> {
-                                ctx.response().setStatusCode(200).end();
+                                ctx.response().setStatusCode(200).end(success);
                             });
                 });
 

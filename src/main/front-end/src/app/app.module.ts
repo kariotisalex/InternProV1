@@ -19,7 +19,8 @@ import { PostsComponent } from './profile/posts/posts.component';
 import { SearchComponent } from './search/search.component';
 import { AddPostComponent } from './add-post/add-post.component';
 import { PostDetailsComponent } from './profile/posts/post-details/post-details.component';
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {CommonModule} from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -28,8 +29,9 @@ import {ReactiveFormsModule} from "@angular/forms";
     HomePageComponent,
     ProfileComponent,
     PostsComponent,
-    SearchComponent,
-    PostDetailsComponent
+    PostDetailsComponent,
+    SearchComponent
+
 
   ],
     imports: [
@@ -40,7 +42,9 @@ import {ReactiveFormsModule} from "@angular/forms";
         BrowserAnimationsModule,
         MatIconModule,
         MatButtonModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        FormsModule,
+        CommonModule
     ],
   providers: [],
   bootstrap: [AppComponent]

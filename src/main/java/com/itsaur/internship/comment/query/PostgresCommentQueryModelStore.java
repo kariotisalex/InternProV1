@@ -32,7 +32,8 @@ public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
         return client
                 .preparedQuery("SELECT C.commentid, C.createdate, C.comment, C.userid, U.username, C.postid " +
                         "FROM posts AS P , comments AS C, users AS U " +
-                        "WHERE P.postid = C.postid AND U.userid = P.userid AND P.postid=($1)")
+                        "WHERE P.postid = C.postid AND U.userid = P.userid AND P.postid=($1)" +
+                        "ORDER BY (createdate) DESC")
                 .execute(Tuple.of(String.valueOf(postid)))
                 .onFailure(err -> {
                     err.printStackTrace();
@@ -42,6 +43,7 @@ public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
 
                     if (rows.iterator().hasNext()){
                         for (Row row : rows){
+
                             String commentid    = String.valueOf(row.getUUID("commentid"));
                             String createdate   = String.valueOf(row.getLocalDateTime("createdate"));
                             String comment      = row.getString("comment");

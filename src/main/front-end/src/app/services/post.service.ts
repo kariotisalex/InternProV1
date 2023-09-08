@@ -37,4 +37,11 @@ export class PostService {
   getPostByPostid(uid : String, postid : String) : Observable<Post> {
     return this.http.get<Post>(`/api/user/${uid}/post/${postid}`);
   }
+
+  updateDesc(uid : string, pid : string, desc : string) : Observable<String>{
+    const body = {
+      'desc':desc
+    }
+    return this.http.put(`/api/user/${uid}/post/${pid}`,body,{responseType: 'text'})
+  }
 }

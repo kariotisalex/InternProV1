@@ -14,6 +14,9 @@ import {PostsComponent} from "./profile/posts/posts.component";
 import {SearchComponent} from "./search/search.component";
 import {AddPostComponent} from "./add-post/add-post.component";
 import {PostDetailsComponent} from "./profile/posts/post-details/post-details.component";
+import {BrowserModule} from "@angular/platform-browser";
+import {FormsModule} from "@angular/forms";
+import {NgModel} from "@angular/forms";
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full'},
@@ -39,6 +42,8 @@ const routes: Routes = [
   declarations: [],
   imports: [
     CommonModule,
+    BrowserModule,
+    FormsModule,
     RouterModule.forRoot(routes)
   ],
   exports:[
