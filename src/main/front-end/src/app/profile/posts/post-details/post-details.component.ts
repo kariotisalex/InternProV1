@@ -3,7 +3,7 @@ import {Post} from "../../../services/interfaces/post";
 import {PostService} from "../../../services/post.service";
 import {UserService} from "../../../services/user.service";
 import {User} from "../../../services/interfaces/user";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {map} from "rxjs";
 import {CommentService} from "../../../services/comment.service";
 import {HttpErrorResponse} from "@angular/common/http";
@@ -28,7 +28,8 @@ export class PostDetailsComponent implements OnInit{
     private postService : PostService,
     private userService : UserService,
     private route : ActivatedRoute,
-    private commentService : CommentService
+    private commentService : CommentService,
+    private router : Router
   ){}
 
   ngOnInit() {
@@ -159,7 +160,12 @@ export class PostDetailsComponent implements OnInit{
     this.uid = this.userService.getUid();
 
   }
+  deletePostCalling(){
+    this.isUpdateCommentTabEnable  = true;
+    this.isUpdateDescTabEnable  = true;
+    this.uid = this.userService.getUid();
 
+  }
 
 
 
@@ -179,7 +185,7 @@ export class PostDetailsComponent implements OnInit{
         }
       })
   }
-  deleteButtonFunc(){
+  deleteCommentButtonFunc(){
     if (confirm("Are you sure?")){
       this.commentService.deleteComment(this.uid, this.cid)
         .subscribe({
@@ -216,5 +222,25 @@ export class PostDetailsComponent implements OnInit{
 
     }
 
+  }
+
+  deletePostButtonFunc(){
+    const pid = this.route.snapshot.paramMap.get('id');
+    if(pid) {
+      this.postService.deletePost(this.uid,pid)
+        .subscribe({
+          next: x =>{
+            this.postsNav();
+          },
+          error: err =>{
+            console.log(err.error)
+          }
+        })
+    }
+  }
+
+
+  postsNav(){
+    this.router.navigateByUrl('/home/profile/posts');
   }
 }

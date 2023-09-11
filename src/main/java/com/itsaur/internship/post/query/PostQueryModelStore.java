@@ -12,4 +12,7 @@ public interface PostQueryModelStore {
 
 
     public Future<List<PostQueryModel>> findAllByUid(UUID uid);
+
+    public Future<String> countAllPostsbyUid(UUID uid);
+    public Future<List<PostQueryModel>> findAllByUid(UUID uid, String startWith, String endTo);
 }

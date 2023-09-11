@@ -15,6 +15,8 @@ import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class VerticleApi extends AbstractVerticle {
@@ -298,6 +300,39 @@ public class VerticleApi extends AbstractVerticle {
                                     });
                 });
 
+        router
+                .get("/user/:userId/posts/page")
+                .handler(ctx -> {
+                    String startFrom = ctx.request().getParam("startFrom");
+                    String endTo = ctx.request().getParam("endTo");
+                    System.out.println(startFrom + " and " + endTo);
+                    if (startFrom != null && endTo != null){
+                        this.postQueryModelStore.findAllByUid(UUID.fromString(ctx.pathParam("userId")),startFrom,endTo)
+                                .onSuccess(posts -> {
+                                    ctx.response().setStatusCode(200).end(Json.encode(posts));
+                                })
+                                .onFailure(err -> {
+                                    ctx.response().setStatusCode(400).end("There is not posts!");
+                                });
+                    }else {
+                        ctx.response().setStatusCode(400).end("check the null values!");
+                    }
+
+                });
+
+        router
+                .get("/user/:userId/posts/count")
+                .handler(ctx -> {
+                    this.postQueryModelStore.countAllPostsbyUid(UUID.fromString(ctx.pathParam("userId")))
+                            .onSuccess(count -> {
+                                ctx.response().setStatusCode(200).end(count);
+                            })
+                            .onFailure(err -> {
+                                err.printStackTrace();
+                                ctx.response().setStatusCode(400).end("0");
+                            });
+                });
+
 
 
 
@@ -316,6 +351,8 @@ public class VerticleApi extends AbstractVerticle {
 
 
                 });
+
+
 
 
 

@@ -1,0 +1,20 @@
+.searchCaption{
+  margin: 0;
+
+}
+.wrapperSearch{
+  display: grid;
+  grid-template-rows: 10% 90%;
+  border: 1px solid black;
+  margin: 15px;
+}
+
+.nestedSecondRow{
+  min-height: 550px;
+}
+
+ul{
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}

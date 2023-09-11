@@ -1,7 +1,7 @@
 <div class="fullWrapper">
   <div class="wrapperImg lefted">
     <div>
-      <img [src]="post.filename" class="detailImg">
+      <img (click)="deletePostCalling()" [src]="post.filename" class="detailImg">
     </div>
   </div>
 
@@ -17,8 +17,8 @@
           <li (click)="updateCommentCalling(comment.commentid, comment.comment)">{{comment.username}}: {{comment.comment}}</li>
         </ul>
       </div>
-
     </div>
+
 <!--    Create Comment -->
     <div class="nestedCommentNewComment" *ngIf="!isUpdateCommentTabEnable && !isUpdateDescTabEnable">
 
@@ -39,9 +39,10 @@
       <div class="submitButtonClass">
         <button class="updateButtonClass" (click)="updateButtonFunc(valuees)">Update</button>
       </div>
-      <div ><button class="deleteButtonClass" (click)="deleteButtonFunc()">Delete</button></div>
+      <div ><button class="deleteButtonClass" (click)="deleteCommentButtonFunc()">Delete</button></div>
     </div>
-    <!-- Update Description -->
+
+<!-- Update Description -->
     <div class="nestedDescUpdateOrDelete" *ngIf="!isUpdateCommentTabEnable && isUpdateDescTabEnable">
       <div><button (click)="backbuttonfunc()" class="backButtonComment"><</button></div>
       <div class="textareas">
@@ -52,8 +53,19 @@
       </div>
     </div>
 
+<!-- Delete Post -->
+    <div class="nestedDeletePost" *ngIf="isUpdateCommentTabEnable && isUpdateDescTabEnable">
 
-
+      <div class="textareas">
+        <p>Do you want to delete this post?</p>
+      </div>
+      <div class="submitButtonClass">
+        <button class="deleteButtonClass" (click)="backbuttonfunc()">No</button>
+      </div>
+      <div>
+        <button class="updateButtonClass" (click)="deletePostButtonFunc()">Yes</button>
+      </div>
+    </div>
 
   </div>
 </div>

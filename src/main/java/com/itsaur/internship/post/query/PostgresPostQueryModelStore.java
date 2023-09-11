@@ -69,6 +69,28 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                     e.printStackTrace();
                 });
     }
+
+    @Override
+    public Future<String> countAllPostsbyUid(UUID uid) {
+        SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
+        return client
+                .preparedQuery("SELECT count(filename) " +
+                        "FROM posts " +
+                        "WHERE userid=($1)")
+                .execute(Tuple.of(String.valueOf(uid)))
+                .onFailure(e -> {
+                    client.close();
+                    e.printStackTrace();
+                })
+                .compose(rows ->{
+                    if(rows.iterator().hasNext()){
+                        return Future.succeededFuture(String.valueOf(rows.iterator().next().getLong("count")));
+                    }else{
+                        return Future.failedFuture(new IllegalArgumentException("There is no posts!"));
+                    }
+                });
+    }
+
     @Override
     public Future<PostQueryModel> findById(UUID postId) {
         SqlClient client = PgPool.client(vertx,connectOptions, poolOptions);
@@ -109,6 +131,49 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                 }).onFailure(err -> {
                     client.close();
                     //err.printStackTrace();
+                });
+    }
+    @Override
+    public Future<List<PostQueryModel>> findAllByUid(UUID uid, String startWith, String endTo){
+        SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
+        return client
+                .preparedQuery("SELECT postid, createdate, filename,description,userid  " +
+                        "FROM posts " +
+                        "WHERE userid=($1)" +
+                        "ORDER BY (createdate) DESC " +
+                        "OFFSET ($2) ROWS FETCH FIRST ($3) ROWS ONLY")
+                .execute(Tuple.of(String.valueOf(uid),Long.valueOf(startWith),Long.valueOf(endTo)))
+                .onFailure(e -> {
+                    client.close();
+                    e.printStackTrace();
+                })
+                .compose(rows -> {
+
+                    List<PostQueryModel> listofposts = new ArrayList<>();
+                    if (rows.iterator().hasNext()){
+                        for (Row row : rows){
+                            String postid                 = String.valueOf(row.getUUID(0));
+                            String createdate             = String.valueOf(row.getLocalDateTime(1));
+                            String filename               = row.getString(2);
+                            String description            = row.getString(3);
+                            String userid                 = String.valueOf(row.getUUID(4));
+
+                            listofposts.add(
+                                    new PostQueryModel(postid, createdate,
+                                            filename,description, userid)
+                            );
+                        }
+                        client.close();
+                        return Future.succeededFuture(listofposts);
+                    }else {
+                        client.close();
+                        return Future.failedFuture(new IllegalArgumentException("There is no post!"));
+                    }
+
+
+                }).onFailure(e ->{
+                    client.close();
+                    e.printStackTrace();
                 });
     }
 

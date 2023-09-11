@@ -41,6 +41,7 @@ export class UserService {
                    new     : newPassword     }
     return this.http.put(`/api/user/${uid}/password`, body);
   }
+
   delete(uid : String){
     return this.http.delete(`/api/user/${uid}`);
 

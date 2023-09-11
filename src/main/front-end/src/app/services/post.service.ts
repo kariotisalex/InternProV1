@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpErrorResponse} from "@angular/common/http";
+import {HttpClient, HttpErrorResponse, HttpParams} from "@angular/common/http";
 import {Post} from "./interfaces/post";
 import {Observable} from "rxjs";
 
@@ -10,6 +10,7 @@ import {Observable} from "rxjs";
 
 
 export class PostService {
+  numberOfPosts! : number;
   posts! : Post[] ;
   constructor(
     private http : HttpClient
@@ -19,15 +20,7 @@ export class PostService {
     const formObj = new FormData();
     formObj.append('file', file);
     formObj.append('desc', desc);
-    this.http.post(`/api/user/${uid}/post`,formObj)
-      .subscribe({
-        next: x => {
-          console.log('this is correct ' + x);
-        },
-        error: (e : HttpErrorResponse) => {
-          console.log('This is error ' + e);
-        }
-      });
+    return this.http.post(`/api/user/${uid}/post`,formObj, {responseType: "text"});
   }
 
   getPostsById(uid : string) : Observable<Post[]>{
@@ -44,4 +37,23 @@ export class PostService {
     }
     return this.http.put(`/api/user/${uid}/post/${pid}`,body,{responseType: 'text'})
   }
+
+  deletePost(uid : string, pid : string){
+    return this.http.delete(`/api/user/${uid}/post/${pid}`)
+  }
+
+  countPosts(uid : string) : Observable<number>{
+    return this.http.get<number>(`/api/user/${uid}/posts/count`);
+  }
+
+  getPostsByUserid(uid : String, startFrom : String, endTo : String){
+    const params = new HttpParams()
+      .set('startFrom', startFrom as string)
+      .set('endTo',endTo as string);
+    debugger;
+    return this.http.get<Post[]>(`/api/user/${uid}/posts/page`, {params: params});
+  }
+
+
+
 }

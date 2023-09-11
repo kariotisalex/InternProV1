@@ -5,6 +5,7 @@ import {CommonModule, Location} from "@angular/common";
 import {User} from "../services/interfaces/user";
 import {FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {PostService} from "../services/post.service";
+import {HttpErrorResponse} from "@angular/common/http";
 
 @Component({
   selector: 'app-add-post',
@@ -44,7 +45,16 @@ export class AddPostComponent {
 
     const file = event.currentTarget[0].files[0];
     const desc = this.addPostHandling.value.description as string;
-    this.postService.addPost(uid, file, desc);
+    this.postService.addPost(uid, file, desc)
+      .subscribe({
+        next: x => {
+          console.log('this is correct ' + x);
+          this.router.navigateByUrl('/home/profile/posts');
+        },
+        error: (e : HttpErrorResponse) => {
+          console.log('This is error ' + e);
+        }
+      });
 
 
   }
