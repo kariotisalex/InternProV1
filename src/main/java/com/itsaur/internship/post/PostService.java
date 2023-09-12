@@ -8,7 +8,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -33,8 +33,15 @@ public class PostService {
                     e.printStackTrace();
                 })
                 .compose(user -> {
-                    Post post = new Post(filename, description,user.getUserid());
-                    return this.postStore.insert(post);
+                    ;
+                    return this.postStore.insert(
+                            new Post(
+                                    UUID.randomUUID(),
+                                    OffsetDateTime.now(),
+                                    null,
+                                    filename,
+                                    description,
+                                    user.userid()));
                 });
     }
 
@@ -43,10 +50,17 @@ public class PostService {
                 .compose(res -> {
                     User user = res.resultAt(0);
                     Post post = res.resultAt(1);
-                    if (post.getUserid().equals(user.getUserid())){
-                        post.setUpdatedDate(LocalDateTime.now());
-                        post.setDescription(description);
-                        return this.postStore.updatePost(post);
+                    if (post.userid().equals(user.userid())){
+
+                        return this.postStore.updatePost(new Post(
+                                post.postid(),
+                                post.createdDate(),
+                                OffsetDateTime.now(),
+                                post.filename(),
+                                description,
+                                post.userid()
+
+                        ));
                     }else{
                         System.out.println("There is no match between user and post!");
                         return Future.failedFuture(new IllegalArgumentException("There is no match between user and post!"));
@@ -66,8 +80,8 @@ public class PostService {
                         List<Future<Void>> futureList = res
                                 .stream()
                                 .map(w -> {
-                                    System.out.println("asd "+w.getFilename());
-                                    return deletePost(w.getUserid(),w.getPostid());
+                                    System.out.println("asd "+w.filename());
+                                    return deletePost(w.userid(),w.postid());
                                 })
                                 .collect(Collectors.toList());
                     //System.out.println(futureList);
@@ -95,7 +109,7 @@ public class PostService {
                                                     .compose(re -> {
                                                         return vertx
                                                                 .fileSystem()
-                                                                .delete(String.valueOf(Paths.get("images", w.getFilename()).toAbsolutePath()))
+                                                                .delete(String.valueOf(Paths.get("images", w.filename()).toAbsolutePath()))
                                                                 .onFailure(e -> {
                                                                     e.printStackTrace();
                                                                 });

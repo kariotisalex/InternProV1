@@ -47,9 +47,9 @@ export class PostsComponent implements OnInit{
               this.pages.push(i);
             }
           }else {
-            // for (let i = 1; i <= (x / this.postsPerPage); i++){
-            //   this.pages.push(i);
-            // }
+            for (let i = 1; i <= (x / this.postsPerPage); i++){
+              this.pages.push(i);
+            }
           }
 
         },error: err => {
@@ -59,17 +59,11 @@ export class PostsComponent implements OnInit{
   }
 
   getPosts(page : number){
-    let startFrom : Number;
-
-    if (page == 1){
-      startFrom = 1;
-    }else{
-      startFrom = (page - 1) * this.postsPerPage;
-    }
+    let startFrom : number = (page - 1) * this.postsPerPage;
 
     this.postService.getPostsByUserid(this.user.uid,
-      startFrom as unknown as String,
-      this.postsPerPage as unknown as String)
+      startFrom ,
+      this.postsPerPage )
       .pipe(map(x => x.map(z =>{
         z.filename = `/api/post/${z.filename}`
         return z;
@@ -85,7 +79,7 @@ export class PostsComponent implements OnInit{
       });
   }
   postNav(pst : string){
-    this.router.navigateByUrl(`/home/profile/post/${pst}`);
+    this.router.navigateByUrl(`/home/post/${pst}`);
   }
 
 

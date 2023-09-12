@@ -5,7 +5,7 @@ import com.itsaur.internship.post.PostStore;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 public class UserService {
@@ -28,7 +28,7 @@ public class UserService {
                  .otherwiseEmpty()
                  .compose(q -> {
                     if (q == null)
-                        return usersStore.insert(new User(UUID.randomUUID(), LocalDateTime.now(), username, password));
+                        return usersStore.insert(new User(UUID.randomUUID(), OffsetDateTime.now(),null, username, password));
                     else
                         return Future.failedFuture(new IllegalArgumentException("User exists!"));
                  });
@@ -78,10 +78,15 @@ public class UserService {
                 })
                 .compose(user -> {
                     if (user.isPasswordEqual(currentPassword)){
-                        user.setUpdatedate(LocalDateTime.now());
-                        user.setPassword(newPassword);
 
-                        return usersStore.update(user);
+                        return usersStore.update(
+                                new User(
+                                        user.userid(),
+                                        user.createdate(),
+                                        OffsetDateTime.now(),
+                                        user.username(),
+                                        newPassword
+                                ));
                     }else {
                         return Future.failedFuture(new IllegalArgumentException("Password is wrong."));
                     }

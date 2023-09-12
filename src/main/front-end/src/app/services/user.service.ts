@@ -11,7 +11,7 @@ export class UserService {
 
   user : User
     = {
-    uid:"ef1bf370-c6fd-43a2-963a-df11793b4296",
+    uid:"12cfaf83-6928-4bd6-9886-a17b77c5e626",
     username:"asdf"
   }
   ;

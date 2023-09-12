@@ -1,6 +1,5 @@
 package com.itsaur.internship.post.query;
 
-import com.itsaur.internship.post.Post;
 import io.vertx.core.Future;
 
 import java.util.List;
@@ -11,8 +10,8 @@ public interface PostQueryModelStore {
 
 
 
-    public Future<List<PostQueryModel>> findAllByUid(UUID uid);
+    public Future<List<PostQueryModel>> findPostPageByUid(UUID uid);
 
     public Future<String> countAllPostsbyUid(UUID uid);
-    public Future<List<PostQueryModel>> findAllByUid(UUID uid, String startWith, String endTo);
+    public Future<List<PostQueryModel>> findPostPageByUid(UUID uid, int startWith, int endTo);
 }

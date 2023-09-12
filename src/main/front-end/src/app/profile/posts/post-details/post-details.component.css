@@ -1,25 +1,30 @@
 .fullWrapper{
   display: grid;
-  grid-template-columns: minmax(400px,auto) 280px;
+  grid-template-rows: 400px auto;
   /*border: 1px solid black;*/
-  max-height: 420px;
+  margin-bottom: 10px;
+
 
 }
 .wrapperImg{
-  margin: auto;
+  margin: 0 auto 0 auto;
+  padding : 0;
 }
 
 .detailImg{
-  width: 420px;
-  height: 420px;
+  margin: 0;
+  padding: 0;
+  width: 400px;
+  height: 400px;
   object-fit: contain;
 }
 
 .wrapperSecColumn{
   display: grid;
-  grid-template-rows: 50px 320px 40px;
+  grid-template-rows: 50px 180px 40px;
   /*border: 1px solid black;*/
-  row-gap: 5px;
+  padding: 0;
+  margin: 0;
 }
 .nestedDesc{
   /*border: 1px solid black;*/
@@ -32,6 +37,7 @@
   box-shadow: 0px 0px 3px gray;
   overflow: scroll;
   font-size: medium;
+  margin: 5px 0 5px 0;
 }
 .usernmClass{
   list-style-type: none;

@@ -2,6 +2,9 @@ package com.itsaur.internship;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.itsaur.internship.comment.CommentService;
 import com.itsaur.internship.comment.CommentStore;
 import com.itsaur.internship.comment.PostgresCommentStore;
@@ -16,11 +19,16 @@ import com.itsaur.internship.user.PostgresUsersStore;
 import com.itsaur.internship.user.UserService;
 import com.itsaur.internship.user.UsersStore;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.Json;
+import io.vertx.pgclient.PgPool;
+import io.vertx.sqlclient.PoolOptions;
+
+import java.time.OffsetDateTime;
 
 public class Application {
 
 
-    final UserService service;
+    final UserService userService;
     final CommentService commentService;
     final PostService postService;
     final PostQueryModelStore postQueryModelStore;
@@ -28,10 +36,14 @@ public class Application {
     final CommentQueryModelStore commentQueryModelStore;
 
 
-    public Application(PostService postService,  UserService service,
-                       CommentService commentService, PostQueryModelStore postQueryModelStore,
-                       CommentQueryModelStore commentQueryModelStore) {
-        this.service = service;
+    public Application(
+            PostService postService,
+            UserService userService,
+            CommentService commentService,
+            PostQueryModelStore postQueryModelStore,
+            CommentQueryModelStore commentQueryModelStore)
+    {
+        this.userService = userService;
         this.commentService = commentService;
         this.postService = postService;
         this.postQueryModelStore = postQueryModelStore;
@@ -46,22 +58,31 @@ public class Application {
 
 
     public static void main(String[] args) {
+        System.out.println(OffsetDateTime.now());
         Vertx vertx = Vertx.vertx();
+        io.vertx.core.json.jackson.DatabindCodec codec = (io.vertx.core.json.jackson.DatabindCodec) io.vertx.core.json.Json.CODEC;
+
+
         PostgresOptions postgresOptions = new PostgresOptions();
+        PgPool pool = PgPool.pool(
+                vertx,
+                postgresOptions
+                        .getPgConnectOptions(),
+                new PoolOptions()
+                        .setMaxSize(5));
 
-
-        PostStore postgresPostStore                   = new PostgresPostStore (vertx, postgresOptions.getPgConnectOptions());
-        UsersStore postgresUsersStore                 = new PostgresUsersStore (vertx, postgresOptions.getPgConnectOptions());
-        CommentStore postgresCommentStore             = new PostgresCommentStore (vertx, postgresOptions.getPgConnectOptions());
-        PostQueryModelStore postQueryModelStore       = new PostgresPostQueryModelStore(vertx, postgresOptions.getPgConnectOptions());
-        CommentQueryModelStore commentQueryModelStore = new PostgresCommentQueryModelStore(vertx, postgresOptions.getPgConnectOptions());
+        PostStore postgresPostStore                   = new PostgresPostStore (pool);
+        UsersStore postgresUsersStore                 = new PostgresUsersStore (pool);
+        CommentStore postgresCommentStore             = new PostgresCommentStore (pool);
+        PostQueryModelStore postQueryModelStore       = new PostgresPostQueryModelStore(pool);
+        CommentQueryModelStore commentQueryModelStore = new PostgresCommentQueryModelStore(pool);
 
         Application application = new Application(
                 new PostService(vertx, postgresPostStore, postgresUsersStore, postgresCommentStore),
                 new UserService(vertx, postgresPostStore, postgresUsersStore, postgresCommentStore),
-                new CommentService(vertx, postgresPostStore, postgresUsersStore, postgresCommentStore),
-                new PostgresPostQueryModelStore(vertx, postgresOptions.getPgConnectOptions()),
-                new PostgresCommentQueryModelStore(vertx, postgresOptions.getPgConnectOptions())
+                new CommentService(postgresPostStore, postgresUsersStore, postgresCommentStore),
+                new PostgresPostQueryModelStore(pool),
+                new PostgresCommentQueryModelStore(pool)
         );
 
         try{
@@ -80,7 +101,7 @@ public class Application {
             System.out.println("Application.java : deployVerticle()");
             vertx.deployVerticle(
                     new VerticleApi(
-                        application.service,
+                        application.userService,
                         application.commentService,
                         application.postService ,
                         application.postQueryModelStore,
@@ -91,7 +112,7 @@ public class Application {
             });
 
         }else if (postgresOptions.getService().equals("console")) {
-            new UserConsole(application.service).executeCommand(args)
+            new UserConsole(application.userService).executeCommand(args)
                     .onComplete(v -> System.exit(0));
         } else {
             System.out.println("Something went wrong!");

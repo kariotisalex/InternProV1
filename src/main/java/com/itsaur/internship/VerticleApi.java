@@ -15,8 +15,6 @@ import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class VerticleApi extends AbstractVerticle {
@@ -65,8 +63,8 @@ public class VerticleApi extends AbstractVerticle {
                             System.out.println("Successful Login");
 
                             JsonObject jsonObject = new JsonObject();
-                            jsonObject.put("uid" , String.valueOf(v.getUserid()));
-                            jsonObject.put("username" , v.getUsername());
+                            jsonObject.put("uid" , String.valueOf(v.userid()));
+                            jsonObject.put("username" , v.username());
                             System.out.println(jsonObject);
 
                             ctx.response().setStatusCode(200).end(jsonObject.encode());
@@ -291,7 +289,7 @@ public class VerticleApi extends AbstractVerticle {
         router
                 .get("/user/:userId/posts")
                 .handler(ctx -> {
-                            this.postQueryModelStore.findAllByUid(UUID.fromString(ctx.pathParam("userId")))
+                            this.postQueryModelStore.findPostPageByUid(UUID.fromString(ctx.pathParam("userId")))
                                     .onSuccess(posts -> {
                                         ctx.response().setStatusCode(200).end(Json.encode(posts));
                                     })
@@ -304,11 +302,14 @@ public class VerticleApi extends AbstractVerticle {
                 .get("/user/:userId/posts/page")
                 .handler(ctx -> {
                     String startFrom = ctx.request().getParam("startFrom");
-                    String endTo = ctx.request().getParam("endTo");
-                    System.out.println(startFrom + " and " + endTo);
-                    if (startFrom != null && endTo != null){
-                        this.postQueryModelStore.findAllByUid(UUID.fromString(ctx.pathParam("userId")),startFrom,endTo)
-                                .onSuccess(posts -> {
+                    String size = ctx.request().getParam("size");
+                    System.out.println(startFrom + " and " + size);
+                    if (startFrom != null && size != null){
+                        this.postQueryModelStore.findPostPageByUid(
+                                    UUID.fromString(ctx.pathParam("userId")),
+                                    Integer.valueOf(startFrom),
+                                    Integer.valueOf(size)
+                                ).onSuccess(posts -> {
                                     ctx.response().setStatusCode(200).end(Json.encode(posts));
                                 })
                                 .onFailure(err -> {

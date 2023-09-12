@@ -14,22 +14,16 @@ import java.util.List;
 import java.util.UUID;
 
 public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
-    private final Vertx vertx;
-    private final PgConnectOptions connectOptions;
+    private PgPool pool;
 
-    final PoolOptions poolOptions = new PoolOptions()
-            .setMaxSize(5);
-
-    public PostgresCommentQueryModelStore(Vertx vertx, PgConnectOptions connectOptions) {
-        this.vertx = vertx;
-        this.connectOptions = connectOptions;
+    public PostgresCommentQueryModelStore(PgPool pool) {
+        this.pool = pool;
     }
 
     @Override
     public Future<List<CommentQueryModel>> findAllByPostId(UUID postid){
-        SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
 
-        return client
+        return pool
                 .preparedQuery("SELECT C.commentid, C.createdate, C.comment, C.userid, U.username, C.postid " +
                         "FROM posts AS P , comments AS C, users AS U " +
                         "WHERE P.postid = C.postid AND U.userid = P.userid AND P.postid=($1)" +
@@ -45,7 +39,7 @@ public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
                         for (Row row : rows){
 
                             String commentid    = String.valueOf(row.getUUID("commentid"));
-                            String createdate   = String.valueOf(row.getLocalDateTime("createdate"));
+                            String createdate   = String.valueOf(row.getOffsetDateTime("createdate"));
                             String comment      = row.getString("comment");
                             String userid       = String.valueOf(row.getUUID("userid"));
                             String username     = row.getString("username");

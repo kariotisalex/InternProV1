@@ -29,9 +29,9 @@ const routes: Routes = [
       {path: 'profile', component: ProfileComponent,
       children:[
         { path: 'settings', component: SettingsComponent },
-        { path: 'posts', component: PostsComponent },
-        { path: 'post/:id', component: PostDetailsComponent }
+        { path: 'posts', component: PostsComponent }
       ]},
+      { path: 'post/:id', component: PostDetailsComponent },
       { path: 'search', component: SearchComponent },
       { path: 'addpost', component: AddPostComponent }
     ]

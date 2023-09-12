@@ -11,47 +11,47 @@ import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.SqlClient;
 import io.vertx.sqlclient.Tuple;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class PostgresPostStore implements PostStore {
 
-    private final Vertx vertx;
-    private final PgConnectOptions connectOptions;
-
-    final PoolOptions poolOptions = new PoolOptions()
-            .setMaxSize(5);
+    private final PgPool pool;
 
 
-    public PostgresPostStore(Vertx vertx, PgConnectOptions connectOptions) {
-        this.vertx = vertx;
-        this.connectOptions = connectOptions;
+    public PostgresPostStore(PgPool pool) {
+        this.pool = pool;
 
     }
 
     @Override
     public Future<Void> insert(Post post) {
-        SqlClient client = PgPool.client(vertx, connectOptions, poolOptions);
-        return client
+
+        return pool
                     .preparedQuery("INSERT INTO posts(postid, createdate, filename, description, userid)\n" +
-                            "SELECT ($1) , ($2) , ($3), ($4), userid FROM users WHERE userid=($5)")
-                    .execute(Tuple.of(UUID.randomUUID(), LocalDateTime.now(), post.getFilename(), post.getDescription(), post.getUserid()))
+                            "SELECT ($1) , ($2) , ($3), ($4), userid " +
+                            "FROM users WHERE userid=($5)")
+                    .execute(Tuple.of(
+                            UUID.randomUUID(),
+                            OffsetDateTime.now(),
+                            post.filename(),
+                            post.description(),
+                            post.userid())
+                    )
                     .onFailure(e -> {
                         e.printStackTrace();
                     })
-                    .compose(w -> {
-                        return client.close();
-                    });
+                .mapEmpty();
     }
 
 
 
     @Override
     public Future<Post> findPostByPostid(UUID postid) {
-        SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
-        return client
+
+        return pool
                 .preparedQuery("SELECT postid, createdate, updatedate, filename, description, userid " +
                         "FROM posts " +
                         "WHERE postid=($1)")
@@ -60,19 +60,22 @@ public class PostgresPostStore implements PostStore {
                     if (rows.iterator().hasNext()){
                         Row row = rows.iterator().next();
 
-                        LocalDateTime createdate = row.getLocalDateTime(1);
-                        LocalDateTime updatedate = row.getLocalDateTime(2);
+                        OffsetDateTime createdate = row.getOffsetDateTime(1);
+                        OffsetDateTime updatedate = row.getOffsetDateTime(2);
                         String filename          = row.getString(3);
                         String description       = row.getString(4);
                         UUID userid              = row.getUUID(5);
 
-                        final Post post = new Post(postid, createdate,
-                                updatedate, filename, description, userid);
-
-                        client.close();
-                        return Future.succeededFuture(post);
+                        return Future.succeededFuture(
+                                new Post(
+                                        postid,
+                                        createdate,
+                                        updatedate,
+                                        filename,
+                                        description,
+                                        userid)
+                        );
                     }else {
-                        client.close();
                         return Future.failedFuture(new NullPointerException());
                     }
                 });
@@ -80,30 +83,32 @@ public class PostgresPostStore implements PostStore {
 
     @Override
     public Future<Void> updatePost(Post post) {
-        SqlClient client = PgPool.client(vertx, connectOptions, poolOptions);
-        return client
-                .preparedQuery("UPDATE posts SET createdate=($2), updatedate=($3), filename=($4), description=($5)  WHERE postid=($1)")
-                .execute(Tuple.of(post.getPostid(), post.getCreatedDate(), post.getUpdatedDate(),post.getFilename(), post.getDescription()))
-                .compose(q -> {
-                    return client.close();
-                });
+
+        return pool
+                .preparedQuery("UPDATE posts SET createdate=($2), updatedate=($3), filename=($4), description=($5)  " +
+                        "WHERE postid=($1)")
+                .execute(Tuple.of(
+                        post.postid(),
+                        post.createdDate(),
+                        post.updatedDate(),
+                        post.filename(),
+                        post.description()
+                        )
+                ).mapEmpty();
     }
 
     @Override
     public Future<Void> delete(UUID postid){
-        SqlClient client = PgPool.client(vertx, connectOptions,poolOptions);
-        return client
+        return pool
                 .preparedQuery("DELETE FROM posts WHERE postid=($1)")
                 .execute(Tuple.of(postid))
-                .compose(w -> {
-                    return client.close();
-                });
+                .mapEmpty();
     }
 
     @Override
     public Future<List<Post>> readAllByUserid(UUID userid){
-        SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
-        return client
+
+        return pool
                 .preparedQuery("SELECT postid, createdate, updatedate, filename, description, userid " +
                         "FROM posts " +
                         "WHERE userid=($1)")
@@ -113,17 +118,17 @@ public class PostgresPostStore implements PostStore {
                     if (rows.iterator().hasNext()) {
                         for (Row row : rows) {
                             UUID postid = row.getUUID(0);
-                            LocalDateTime createdate = row.getLocalDateTime(1);
-                            LocalDateTime updatedate = row.getLocalDateTime(2);
+                            OffsetDateTime createdate = row.getOffsetDateTime(1);
+                            OffsetDateTime updatedate = row.getOffsetDateTime(2);
                             String filename = row.getString(3);
                             String description = row.getString(4);
                             allPostsByUser.add(new Post(postid, createdate, updatedate, filename, description, userid));
                         }
 
-                        client.close();
+
                         return Future.succeededFuture(allPostsByUser);
                     }else {
-                        client.close();
+
                         return Future.failedFuture(new NullPointerException());
                     }
                 });

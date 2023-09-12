@@ -6,7 +6,7 @@ import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.pgclient.PgPool;
 import io.vertx.sqlclient.*;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -59,7 +59,7 @@ public class CreateUserInPostgreSQL {
 
         List<Tuple> batch = new ArrayList<>();
         IntStream.range(0, records).forEach(e ->{
-            batch.add(Tuple.of(UUID.randomUUID(), LocalDateTime.now(), generateRandom(1), generateRandom(0)));
+            batch.add(Tuple.of(UUID.randomUUID(), OffsetDateTime.now(), generateRandom(1), generateRandom(0)));
         });
         return batch;
     }

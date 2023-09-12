@@ -10,34 +10,29 @@ import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.SqlClient;
 import io.vertx.sqlclient.Tuple;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class PostgresPostQueryModelStore implements PostQueryModelStore{
 
-    private final Vertx vertx;
-    private final PgConnectOptions connectOptions;
+    private PgPool pool;
 
-    final PoolOptions poolOptions = new PoolOptions()
-            .setMaxSize(5);
-
-    public PostgresPostQueryModelStore(Vertx vertx, PgConnectOptions connectOptions) {
-        this.vertx = vertx;
-        this.connectOptions = connectOptions;
+    public PostgresPostQueryModelStore(PgPool pool) {
+        this.pool = pool;
     }
 
     @Override
-    public Future<List<PostQueryModel>> findAllByUid(UUID uid){
-        SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
-        return client
-                .preparedQuery("SELECT postid, createdate, filename,description,userid  " +
-                                   "FROM posts " +
-                                   "WHERE userid=($1)" +
-                                   "ORDER BY (createdate) DESC ")
+    public Future<List<PostQueryModel>> findPostPageByUid(UUID uid){
+        return pool
+                .preparedQuery(
+                "SELECT P.postid, P.createdate, P.filename, P.description, P.userid, U.username " +
+                    "FROM posts AS P, users AS U " +
+                    "WHERE U.userid = P.userid AND P.userid=($1)" +
+                    "ORDER BY (createdate) DESC ")
                 .execute(Tuple.of(String.valueOf(uid)))
                 .onFailure(e -> {
-                    client.close();
                     e.printStackTrace();
                 })
                 .compose(rows -> {
@@ -46,40 +41,41 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                     if (rows.iterator().hasNext()){
                         for (Row row : rows){
                             String postid                 = String.valueOf(row.getUUID(0));
-                            String createdate             = String.valueOf(row.getLocalDateTime(1));
+                            String createdate             = String.valueOf(row.getOffsetDateTime(1));
                             String filename               = row.getString(2);
                             String description            = row.getString(3);
                             String userid                 = String.valueOf(row.getUUID(4));
+                            String username               = row.getString("username");
 
                             listofposts.add(
-                                    new PostQueryModel(postid, createdate,
-                                            filename,description, userid)
+                                    new PostQueryModel(
+                                            postid,
+                                            createdate,
+                                            filename,
+                                            description,
+                                            userid,
+                                            username
+                                    )
                             );
                         }
-                        client.close();
                         return Future.succeededFuture(listofposts);
                     }else {
-                        client.close();
                         return Future.failedFuture(new IllegalArgumentException("There is no post!"));
                     }
 
-
                 }).onFailure(e ->{
-                    client.close();
                     e.printStackTrace();
                 });
     }
 
     @Override
     public Future<String> countAllPostsbyUid(UUID uid) {
-        SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
-        return client
+        return pool
                 .preparedQuery("SELECT count(filename) " +
                         "FROM posts " +
                         "WHERE userid=($1)")
                 .execute(Tuple.of(String.valueOf(uid)))
                 .onFailure(e -> {
-                    client.close();
                     e.printStackTrace();
                 })
                 .compose(rows ->{
@@ -93,15 +89,14 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
 
     @Override
     public Future<PostQueryModel> findById(UUID postId) {
-        SqlClient client = PgPool.client(vertx,connectOptions, poolOptions);
 
-        return client
-                .preparedQuery("SELECT postid, createdate, filename,description,userid  " +
-                                   "FROM posts " +
-                                   "WHERE postid=($1)")
+        return pool
+                .preparedQuery(
+                "SELECT P.postid, P.createdate, P.filename, P.description, P.userid, U.username  " +
+                    "FROM posts AS P, users AS U " +
+                    "WHERE U.userid = P.userid AND P.postid=($1)")
                 .execute(Tuple.of(String.valueOf(postId)))
                 .onFailure(err ->{
-                    client.close();
                     err.printStackTrace();
                 })
                 .compose(rows -> {
@@ -111,40 +106,47 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                         Row row = rows.iterator().next();
 
                         String postid                 = String.valueOf(row.getUUID("postid"));
-                        String createdate             = String.valueOf(row.getLocalDateTime("createdate"));
+                        String createdate             = String.valueOf(row.getOffsetDateTime("createdate"));
                         String filename               = row.getString("filename");
                         String description            = row.getString("description");
                         String userid                 = String.valueOf(row.getUUID("userid"));
+                        String username               = row.getString("username");
 
-                        PostQueryModel postQueryModel = new PostQueryModel(postid, createdate,
-                                filename,description, userid);
+                        PostQueryModel postQueryModel = new PostQueryModel(
+                                postid,
+                                createdate,
+                                filename,
+                                description,
+                                userid,
+                                username
+                        );
 
                         System.out.println(postQueryModel);
-                        client.close();
                         return Future.succeededFuture(postQueryModel);
 
                     }else {
 
-                        client.close();
                         return Future.failedFuture(new IllegalArgumentException("There is no post!"));
                     }
                 }).onFailure(err -> {
-                    client.close();
-                    //err.printStackTrace();
+                    err.printStackTrace();
                 });
     }
     @Override
-    public Future<List<PostQueryModel>> findAllByUid(UUID uid, String startWith, String endTo){
-        SqlClient client = PgPool.client(vertx,connectOptions,poolOptions);
-        return client
-                .preparedQuery("SELECT postid, createdate, filename,description,userid  " +
-                        "FROM posts " +
-                        "WHERE userid=($1)" +
+    public Future<List<PostQueryModel>> findPostPageByUid(UUID uid, int startFrom, int size){
+        return pool
+                .preparedQuery(
+                    "SELECT P.postid, P.createdate, P.filename, P.description, P.userid, U.username  " +
+                        "FROM posts AS P, users AS U " +
+                        "WHERE U.userid = P.userid AND P.userid=($1)" +
                         "ORDER BY (createdate) DESC " +
                         "OFFSET ($2) ROWS FETCH FIRST ($3) ROWS ONLY")
-                .execute(Tuple.of(String.valueOf(uid),Long.valueOf(startWith),Long.valueOf(endTo)))
+                .execute(Tuple.of(
+                        String.valueOf(uid),
+                        startFrom,
+                        size
+                ))
                 .onFailure(e -> {
-                    client.close();
                     e.printStackTrace();
                 })
                 .compose(rows -> {
@@ -152,27 +154,25 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                     List<PostQueryModel> listofposts = new ArrayList<>();
                     if (rows.iterator().hasNext()){
                         for (Row row : rows){
+
                             String postid                 = String.valueOf(row.getUUID(0));
-                            String createdate             = String.valueOf(row.getLocalDateTime(1));
+                            String createdate             = String.valueOf(row.getOffsetDateTime(1));
                             String filename               = row.getString(2);
                             String description            = row.getString(3);
                             String userid                 = String.valueOf(row.getUUID(4));
+                            String username               = row.getString("username");
 
                             listofposts.add(
                                     new PostQueryModel(postid, createdate,
-                                            filename,description, userid)
+                                            filename,description, userid, username)
                             );
                         }
-                        client.close();
                         return Future.succeededFuture(listofposts);
                     }else {
-                        client.close();
                         return Future.failedFuture(new IllegalArgumentException("There is no post!"));
                     }
 
-
                 }).onFailure(e ->{
-                    client.close();
                     e.printStackTrace();
                 });
     }

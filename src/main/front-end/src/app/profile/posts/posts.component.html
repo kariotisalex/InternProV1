@@ -6,9 +6,9 @@
            (click)="postNav(post.postid)">
     </div>
   </div>
-  <div style="margin: 0 0 0 auto">
+  <div style="margin: 10px auto 0 auto">
     <div class="nestedWrapperPaging" *ngFor="let page of pages" >
-      <a class="paging" href="this.getPosts(page)" >{{page}}</a>
+      <button class="paging" (click)="this.getPosts(page)" >{{page}}</button>
     </div>
   </div>
 </div>

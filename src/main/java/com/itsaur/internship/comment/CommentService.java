@@ -5,7 +5,7 @@ import com.itsaur.internship.user.UsersStore;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,13 +13,13 @@ public class CommentService {
     private CommentStore commentStore;
     private PostStore postStore;
     private UsersStore usersStore;
-    Vertx vertx;
 
-    public CommentService(Vertx vertx, PostStore postStore, UsersStore usersStore,CommentStore commentStore ) {
+
+    public CommentService( PostStore postStore, UsersStore usersStore,CommentStore commentStore ) {
         this.commentStore = commentStore;
         this.postStore = postStore;
         this.usersStore = usersStore;
-        this.vertx = vertx;
+
     }
 
     public Future<Void> addComment(UUID userid, UUID postid, String comment){
@@ -29,8 +29,14 @@ public class CommentService {
                     e.printStackTrace();
                 })
                 .compose(res -> {
-                    return this.commentStore.insert(new Comment(UUID.randomUUID(),
-                            LocalDateTime.now(), comment, userid, postid));
+                    return this.commentStore.insert(
+                            new Comment(
+                                    UUID.randomUUID(),
+                                    OffsetDateTime.now(),
+                                    null,
+                                    comment,
+                                    userid,
+                                    postid));
                 });
    }
 
@@ -41,16 +47,21 @@ public class CommentService {
                     e.printStackTrace();
                 })
                 .compose(q -> {
-                    if (userid.equals(q.getUserid())) {
+                    if (userid.equals(q.userid())) {
                         return this.commentStore.findById(commentid)
                                 .onFailure(e -> {
                                     System.out.println("findById");
                                     e.printStackTrace();
                                 })
                                 .compose(w -> {
-                                    return this.commentStore.update(new Comment(w.getCommentid(),w.getCreatedate(),
-                                            LocalDateTime.now(), comment, w.getUserid(), w.getPostid()));
-
+                                    return this.commentStore.update(
+                                            new Comment(
+                                                    w.commentid(),
+                                                    w.createdate(),
+                                                    OffsetDateTime.now(),
+                                                    comment,
+                                                    w.userid(),
+                                                    w.postid()));
                                 });
                     } else {
                         return Future.failedFuture(new IllegalArgumentException("userid of Comment entity and given userid are not the same!"));
@@ -61,7 +72,7 @@ public class CommentService {
    public Future<Void> deleteComment(UUID userid, UUID commentid){
         return this.usersStore.findUserByUserid(userid)
                 .compose(res -> {
-                    if (userid.equals(res.getUserid())){
+                    if (userid.equals(res.userid())){
                         return this.commentStore.findById(commentid)
                                 .onFailure(e -> {
                                     e.printStackTrace();

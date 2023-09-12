@@ -1,8 +1,8 @@
 <div class="fullWrapper">
-  <div class="wrapperImg lefted">
-    <div>
+  <div class="wrapperImg ">
+
       <img (click)="deletePostCalling()" [src]="post.filename" class="detailImg">
-    </div>
+
   </div>
 
 
@@ -14,7 +14,7 @@
       <p *ngIf="!isAnyCommentExist">There is no comments! </p>
       <div *ngIf="isAnyCommentExist">
         <ul  *ngFor="let comment of comments" class="usernmClass">
-          <li (click)="updateCommentCalling(comment.commentid, comment.comment)">{{comment.username}}: {{comment.comment}}</li>
+          <li (click)="updateCommentCalling(comment.commentid, comment.comment)">{{comment.createdate}} : {{comment.username}}: {{comment.comment}}</li>
         </ul>
       </div>
     </div>

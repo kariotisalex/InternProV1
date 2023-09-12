@@ -46,11 +46,10 @@ export class PostService {
     return this.http.get<number>(`/api/user/${uid}/posts/count`);
   }
 
-  getPostsByUserid(uid : String, startFrom : String, endTo : String){
+  getPostsByUserid(uid : String, startFrom : number, size : number){
     const params = new HttpParams()
-      .set('startFrom', startFrom as string)
-      .set('endTo',endTo as string);
-    debugger;
+      .set('startFrom', startFrom )
+      .set('size',size );
     return this.http.get<Post[]>(`/api/user/${uid}/posts/page`, {params: params});
   }
 

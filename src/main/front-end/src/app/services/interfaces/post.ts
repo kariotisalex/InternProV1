@@ -3,5 +3,6 @@ export interface Post {
   createdDate : string,
   filename : string,
   description : string,
-  userid : string
+  userid : string,
+  username : string
 }
