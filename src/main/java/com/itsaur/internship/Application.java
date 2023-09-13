@@ -60,7 +60,6 @@ public class Application {
     public static void main(String[] args) {
         System.out.println(OffsetDateTime.now());
         Vertx vertx = Vertx.vertx();
-        io.vertx.core.json.jackson.DatabindCodec codec = (io.vertx.core.json.jackson.DatabindCodec) io.vertx.core.json.Json.CODEC;
 
 
         PostgresOptions postgresOptions = new PostgresOptions();

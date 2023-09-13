@@ -1,6 +1,7 @@
-import {CanActivateFn, Router} from '@angular/router';
+import {CanActivateFn} from '@angular/router';
 import {inject} from "@angular/core";
 import {UserService} from "./services/user.service";
+import {NavigationService} from "./services/navigation.service";
 
 
 export const homeGuard: CanActivateFn = (route, state) => {
@@ -11,7 +12,7 @@ export const homeGuard: CanActivateFn = (route, state) => {
     return true;
 
   }else {
-    inject(Router).navigateByUrl('/login');
+    inject(NavigationService).goToLogin();
     return false;
   }
 

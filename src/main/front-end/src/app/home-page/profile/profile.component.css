@@ -6,7 +6,7 @@
   grid-template-rows: 150px 80%;
   min-height: 600px;
   /*border: 1px solid black;*/
-  padding: 10px;
+  margin: 0;
 }
 .profileNestedA{
   /*border: 1px solid black;*/
@@ -14,9 +14,7 @@
   grid-template-columns: minmax(auto,250px) minmax(auto,55%) 100px;
 
 }
-.profileNestedB{
-  /*border: 1px solid black*/
-}
+
 
 #photoProfCircle{
   object-fit: cover;
@@ -54,4 +52,64 @@
   margin-left: 0px;
   /*border: 1px solid black;*/
   text-orientation: mixed;
+}
+
+
+
+
+.wrapperResults{
+  display: grid;
+  grid-template-rows: 90% 10%;
+  width: 800px;
+  margin: 0 auto;
+}
+.results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(235px, auto));
+  column-gap: 5px;
+
+  row-gap: 14px;
+  overflow: scroll;
+  min-height: 480px;
+
+}
+.listing{
+
+  /*border: 1px solid black;*/
+
+}
+.footerPagingPosts{
+  padding: 5px 0;
+  margin: auto auto 0 auto;
+}
+.listing-photo {
+  display: flow;
+  height: 230px;
+  width: 230px;
+  object-fit: cover;
+
+  border-radius: 30px;
+  /*border: 1px solid black;*/
+  margin: auto;
+
+}
+
+.nestedWrapperPaging{
+  display: inline-block;
+
+}
+.paging{
+  color: black;
+  float: left;
+  padding: 4px 8px;
+  background-color: rgba(255, 255, 255, 0.6);
+  border: none;
+}
+.paging:hover{
+  background-color: white;
+  font-weight: bold;
+}
+.paging:active{
+  background-color: rgba(80,80,80,0.5);
+  color:white;
 }

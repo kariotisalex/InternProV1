@@ -1,5 +1,6 @@
 package com.itsaur.internship.adminService.postgreSQL;
 
+import com.itsaur.internship.PostgresOptions;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.pgclient.PgConnectOptions;
@@ -26,7 +27,12 @@ public class CreateUserInPostgreSQL {
     }
 
     public static void main(String[] args) {
+        Vertx vertx = Vertx.vertx();
+        PostgresOptions postgresOptions = new PostgresOptions();
+        PoolOptions poolOptions = new PoolOptions().setMaxSize(5);
+        SqlClient client = PgPool.client(vertx,postgresOptions.getPgConnectOptions(),poolOptions);
 
+        insertRandomUsers(client, 10);
 
 
 

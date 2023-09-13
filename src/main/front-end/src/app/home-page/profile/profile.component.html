@@ -1,0 +1,27 @@
+<div class="profileWrapper">
+  <div class="profileNestedA">
+
+      <img id="photoProfCircle" src="../../../assets/DemoProfilePic.jpg" alt="">
+
+    <div id="profName">{{user.username}}</div>
+    <div class="settingButtonDiv">
+      <button id="settingButton" (click)="routing()">. . .</button>
+    </div>
+  </div>
+
+
+    <div class="wrapperResults">
+      <div class="results">
+        <div class="listing" *ngFor="let post of posts">
+          <img class="listing-photo" [src]="post.filename"
+               alt="Exterior photo of {{post.postid}}"
+               (click)="postNav(post.postid)">
+        </div>
+      </div>
+      <div class="footerPagingPosts">
+        <div class="nestedWrapperPaging" *ngFor="let page of pages" >
+          <button class="paging" (click)="this.getPosts(page)" >{{page}}</button>
+        </div>
+      </div>
+    </div>
+</div>

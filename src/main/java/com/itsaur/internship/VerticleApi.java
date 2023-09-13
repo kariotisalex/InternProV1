@@ -297,7 +297,7 @@ public class VerticleApi extends AbstractVerticle {
                                         ctx.response().setStatusCode(400).end("There is not posts!");
                                     });
                 });
-
+        // Post page
         router
                 .get("/user/:userId/posts/page")
                 .handler(ctx -> {
@@ -321,15 +321,57 @@ public class VerticleApi extends AbstractVerticle {
 
                 });
 
+
+        // Comment page
+        router
+                .get("/post/:postId/comments/page")
+                .handler(ctx -> {
+                    String startFrom = ctx.request().getParam("startFrom");
+                    String size = ctx.request().getParam("size");
+                    System.out.println(startFrom + " and " + size);
+                    if (startFrom != null && size != null){
+                        this.commentQueryModelStore.findCommentPageByUid(
+                                        UUID.fromString(ctx.pathParam("postId")),
+                                        Integer.valueOf(startFrom),
+                                        Integer.valueOf(size)
+                                ).onSuccess(posts -> {
+                                    ctx.response().setStatusCode(200).end(Json.encode(posts));
+                                })
+                                .onFailure(err -> {
+                                    ctx.response().setStatusCode(400).end("There is no comments!");
+                                });
+                    }else {
+                        ctx.response().setStatusCode(400).end("check the null values!");
+                    }
+                });
+
+
+        // Post count
         router
                 .get("/user/:userId/posts/count")
                 .handler(ctx -> {
                     this.postQueryModelStore.countAllPostsbyUid(UUID.fromString(ctx.pathParam("userId")))
                             .onSuccess(count -> {
+                                System.out.println(count);
                                 ctx.response().setStatusCode(200).end(count);
                             })
                             .onFailure(err -> {
                                 err.printStackTrace();
+                                ctx.response().setStatusCode(400).end("0");
+                            });
+                });
+
+
+        // Comment count
+        router
+                .get("/post/:postId/comments/count")
+                .handler(ctx -> {
+                    String postid = ctx.pathParam("postId");
+                    this.commentQueryModelStore.countAllCommentsByPid(postid)
+                            .onSuccess(suc -> {
+                                ctx.response().setStatusCode(200).end(suc);
+                            })
+                            .onFailure(err -> {
                                 ctx.response().setStatusCode(400).end("0");
                             });
                 });

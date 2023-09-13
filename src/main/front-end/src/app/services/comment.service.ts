@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
 import { Comment } from "./interfaces/comment";
+import {Post} from "./interfaces/post";
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class CommentService {
     return this.http.get<Comment[]>(`/api/post/${postid}/comments`);
   }
 
+
   addNewComment(uid : String, pid : String, newComment : string) : Observable<any>{
     const body ={'comment': newComment}
 
@@ -27,6 +29,15 @@ export class CommentService {
   updateComment(uid : string, cid : string, comment : string) : Observable<String>{
     const body = {'comment':comment}
     return this.http.put(`/api/user/${uid}/comment/${cid}`,body,{responseType: "text"});
+  }
+  countComments(pid : string) : Observable<number>{
+    return this.http.get<number>(`/api/post/${pid}/comments/count`);
+  }
+  getPageCommentsByPostid(pid : String, startFrom : number, size : number) : Observable<Comment[]>{
+    const params = new HttpParams()
+      .set('startFrom', startFrom )
+      .set('size',size);
+    return this.http.get<Comment[]>(`/api/post/${pid}/comments/page`, {params: params});
   }
 
 }

@@ -1,13 +1,14 @@
 import {Component, OnInit} from '@angular/core';
-import {Post} from "../../../services/interfaces/post";
-import {PostService} from "../../../services/post.service";
-import {UserService} from "../../../services/user.service";
-import {User} from "../../../services/interfaces/user";
+import {Post} from "../../services/interfaces/post";
+import {PostService} from "../../services/post.service";
+import {UserService} from "../../services/user.service";
+import {User} from "../../services/interfaces/user";
 import {ActivatedRoute, Router} from "@angular/router";
 import {map} from "rxjs";
-import {CommentService} from "../../../services/comment.service";
+import {CommentService} from "../../services/comment.service";
 import {HttpErrorResponse} from "@angular/common/http";
-import { Comment } from "../../../services/interfaces/comment";
+import { Comment } from "../../services/interfaces/comment";
+import {NavigationService} from "../../services/navigation.service";
 
 
 @Component({
@@ -24,33 +25,29 @@ export class PostDetailsComponent implements OnInit{
   isUpdateCommentTabEnable : boolean = false;
   isUpdateDescTabEnable : boolean = false;
 
+  commentsPerPage : number = 10;
+  commentPages : number[] = [];
+
   constructor(
-    private postService : PostService,
-    private userService : UserService,
-    private route : ActivatedRoute,
+    private postService    : PostService,
+    private userService    : UserService,
     private commentService : CommentService,
-    private router : Router
+    private route          : ActivatedRoute,
+    private router         : Router,
+    private navigation     : NavigationService
   ){}
 
   ngOnInit() {
     this.getPost();
-    this.getComments();
+    this.getComments(1);
+    this.countComments();
   }
-  backbuttonfunc(){
-    if(!this.isNotificationInTextarea()){
-      this.valuees = '';
-    }
-    this.isUpdateCommentTabEnable = false;
-    this.isUpdateDescTabEnable = false;
-  }
-
   get user() : User{
     return this.userService.getUser();
   }
   get comments() : Comment[] {
     return this.commentService.comments;
   }
-
 
   getPost() {
     const pid = this.route.snapshot.paramMap.get('id');
@@ -72,10 +69,43 @@ export class PostDetailsComponent implements OnInit{
     }
   }
 
-  getComments(){
-    const id = this.route.snapshot.paramMap.get('id')
+  countComments(){
+    const id = this.route.snapshot.paramMap.get('id');
+    this.commentPages = [];
+    if(id) {
+      this.commentService.countComments(id)
+        .subscribe({
+          next: x => {
+            console.log('xxx' + x);
+            if (x % this.commentsPerPage != 0) {
+              for (let i = 1; i <= (x / this.commentsPerPage) + 1; i++) {
+                this.commentPages.push(i);
+              }
+            } else {
+              for (let i = 1; i <= (x / this.commentsPerPage); i++) {
+                this.commentPages.push(i);
+              }
+            }
+
+          }, error: err => {
+
+          }
+
+        })
+    }
+  }
+
+  getComments(page : number){
+    const id = this.route.snapshot.paramMap.get('id');
+    let startFrom : number = (page - 1) * this.commentsPerPage;
     if(id){
-      this.commentService.getAllCommentsByPostid(id)
+
+
+
+      this.commentService.getPageCommentsByPostid(
+                                id,
+                                startFrom,
+                                this.commentsPerPage )
         .subscribe({
           next: x => {
             this.isAnyCommentExist = true;
@@ -86,33 +116,18 @@ export class PostDetailsComponent implements OnInit{
             console.log(err.error)
           }
         })
-    }
-  }
 
-  onSubmitNewComment(newComment : string){
-    const uid = this.userService.getUid();
-    const pid = this.route.snapshot.paramMap.get('id');
-    if(pid){
-      if ((newComment != '' && newComment)
-      && (
-          !this.isNotificationInTextarea()
-        )){
-        this.commentService.addNewComment(uid, pid, newComment)
-          .subscribe({
-            next: x => {
-              this.valuees = "This comment posted successfully!";
-              this.getComments();
-            },
-            error: err =>{
-              this.valuees = "This comment failed to post!"
-            }
-          });
-      }else {
-        this.valuees = "Please write something to post!"
-      }
+
+
+
+
 
     }
   }
+
+
+
+
 
 
   clearingNewCommentTextarea() {
@@ -141,11 +156,34 @@ export class PostDetailsComponent implements OnInit{
     }
   }
 
+  onSubmitNewComment(newComment : string){
+    const uid = this.userService.getUid();
+    const pid = this.route.snapshot.paramMap.get('id');
+    if(pid){
+      if ((newComment != '' && newComment)
+        && (
+          !this.isNotificationInTextarea()
+        )){
+        this.commentService.addNewComment(uid, pid, newComment)
+          .subscribe({
+            next: x => {
+              this.valuees = "This comment posted successfully!";
+              this.getComments(1);
+              this.countComments();
+            },
+            error: err =>{
+              this.valuees = "This comment failed to post!"
+            }
+          });
+      }else {
+        this.valuees = "Please write something to post!"
+      }
+
+    }
+  }
 
 
-
-
-
+// callings
   updateCommentCalling(cid : string, comment : string){
     this.isUpdateDescTabEnable = false;
     this.isUpdateCommentTabEnable = true;
@@ -171,13 +209,14 @@ export class PostDetailsComponent implements OnInit{
 
 
 
-
+  // Buttons functions
   updateButtonFunc( comment : string){
     this.commentService.updateComment(this.uid, this.cid, comment)
       .subscribe({
         next: x => {
           this.valuees = 'The comment updated!'
-          this.getComments();
+          this.getComments(1);
+          this.countComments();
           this.backbuttonfunc();
         },
         error: err => {
@@ -191,7 +230,8 @@ export class PostDetailsComponent implements OnInit{
         .subscribe({
           next: x => {
             this.valuees = "The comment deleted!"
-            this.getComments();
+            this.getComments(1);
+            this.countComments();
             this.backbuttonfunc();
           },
           error: err => {
@@ -200,7 +240,6 @@ export class PostDetailsComponent implements OnInit{
         })
     }
   }
-
   updateDescButtonFunc(){
     const pid = this.route.snapshot.paramMap.get('id');
     if(pid) {
@@ -223,13 +262,13 @@ export class PostDetailsComponent implements OnInit{
     }
 
   }
-
   deletePostButtonFunc(){
     const pid = this.route.snapshot.paramMap.get('id');
     if(pid) {
       this.postService.deletePost(this.uid,pid)
         .subscribe({
           next: x =>{
+            this.postService.posts = [];
             this.postsNav();
           },
           error: err =>{
@@ -238,9 +277,15 @@ export class PostDetailsComponent implements OnInit{
         })
     }
   }
-
+  backbuttonfunc(){
+    if(!this.isNotificationInTextarea()){
+      this.valuees = '';
+    }
+    this.isUpdateCommentTabEnable = false;
+    this.isUpdateDescTabEnable = false;
+  }
 
   postsNav(){
-    this.router.navigateByUrl('/home/profile/posts');
+    this.navigation.goToPosts();
   }
 }

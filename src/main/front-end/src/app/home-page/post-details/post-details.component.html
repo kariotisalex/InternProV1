@@ -2,6 +2,8 @@
   <div class="wrapperImg ">
 
       <img (click)="deletePostCalling()" [src]="post.filename" class="detailImg">
+    {{post.createdDate | date}}
+
 
   </div>
 
@@ -14,10 +16,23 @@
       <p *ngIf="!isAnyCommentExist">There is no comments! </p>
       <div *ngIf="isAnyCommentExist">
         <ul  *ngFor="let comment of comments" class="usernmClass">
-          <li (click)="updateCommentCalling(comment.commentid, comment.comment)">{{comment.createdate}} : {{comment.username}}: {{comment.comment}}</li>
+          <li class="liCommentView" (click)="updateCommentCalling(comment.commentid, comment.comment)">
+            <span style="font-size: x-small">{{comment.createdate | date:'short'}} : </span>{{comment.username}}: {{comment.comment}}
+          </li>
         </ul>
       </div>
     </div>
+
+
+    <div class="footerPagingComments">
+      <div class="nestedWrapperPaging" *ngFor="let comment of commentPages" >
+        <button class="paging" (click)="this.getComments(comment)" >{{comment}}</button>
+      </div>
+    </div>
+
+
+
+
 
 <!--    Create Comment -->
     <div class="nestedCommentNewComment" *ngIf="!isUpdateCommentTabEnable && !isUpdateDescTabEnable">

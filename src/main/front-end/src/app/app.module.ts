@@ -12,13 +12,12 @@ import { HomePageComponent } from './home-page/home-page.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
-import { ProfileComponent } from './profile/profile.component';
+import { ProfileComponent } from './home-page/profile/profile.component';
 import { SignupComponent } from './login/signup/signup.component';
-import { SettingsComponent } from './profile/settings/settings.component';
-import { PostsComponent } from './profile/posts/posts.component';
+import { SettingsComponent } from './home-page/settings/settings.component';
 import { SearchComponent } from './search/search.component';
 import { AddPostComponent } from './add-post/add-post.component';
-import { PostDetailsComponent } from './profile/posts/post-details/post-details.component';
+import { PostDetailsComponent } from './home-page/post-details/post-details.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CommonModule} from "@angular/common";
 
@@ -28,7 +27,6 @@ import {CommonModule} from "@angular/common";
     PagenotfoundComponent,
     HomePageComponent,
     ProfileComponent,
-    PostsComponent,
     PostDetailsComponent,
     SearchComponent
 

@@ -1,41 +1,40 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Post } from "../../services/interfaces/post";
-import { PostService } from "../../services/post.service";
-import { UserService } from "../../services/user.service";
-import { User } from "../../services/interfaces/user";
-import { map } from "rxjs";
-import { Router } from "@angular/router";
-import { HttpErrorResponse } from "@angular/common/http";
+import {Component, Input, OnInit} from '@angular/core';
+import {User} from "../../services/interfaces/user";
+import {UserService} from "../../services/user.service";
+import {Router} from "@angular/router";
+import {Post} from "../../services/interfaces/post";
+import {PostService} from "../../services/post.service";
+import {map} from "rxjs";
+import {HttpErrorResponse} from "@angular/common/http";
+import {NavigationService} from "../../services/navigation.service";
 
 @Component({
-  selector: 'app-posts',
-
-  templateUrl: './posts.component.html',
-  styleUrls: ['./posts.component.css']
+  selector: 'app-profile',
+  templateUrl: './profile.component.html',
+  styleUrls: ['./profile.component.css']
 })
-export class PostsComponent implements OnInit{
+export class ProfileComponent implements OnInit{
+
   postsPerPage : number = 6;
   pages : number[] = [];
 
   constructor(
-    private postService : PostService,
     private userService : UserService,
-    private router      : Router
+    private router : Router,
+    private postService : PostService,
+    private navigation : NavigationService
   ) {}
-
-
-  get user() : User {
-    return this.userService.getUser();
-  }
-
-  get posts() : Post[]{
-    return this.postService.posts;
-  }
 
   ngOnInit(){
     this.getPosts(1);
     this.countPosts();
 
+  }
+  get user() : User {
+    return this.userService.getUser();
+  }
+  get posts() : Post[]{
+    return this.postService.posts;
   }
 
   countPosts(){
@@ -51,13 +50,11 @@ export class PostsComponent implements OnInit{
               this.pages.push(i);
             }
           }
-
         },error: err => {
 
         }
       })
   }
-
   getPosts(page : number){
     let startFrom : number = (page - 1) * this.postsPerPage;
 
@@ -78,9 +75,18 @@ export class PostsComponent implements OnInit{
         }
       });
   }
+
   postNav(pst : string){
-    this.router.navigateByUrl(`/home/post/${pst}`);
+    this.navigation.goToPostDetail(pst);
   }
 
 
+
+
+
+  routing(){
+    this.navigation.goToSettings();
+  }
+
 }
+

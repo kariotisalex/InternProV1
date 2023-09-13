@@ -23,8 +23,8 @@
   display: grid;
   grid-template-rows: 60px 475px 60px;
   padding: 4%;
-  min-height: 600px;
-  max-height: 600px;
+  height: 600px;
+
 }
 
 .leftNested{
@@ -90,8 +90,7 @@
 }
 
 .centerNested{
-  margin: auto;
-  max-width: 800px;
+  display: flow;
 }
 
 @media screen and (max-width: 1080px){

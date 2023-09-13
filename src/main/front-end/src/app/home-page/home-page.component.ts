@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { UserService } from "../services/user.service";
 import { User } from "../services/interfaces/user";
 import {Router} from "@angular/router";
+import {NavigationService} from "../services/navigation.service";
 
 @Component({
   selector: 'app-home-page',
@@ -16,7 +17,8 @@ export class HomePageComponent {
   }
   constructor(
     private userService : UserService,
-    private router : Router
+    private router : Router,
+    private navigation : NavigationService
   ) {}
 
   get user(): User{
@@ -25,7 +27,7 @@ export class HomePageComponent {
 
   get logout(){
      this.userService.logout();
-     this.router.navigateByUrl("/login")
+     this.navigation.goToLogin();
     return true;
   }
 

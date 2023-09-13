@@ -156,15 +156,21 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                         for (Row row : rows){
 
                             String postid                 = String.valueOf(row.getUUID(0));
-                            String createdate             = String.valueOf(row.getOffsetDateTime(1));
+                            String createdate     = String.valueOf(row.getOffsetDateTime(1));
                             String filename               = row.getString(2);
                             String description            = row.getString(3);
                             String userid                 = String.valueOf(row.getUUID(4));
                             String username               = row.getString("username");
 
                             listofposts.add(
-                                    new PostQueryModel(postid, createdate,
-                                            filename,description, userid, username)
+                                    new PostQueryModel(
+                                            postid,
+                                            createdate,
+                                            filename,
+                                            description,
+                                            userid,
+                                            username
+                                    )
                             );
                         }
                         return Future.succeededFuture(listofposts);

@@ -6,6 +6,7 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validator, Validators} from
 import {CommonModule} from "@angular/common";
 import { Location } from "@angular/common";
 import {HttpErrorResponse} from "@angular/common/http";
+import {NavigationService} from "../../services/navigation.service";
 
 
 @Component({
@@ -33,7 +34,8 @@ export class SettingsComponent {
   constructor(
     private router : Router,
     private userService : UserService,
-    private location : Location
+    private location : Location,
+    private navigation : NavigationService
   ) {}
 
 
@@ -78,7 +80,7 @@ export class SettingsComponent {
           this.error = "Deleted successfully !";
           this.userService.logout();
           setTimeout(() => {
-            this.router.navigateByUrl('/login');
+            this.navigation.goToLogin();
           },1000);
         },
         error: e => {

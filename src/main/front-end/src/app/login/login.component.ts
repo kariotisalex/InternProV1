@@ -5,6 +5,7 @@ import { Router, RouterLink } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { HttpErrorResponse } from "@angular/common/http";
 import { UserService } from "../services/user.service";
+import {NavigationService} from "../services/navigation.service";
 
 
 @Component({
@@ -24,7 +25,8 @@ export class LoginComponent {
 
   constructor(
     private router : Router,
-    private userService:UserService
+    private userService:UserService,
+    private navigation : NavigationService
   ) {}
 
   loginHandling = new FormGroup({
@@ -39,7 +41,7 @@ export class LoginComponent {
     .subscribe( {
       next: x => {
         this.userService.loggedinUser(x);
-        this.router.navigateByUrl("/home");
+        this.navigation.goToHome();
       },
       error: (err: HttpErrorResponse) => {
         this.error = err.error;

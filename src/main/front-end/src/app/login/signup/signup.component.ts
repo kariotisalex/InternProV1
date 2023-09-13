@@ -4,6 +4,7 @@ import {HttpErrorResponse} from "@angular/common/http";
 import {Router, RouterLink} from "@angular/router";
 import {UserService} from "../../services/user.service";
 import {CommonModule} from "@angular/common";
+import {NavigationService} from "../../services/navigation.service";
 
 @Component({
   selector: 'app-signup',
@@ -23,7 +24,8 @@ export class SignupComponent {
   valueV: String = "";
   constructor(
     private router : Router,
-    private userService : UserService
+    private userService : UserService,
+    private navigation : NavigationService
   ) {}
 
 
@@ -42,7 +44,7 @@ export class SignupComponent {
       this.userService.signup(username,password)
         .subscribe( {
           next: x => {
-            this.router.navigateByUrl("/login");
+            this.navigation.goToLogin();
           },
           error: (err: HttpErrorResponse) => {
             this.error = err.error;

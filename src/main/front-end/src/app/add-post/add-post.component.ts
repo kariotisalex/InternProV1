@@ -6,6 +6,7 @@ import {User} from "../services/interfaces/user";
 import {FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {PostService} from "../services/post.service";
 import {HttpErrorResponse} from "@angular/common/http";
+import {NavigationService} from "../services/navigation.service";
 
 @Component({
   selector: 'app-add-post',
@@ -27,6 +28,7 @@ export class AddPostComponent {
     private userService : UserService,
     private location    : Location,
     private postService : PostService,
+    private navigation  : NavigationService
   ) {}
 
 
@@ -49,7 +51,7 @@ export class AddPostComponent {
       .subscribe({
         next: x => {
           console.log('this is correct ' + x);
-          this.router.navigateByUrl('/home/profile/posts');
+          this.navigation.goToPosts();
         },
         error: (e : HttpErrorResponse) => {
           console.log('This is error ' + e);

@@ -1,12 +1,15 @@
 .fullWrapper{
+  width: 800px;
   display: grid;
-  grid-template-rows: 400px auto;
+  grid-template-columns: 400px 350px;
   /*border: 1px solid black;*/
-  margin-bottom: 10px;
+  margin: 50px auto;
+  column-gap: 30px;
 
 
 }
 .wrapperImg{
+  height: 400px;
   margin: 0 auto 0 auto;
   padding : 0;
 }
@@ -16,15 +19,22 @@
   padding: 0;
   width: 400px;
   height: 400px;
-  object-fit: contain;
+  object-fit: cover;
 }
-
-.wrapperSecColumn{
-  display: grid;
-  grid-template-rows: 50px 180px 40px;
-  /*border: 1px solid black;*/
+.datePost{
+  font-size: smaller;
+  color: #464646;
   padding: 0;
   margin: 0;
+
+}
+.wrapperSecColumn{
+  display: grid;
+  grid-template-rows: 50px 280px 25px 40px;
+  width: 350px;
+  /*border: 1px solid black;*/
+  padding: 0;
+  margin: 0 auto;
 }
 .nestedDesc{
   /*border: 1px solid black;*/
@@ -178,4 +188,37 @@ textarea{
   grid-template-columns: 10% 75% 15%;
   padding: 0;
   margin: 0;
+}
+
+.liCommentView{
+  margin-bottom: 5px;
+}
+.footerPagingComments{
+  margin: 0 auto ;
+}
+.nestedWrapperPaging{
+  display: inline-block;
+
+}
+.paging{
+  color: black;
+  float: left;
+  padding: 4px 8px;
+  background-color: rgba(255, 255, 255, 0.6);
+  border: none;
+}
+.paging:hover{
+  background-color: white;
+  font-weight: bold;
+}
+.paging:active{
+  background-color: rgba(80,80,80,0.5);
+  color:white;
+}
+@media screen AND (max-width: 700px){
+  .fullWrapper{
+    display: grid;
+    grid-template-columns: none;
+    grid-templates-rows: auto auto;
+  }
 }
