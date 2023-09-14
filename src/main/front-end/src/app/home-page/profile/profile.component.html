@@ -12,11 +12,8 @@
 
     <div class="wrapperResults">
       <div class="results">
-        <div class="listing" *ngFor="let post of posts">
-          <img class="listing-photo" [src]="post.filename"
-               alt="Exterior photo of {{post.postid}}"
-               (click)="postNav(post.postid)">
-        </div>
+        <app-small-post-presentation *ngFor="let post of posts"
+                                     [post]="post"></app-small-post-presentation>
       </div>
       <div class="footerPagingPosts">
         <div class="nestedWrapperPaging" *ngFor="let page of pages" >

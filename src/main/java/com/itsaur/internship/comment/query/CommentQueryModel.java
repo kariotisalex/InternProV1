@@ -2,13 +2,16 @@ package com.itsaur.internship.comment.query;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import java.time.OffsetDateTime;
+import java.util.UUID;
+
 public record CommentQueryModel (
 
-        String commentid,
-        String createdate,
+        UUID commentid,
+        OffsetDateTime createdate,
         String comment,
-        String userid,
+        UUID userid,
         String username,
-        String postid
+        UUID postid
 ){
 }

@@ -16,7 +16,7 @@ export class PostService {
     private http : HttpClient
   ) { }
 
-  addPost(uid : String, file : File, desc: string){
+  addPost(uid : string, file : File, desc: string){
     const formObj = new FormData();
     formObj.append('file', file);
     formObj.append('desc', desc);
@@ -27,11 +27,11 @@ export class PostService {
     return this.http.get<Post[]>(`/api/user/${uid}/posts`);
   }
 
-  getPostByPostid(uid : String, postid : String) : Observable<Post> {
+  getPostByPostid(uid : string, postid : string) : Observable<Post> {
     return this.http.get<Post>(`/api/user/${uid}/post/${postid}`);
   }
 
-  updateDesc(uid : string, pid : string, desc : string) : Observable<String>{
+  updateDesc(uid : string, pid : string, desc : string) : Observable<string>{
     const body = {
       'desc':desc
     }
@@ -46,7 +46,7 @@ export class PostService {
     return this.http.get<number>(`/api/user/${uid}/posts/count`);
   }
 
-  getPostsByUserid(uid : String, startFrom : number, size : number){
+  getPostsByUserid(uid : string, startFrom : number, size : number){
     const params = new HttpParams()
       .set('startFrom', startFrom )
       .set('size',size );

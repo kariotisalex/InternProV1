@@ -73,26 +73,12 @@
   min-height: 480px;
 
 }
-.listing{
 
-  /*border: 1px solid black;*/
-
-}
 .footerPagingPosts{
   padding: 5px 0;
   margin: auto auto 0 auto;
 }
-.listing-photo {
-  display: flow;
-  height: 230px;
-  width: 230px;
-  object-fit: cover;
 
-  border-radius: 30px;
-  /*border: 1px solid black;*/
-  margin: auto;
-
-}
 
 .nestedWrapperPaging{
   display: inline-block;

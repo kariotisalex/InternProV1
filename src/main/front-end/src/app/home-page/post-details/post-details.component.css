@@ -30,7 +30,8 @@
 }
 .wrapperSecColumn{
   display: grid;
-  grid-template-rows: 50px 280px 25px 40px;
+  height: 400px;
+  grid-template-rows: 50px 285px 25px 40px;
   width: 350px;
   /*border: 1px solid black;*/
   padding: 0;

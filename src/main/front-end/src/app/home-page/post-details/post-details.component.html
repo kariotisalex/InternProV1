@@ -6,8 +6,6 @@
 
 
   </div>
-
-
   <div class="wrapperSecColumn">
     <div class="nestedDesc" (click)="updateDescCalling(post.description)">
       {{post.description}}
@@ -22,30 +20,24 @@
         </ul>
       </div>
     </div>
-
-
-    <div class="footerPagingComments">
+    <div class="footerPagingComments" >
       <div class="nestedWrapperPaging" *ngFor="let comment of commentPages" >
         <button class="paging" (click)="this.getComments(comment)" >{{comment}}</button>
       </div>
     </div>
 
 
-
-
-
-<!--    Create Comment -->
+    <!--    Create Comment -->
     <div class="nestedCommentNewComment" *ngIf="!isUpdateCommentTabEnable && !isUpdateDescTabEnable">
 
-          <div class="textareas">
-            <textarea (focus)="clearingNewCommentTextarea()" [(ngModel)]="valuees"></textarea>
-          </div>
-          <div class="submitButtonClass">
-            <button class="newCommentButtonClass" (click)="onSubmitNewComment(valuees)">Post</button>
-          </div>
+      <div class="textareas">
+        <textarea (focus)="clearingNewCommentTextarea()" [(ngModel)]="valuees"></textarea>
+      </div>
+      <div class="submitButtonClass">
+        <button class="newCommentButtonClass" (click)="onSubmitNewComment(valuees)">Post</button>
+      </div>
     </div>
-
-<!--   Update-Delete Comment -->
+    <!--   Update-Delete Comment -->
     <div class="nestedCommentUpdateOrDelete" *ngIf="isUpdateCommentTabEnable && !isUpdateDescTabEnable">
       <div><button (click)="backbuttonfunc()" class="backButtonComment"><</button></div>
       <div class="textareas">
@@ -57,7 +49,7 @@
       <div ><button class="deleteButtonClass" (click)="deleteCommentButtonFunc()">Delete</button></div>
     </div>
 
-<!-- Update Description -->
+    <!-- Update Description -->
     <div class="nestedDescUpdateOrDelete" *ngIf="!isUpdateCommentTabEnable && isUpdateDescTabEnable">
       <div><button (click)="backbuttonfunc()" class="backButtonComment"><</button></div>
       <div class="textareas">
@@ -68,7 +60,7 @@
       </div>
     </div>
 
-<!-- Delete Post -->
+    <!-- Delete Post -->
     <div class="nestedDeletePost" *ngIf="isUpdateCommentTabEnable && isUpdateDescTabEnable">
 
       <div class="textareas">
@@ -82,5 +74,19 @@
       </div>
     </div>
 
+
+
+
+
+
+
+
+
+
+
+
   </div>
+
+
+
 </div>

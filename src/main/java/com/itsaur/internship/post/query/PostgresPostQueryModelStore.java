@@ -3,6 +3,8 @@ package com.itsaur.internship.post.query;
 import com.itsaur.internship.comment.query.CommentQueryModel;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.pgclient.PgPool;
 import io.vertx.sqlclient.PoolOptions;
@@ -13,6 +15,7 @@ import io.vertx.sqlclient.Tuple;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class PostgresPostQueryModelStore implements PostQueryModelStore{
@@ -37,28 +40,31 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                 })
                 .compose(rows -> {
 
-                    List<PostQueryModel> listofposts = new ArrayList<>();
+                    List<PostQueryModel> queryModelList = new ArrayList<>();
+
                     if (rows.iterator().hasNext()){
                         for (Row row : rows){
-                            String postid                 = String.valueOf(row.getUUID(0));
-                            String createdate             = String.valueOf(row.getOffsetDateTime(1));
-                            String filename               = row.getString(2);
-                            String description            = row.getString(3);
-                            String userid                 = String.valueOf(row.getUUID(4));
-                            String username               = row.getString("username");
+                            UUID postid                 = row.getUUID(0);
+                            OffsetDateTime createdate   = row.getOffsetDateTime(1);
+                            String filename             = row.getString(2);
+                            String description          = row.getString(3);
+                            UUID userid                 = row.getUUID(4);
+                            String username             = row.getString("username");
 
-                            listofposts.add(
+                            queryModelList.add(
                                     new PostQueryModel(
                                             postid,
                                             createdate,
                                             filename,
                                             description,
                                             userid,
-                                            username
-                                    )
-                            );
+                                            username)
+                                    );
+
+
+
                         }
-                        return Future.succeededFuture(listofposts);
+                        return Future.succeededFuture(queryModelList);
                     }else {
                         return Future.failedFuture(new IllegalArgumentException("There is no post!"));
                     }
@@ -106,7 +112,7 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                         Row row = rows.iterator().next();
 
                         String postid                 = String.valueOf(row.getUUID("postid"));
-                        String createdate             = String.valueOf(row.getOffsetDateTime("createdate"));
+                        OffsetDateTime createdate             = row.getOffsetDateTime("createdate");
                         String filename               = row.getString("filename");
                         String description            = row.getString("description");
                         String userid                 = String.valueOf(row.getUUID("userid"));
@@ -133,7 +139,8 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                 });
     }
     @Override
-    public Future<List<PostQueryModel>> findPostPageByUid(UUID uid, int startFrom, int size){
+    public Future<JsonArray> findPostPageByUid(UUID uid, int startFrom, int size){
+
         return pool
                 .preparedQuery(
                     "SELECT P.postid, P.createdate, P.filename, P.description, P.userid, U.username  " +
@@ -150,30 +157,28 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                     e.printStackTrace();
                 })
                 .compose(rows -> {
-
-                    List<PostQueryModel> listofposts = new ArrayList<>();
                     if (rows.iterator().hasNext()){
+                        JsonArray jsonArray = new JsonArray();
                         for (Row row : rows){
 
-                            String postid                 = String.valueOf(row.getUUID(0));
-                            String createdate     = String.valueOf(row.getOffsetDateTime(1));
+                            UUID postid                 = row.getUUID(0);
+                            OffsetDateTime createdate     = row.getOffsetDateTime(1);
                             String filename               = row.getString(2);
                             String description            = row.getString(3);
-                            String userid                 = String.valueOf(row.getUUID(4));
+                            UUID userid                   = row.getUUID(4);
                             String username               = row.getString("username");
 
-                            listofposts.add(
-                                    new PostQueryModel(
-                                            postid,
-                                            createdate,
-                                            filename,
-                                            description,
-                                            userid,
-                                            username
-                                    )
-                            );
+
+                            jsonArray.add(new JsonObject()
+                                    .put("postid"       ,postid.toString())
+                                    .put("createdate"   ,createdate.toString())
+                                    .put("filename"     ,filename)
+                                    .put("description"  ,description)
+                                    .put("userid"       ,userid.toString())
+                                    .put("username"     ,username));
+
                         }
-                        return Future.succeededFuture(listofposts);
+                        return Future.succeededFuture(jsonArray);
                     }else {
                         return Future.failedFuture(new IllegalArgumentException("There is no post!"));
                     }

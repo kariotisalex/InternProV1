@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, inject, Input, OnInit} from '@angular/core';
 import {User} from "../../services/interfaces/user";
 import {UserService} from "../../services/user.service";
 import {Router} from "@angular/router";
@@ -17,6 +17,7 @@ export class ProfileComponent implements OnInit{
 
   postsPerPage : number = 6;
   pages : number[] = [];
+
 
   constructor(
     private userService : UserService,
@@ -76,8 +77,8 @@ export class ProfileComponent implements OnInit{
       });
   }
 
-  postNav(pst : string){
-    this.navigation.goToPostDetail(pst);
+  postNav (pst : string) : void {
+    this.navigation.goToPostDetail(pst)
   }
 
 

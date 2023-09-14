@@ -19,9 +19,9 @@ import {NavigationService} from "../../services/navigation.service";
 })
 export class SignupComponent {
 
-  error : String = "";
-  value : String = "";
-  valueV: String = "";
+  error : string = "";
+  value : string = "";
+  valueV: string = "";
   constructor(
     private router : Router,
     private userService : UserService,
@@ -36,9 +36,9 @@ export class SignupComponent {
   });
 
   onSubmit(){
-    const username  : String = this.signupHandling.value.username as String;
-    const password  : String = this.signupHandling.value.password as String;
-    const passwordV : String = this.signupHandling.value.passwordV as String;
+    const username  : string = this.signupHandling.value.username as string;
+    const password  : string = this.signupHandling.value.password as string;
+    const passwordV : string = this.signupHandling.value.passwordV as string;
 
     if (passwordV == password){
       this.userService.signup(username,password)
@@ -62,9 +62,9 @@ export class SignupComponent {
   changing(){
     this.error="";
   }
-  checking() : String {
-    const password  : String = this.signupHandling.value.password as String;
-    const passwordV : String = this.signupHandling.value.passwordV as String;
+  checking() : string {
+    const password  : string = this.signupHandling.value.password as string;
+    const passwordV : string = this.signupHandling.value.passwordV as string;
     if ((password != "") && (passwordV != "")){
       if(passwordV == password){
         return 'greenClass'

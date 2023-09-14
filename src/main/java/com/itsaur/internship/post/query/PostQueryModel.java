@@ -1,17 +1,12 @@
 package com.itsaur.internship.post.query;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.ser.OffsetDateTimeSerializer;
-
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
-
-public record PostQueryModel(String postid,
-                             String createdDate,
+public record PostQueryModel(UUID postid,
+                             OffsetDateTime createdDate,
                              String filename,
                              String description,
-                             String userid,
+                             UUID userid,
                              String username)  {
 }

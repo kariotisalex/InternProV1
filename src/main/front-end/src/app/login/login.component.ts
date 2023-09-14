@@ -21,7 +21,7 @@ import {NavigationService} from "../services/navigation.service";
 })
 export class LoginComponent {
 
-  error : String = "";
+  error : string = "";
 
   constructor(
     private router : Router,
@@ -35,8 +35,8 @@ export class LoginComponent {
   });
 
   onSubmit(){
-    const username : String = this.loginHandling.value.username as String;
-    const password : String = this.loginHandling.value.password as String;
+    const username : string = this.loginHandling.value.username as string;
+    const password : string = this.loginHandling.value.password as string;
     this.userService.logIn(username,password)
     .subscribe( {
       next: x => {

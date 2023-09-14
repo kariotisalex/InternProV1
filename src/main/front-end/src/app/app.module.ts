@@ -20,6 +20,7 @@ import { AddPostComponent } from './add-post/add-post.component';
 import { PostDetailsComponent } from './home-page/post-details/post-details.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CommonModule} from "@angular/common";
+import { SmallPostPresentationComponent } from './support/small-post-presentation/small-post-presentation.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import {CommonModule} from "@angular/common";
     HomePageComponent,
     ProfileComponent,
     PostDetailsComponent,
-    SearchComponent
+    SearchComponent,
+    SmallPostPresentationComponent
 
 
   ],

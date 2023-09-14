@@ -20,7 +20,7 @@ export class UserService {
     private http: HttpClient
   ) { }
 
-  logIn(username: String, password: String){
+  logIn(username: string, password: string){
     const body = { username: username,
                    password: password }
     return this.http.post<User>("/api/user/login", body);
@@ -30,19 +30,19 @@ export class UserService {
     this.user = x;
   }
 
-  signup(username: String, password: String){
+  signup(username: string, password: string){
     const body = { username: username,
                    password: password }
     return this.http.post("/api/user/register", body);
   }
 
-  changePassword(uid : String, currentPassword : String, newPassword : String){
+  changePassword(uid : string, currentPassword : string, newPassword : string){
     const body = { current : currentPassword,
                    new     : newPassword     }
     return this.http.put(`/api/user/${uid}/password`, body);
   }
 
-  delete(uid : String){
+  delete(uid : string){
     return this.http.delete(`/api/user/${uid}`);
 
   }

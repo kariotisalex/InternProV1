@@ -291,7 +291,7 @@ public class VerticleApi extends AbstractVerticle {
                 .handler(ctx -> {
                             this.postQueryModelStore.findPostPageByUid(UUID.fromString(ctx.pathParam("userId")))
                                     .onSuccess(posts -> {
-                                        ctx.response().setStatusCode(200).end(Json.encode(posts));
+                                        ctx.response().setStatusCode(200).end(posts.encode());
                                     })
                                     .onFailure(err -> {
                                         ctx.response().setStatusCode(400).end("There is not posts!");
@@ -310,7 +310,7 @@ public class VerticleApi extends AbstractVerticle {
                                     Integer.valueOf(startFrom),
                                     Integer.valueOf(size)
                                 ).onSuccess(posts -> {
-                                    ctx.response().setStatusCode(200).end(Json.encode(posts));
+                                    ctx.response().setStatusCode(200).end(posts.toString());
                                 })
                                 .onFailure(err -> {
                                     ctx.response().setStatusCode(400).end("There is not posts!");
@@ -335,7 +335,7 @@ public class VerticleApi extends AbstractVerticle {
                                         Integer.valueOf(startFrom),
                                         Integer.valueOf(size)
                                 ).onSuccess(posts -> {
-                                    ctx.response().setStatusCode(200).end(Json.encode(posts));
+                                    ctx.response().setStatusCode(200).end(posts.toString());
                                 })
                                 .onFailure(err -> {
                                     ctx.response().setStatusCode(400).end("There is no comments!");
@@ -415,7 +415,7 @@ public class VerticleApi extends AbstractVerticle {
                             })
                             .onSuccess(res -> {
 
-                                ctx.response().setStatusCode(200).end(Json.encode(res));
+                                ctx.response().setStatusCode(200).end(res.toString());
                             });
                 });
 

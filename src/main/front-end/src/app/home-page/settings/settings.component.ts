@@ -23,12 +23,12 @@ import {NavigationService} from "../../services/navigation.service";
 })
 export class SettingsComponent {
 
-  error!          : String;
+  error!          : string;
   update          : boolean = true;
-  currentPswd     : String = "";
-  newPswd         : String = "";
-  confirmNewPswd  : String = "";
-  delPswd         : String = "";
+  currentPswd     : string = "";
+  newPswd         : string = "";
+  confirmNewPswd  : string = "";
+  delPswd         : string = "";
   succeed         : boolean = false;
 
   constructor(
@@ -51,9 +51,9 @@ export class SettingsComponent {
 
   onSubmitUpdate(){
     const uid = this.userService.getUid();
-    const currentPassword = this.updateHandling.value.currentPassword as String;
-    const newPassword = this.updateHandling.value.newPassword as String;
-    const confirmNewPassword = this.updateHandling.value.confirmNewPassword as String;
+    const currentPassword = this.updateHandling.value.currentPassword as string;
+    const newPassword = this.updateHandling.value.newPassword as string;
+    const confirmNewPassword = this.updateHandling.value.confirmNewPassword as string;
     if ((newPassword == confirmNewPassword) && (currentPassword != newPassword)){
       this.userService.changePassword(uid, currentPassword, newPassword)
         .subscribe({
@@ -110,8 +110,8 @@ export class SettingsComponent {
 
   checking() : boolean{
 
-    const password  : String = this.updateHandling.value.newPassword as String;
-    const passwordV : String = this.updateHandling.value.confirmNewPassword as String;
+    const password  : string = this.updateHandling.value.newPassword as string;
+    const passwordV : string = this.updateHandling.value.confirmNewPassword as string;
     if((password != "") && (passwordV != "")){
       return password == passwordV;
     }else {
@@ -119,9 +119,9 @@ export class SettingsComponent {
     }
   }
 
-  checkingEmpty() : String{
-    const password  : String = this.updateHandling.value.newPassword as String;
-    const passwordV : String = this.updateHandling.value.confirmNewPassword as String;
+  checkingEmpty() : string{
+    const password  : string = this.updateHandling.value.newPassword as string;
+    const passwordV : string = this.updateHandling.value.confirmNewPassword as string;
     if ((password != "") && (passwordV != "")){
       if(passwordV == password){
         return 'greenClassBorder'

@@ -3,6 +3,8 @@ package com.itsaur.internship.comment.query;
 import com.itsaur.internship.post.query.PostQueryModel;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.pgclient.PgPool;
 import io.vertx.sqlclient.PoolOptions;
@@ -10,6 +12,7 @@ import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.SqlClient;
 import io.vertx.sqlclient.Tuple;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -22,7 +25,7 @@ public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
     }
 
     @Override
-    public Future<List<CommentQueryModel>> findAllByPostId(UUID postid){
+    public Future<JsonArray> findAllByPostId(UUID postid){
 
         return pool
                 .preparedQuery("SELECT C.commentid, C.createdate, C.comment, C.userid, U.username, C.postid " +
@@ -36,23 +39,29 @@ public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
                 .compose(rows -> {
                     List<CommentQueryModel> commentQueryModelList = new ArrayList<>();
 
+                    JsonArray jsonArray = new JsonArray();
                     if (rows.iterator().hasNext()){
                         for (Row row : rows){
 
-                            String commentid    = String.valueOf(row.getUUID("commentid"));
-                            String createdate   = String.valueOf(row.getOffsetDateTime("createdate"));
-                            String comment      = row.getString("comment");
-                            String userid       = String.valueOf(row.getUUID("userid"));
-                            String username     = row.getString("username");
+                            UUID commentid              = row.getUUID("commentid");
+                            OffsetDateTime createdate   = row.getOffsetDateTime("createdate");
+                            String comment              = row.getString("comment");
+                            UUID userid                 = row.getUUID("userid");
+                            String username             = row.getString("username");
 
 
+                            jsonArray.add(new JsonObject()
+                                    .put("commentid",commentid.toString())
+                                    .put("createdate",createdate.toString())
+                                    .put("comment",comment)
+                                    .put("userid",userid.toString())
+                                    .put("username",username)
+                                    .put("postid",postid.toString())
+                            );
 
 
-                            commentQueryModelList.add(
-                                    new CommentQueryModel(commentid, createdate,
-                                            comment, userid, username, String.valueOf(postid)));
                         }
-                        return Future.succeededFuture(commentQueryModelList);
+                        return Future.succeededFuture(jsonArray);
                     }else{
                         return Future.failedFuture(new IllegalArgumentException("There is no comments!"));
                     }
@@ -65,7 +74,7 @@ public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
 
 
     @Override
-    public Future<List<CommentQueryModel>> findCommentPageByUid(UUID postid, int startFrom, int size) {
+    public Future<JsonArray> findCommentPageByUid(UUID postid, int startFrom, int size) {
         return pool
                 .preparedQuery(
                         "SELECT C.commentid, C.createdate, C.comment, C.userid, U.username, C.postid " +
@@ -81,25 +90,29 @@ public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
                     err.printStackTrace();
                 })
                 .compose(rows -> {
-                    List<CommentQueryModel> commentQueryModelList = new ArrayList<>();
+
+                    JsonArray jsonArray = new JsonArray();
 
                     if (rows.iterator().hasNext()){
                         for (Row row : rows){
 
-                            String commentid    = String.valueOf(row.getUUID("commentid"));
-                            String createdate   = String.valueOf(row.getOffsetDateTime("createdate"));
-                            String comment      = row.getString("comment");
-                            String userid       = String.valueOf(row.getUUID("userid"));
-                            String username     = row.getString("username");
+                            UUID commentid              = row.getUUID("commentid");
+                            OffsetDateTime createdate   = row.getOffsetDateTime("createdate");
+                            String comment              = row.getString("comment");
+                            UUID userid                 = row.getUUID("userid");
+                            String username             = row.getString("username");
 
+                            jsonArray.add(new JsonObject()
+                                    .put("commentid"    ,commentid.toString())
+                                    .put("createdate"   ,createdate.toString())
+                                    .put("comment"      ,comment)
+                                    .put("userid"       ,userid.toString())
+                                    .put("username"     ,username)
+                                    .put("postid"       ,postid.toString())
+                            );
 
-
-
-                            commentQueryModelList.add(
-                                    new CommentQueryModel(commentid, createdate,
-                                            comment, userid, username, String.valueOf(postid)));
                         }
-                        return Future.succeededFuture(commentQueryModelList);
+                        return Future.succeededFuture(jsonArray);
                     }else{
                         return Future.failedFuture(new IllegalArgumentException("There is no comments!"));
                     }

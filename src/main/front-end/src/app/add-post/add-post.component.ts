@@ -20,7 +20,7 @@ import {NavigationService} from "../services/navigation.service";
   styleUrls: ['./add-post.component.css']
 })
 export class AddPostComponent {
-  error!          : String;
+  error!          : string;
   succeed         : boolean = false;
 
   constructor(
