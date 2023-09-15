@@ -25,7 +25,7 @@ public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
     }
 
     @Override
-    public Future<JsonArray> findAllByPostId(UUID postid){
+    public Future<List<CommentQueryModel>> findAllByPostId(UUID postid){
 
         return pool
                 .preparedQuery("SELECT C.commentid, C.createdate, C.comment, C.userid, U.username, C.postid " +
@@ -50,18 +50,18 @@ public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
                             String username             = row.getString("username");
 
 
-                            jsonArray.add(new JsonObject()
-                                    .put("commentid",commentid.toString())
-                                    .put("createdate",createdate.toString())
-                                    .put("comment",comment)
-                                    .put("userid",userid.toString())
-                                    .put("username",username)
-                                    .put("postid",postid.toString())
+                            commentQueryModelList.add(
+                                    new CommentQueryModel(
+                                            commentid,
+                                            createdate,
+                                            comment,
+                                            userid,
+                                            username,
+                                            postid
+                                    )
                             );
-
-
                         }
-                        return Future.succeededFuture(jsonArray);
+                        return Future.succeededFuture(commentQueryModelList);
                     }else{
                         return Future.failedFuture(new IllegalArgumentException("There is no comments!"));
                     }
@@ -74,7 +74,13 @@ public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
 
 
     @Override
-    public Future<JsonArray> findCommentPageByUid(UUID postid, int startFrom, int size) {
+    public Future<List<CommentQueryModel>> findCommentPageByUid(UUID postid, int startFrom, int size) {
+        if (size < 0 || size > 50){
+            throw new IllegalArgumentException("Comments : The size of comments is unacceptable");
+        }
+        if(startFrom % size != 0 || startFrom < 0){
+            throw new IllegalArgumentException("Comments : The startFrom is not valid!");
+        }
         return pool
                 .preparedQuery(
                         "SELECT C.commentid, C.createdate, C.comment, C.userid, U.username, C.postid " +
@@ -91,7 +97,8 @@ public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
                 })
                 .compose(rows -> {
 
-                    JsonArray jsonArray = new JsonArray();
+
+                    List<CommentQueryModel> commentQueryModelList = new ArrayList<>();
 
                     if (rows.iterator().hasNext()){
                         for (Row row : rows){
@@ -102,17 +109,19 @@ public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
                             UUID userid                 = row.getUUID("userid");
                             String username             = row.getString("username");
 
-                            jsonArray.add(new JsonObject()
-                                    .put("commentid"    ,commentid.toString())
-                                    .put("createdate"   ,createdate.toString())
-                                    .put("comment"      ,comment)
-                                    .put("userid"       ,userid.toString())
-                                    .put("username"     ,username)
-                                    .put("postid"       ,postid.toString())
-                            );
 
+                            commentQueryModelList.add(
+                                    new CommentQueryModel(
+                                            commentid,
+                                            createdate,
+                                            comment,
+                                            userid,
+                                            username,
+                                            postid
+                                    )
+                            );
                         }
-                        return Future.succeededFuture(jsonArray);
+                        return Future.succeededFuture(commentQueryModelList);
                     }else{
                         return Future.failedFuture(new IllegalArgumentException("There is no comments!"));
                     }
@@ -124,7 +133,7 @@ public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
     }
 
     @Override
-    public Future<String> countAllCommentsByPid(String pid) {
+    public Future<String> countAllCommentsByPid(UUID pid) {
         return pool
                 .preparedQuery("SELECT count(commentid) " +
                         "FROM comments AS C, posts AS P " +

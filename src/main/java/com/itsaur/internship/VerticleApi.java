@@ -9,12 +9,13 @@ import com.itsaur.internship.user.UserService;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServer;
-import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.UUID;
 
 public class VerticleApi extends AbstractVerticle {
@@ -53,9 +54,11 @@ public class VerticleApi extends AbstractVerticle {
             .handler(BodyHandler.create())
             .handler(ctx -> {
                 final JsonObject body = ctx.body().asJsonObject();
-                String username = body.getString("username");
+                String username = Objects.requireNonNull(
+                                            body.getString("username"));
                 System.out.println(username);
-                String password = body.getString("password");
+                String password = Objects.requireNonNull(
+                                            body.getString("password"));
                 System.out.println(password);
 
                 this.userService.login(username, password)
@@ -63,7 +66,7 @@ public class VerticleApi extends AbstractVerticle {
                             System.out.println("Successful Login");
 
                             JsonObject jsonObject = new JsonObject();
-                            jsonObject.put("uid" , String.valueOf(v.userid()));
+                            jsonObject.put("uid" , v.userid().toString());
                             jsonObject.put("username" , v.username());
                             System.out.println(jsonObject);
 
@@ -79,26 +82,32 @@ public class VerticleApi extends AbstractVerticle {
                 .post("/user/register")
                 .handler(BodyHandler.create())
                 .handler(ctx -> {
-                    final JsonObject body = ctx.body().asJsonObject();
-                    String username = body.getString("username");
-                    System.out.println(username);
-                    String password = body.getString("password");
-                    System.out.println(password);
+                    try {
+                        final JsonObject body = ctx.body().asJsonObject();
+                        String username = Objects.requireNonNull(body.getString("username"));
+                        System.out.println(username);
+                        String password = Objects.requireNonNull(body.getString("password"));
+                        System.out.println(password);
 
-                    if (username ==""){
-                        ctx.response().setStatusCode(400).end("Empty username");
-                    } else if (password == "") {
-                        ctx.response().setStatusCode(400).end("Empty password");
+                        if (username.isBlank()) {
+                            ctx.response().setStatusCode(400).end("Empty username");
+                        } else if (password.isBlank()) {
+                            ctx.response().setStatusCode(400).end("Empty password");
+                        } else {
+                            this.userService.register(username, password)
+                                    .onSuccess(v -> {
+                                        System.out.println("Your registration is successful");
+                                        ctx.response().setStatusCode(200).end();
+                                    })
+                                    .onFailure(v -> {
+                                        ctx.response().setStatusCode(400).end(v.getMessage());
+                                    });
+                        }
+                    }catch (NullPointerException e){
+                        ctx.response().setStatusCode(500).end(e.getMessage());
+                    }catch(Exception e){
+                        ctx.response().setStatusCode(500).end(e.getMessage());
 
-                    }else {
-                        this.userService.register(username, password)
-                            .onSuccess(v -> {
-                                System.out.println("Your registration is successful");
-                                ctx.response().setStatusCode(200).end();
-                            })
-                            .onFailure(v -> {
-                                ctx.response().setStatusCode(400).end(v.getMessage());
-                            });
                     }
 
                 });
@@ -108,13 +117,22 @@ public class VerticleApi extends AbstractVerticle {
                 .put("/user/:userid/password")
                 .handler(BodyHandler.create())
                 .handler(ctx ->{
-                    final JsonObject body = ctx.body().asJsonObject();
+                    try{
+                        final JsonObject body = Objects.requireNonNull(
+                                                        ctx.body().asJsonObject());
 
-                    final UUID userid = UUID.fromString(ctx.pathParam("userid"));
-                    final String currentPw = body.getString("current");
-                    final String newPw = body.getString("new");
+                        final UUID userid       = UUID.fromString(
+                                                        Objects.requireNonNull(
+                                                                ctx.pathParam("userid")));
 
-                    this.userService.changePassword(userid, currentPw, newPw)
+                        final String currentPw  = Objects.requireNonNull(
+                                                        body.getString("current"));
+
+                        final String newPw      = Objects.requireNonNull(
+                                                        body.getString("new"));
+
+
+                        this.userService.changePassword(userid, currentPw, newPw)
                             .onSuccess(v -> {
                                 System.out.println("Password changes successfully from user " + ctx.pathParam("userid"));
                                 ctx.response().setStatusCode(200).end();
@@ -123,15 +141,23 @@ public class VerticleApi extends AbstractVerticle {
                                 System.out.println("Password changing operation fails from user " + ctx.pathParam("userid"));
                                 ctx.response().setStatusCode(400).end(e.getMessage());
                             });
+                    }catch (IllegalArgumentException e){
+                        e.printStackTrace();
+                        ctx.response().setStatusCode(500).end(e.getMessage());
+                    }catch(Exception e){
+                        ctx.response().setStatusCode(500).end(e.getMessage());
+
+                    }
                 });
 
 
         router
                 .delete("/user/:userid")
                 .handler(ctx -> {
+                    try{
                     System.out.println(ctx.pathParam("userid"));
-
-                    this.userService.deleteByUserid(UUID.fromString(ctx.pathParam("userid")))
+                    UUID userid = UUID.fromString(Objects.requireNonNull(ctx.pathParam("userid")));
+                    this.userService.deleteByUserid(userid)
                             .onSuccess(v -> {
                                 System.out.println("User :" + ctx.pathParam("userid") + " deleted successfully");
                                 ctx.response().setStatusCode(200).end();
@@ -140,8 +166,18 @@ public class VerticleApi extends AbstractVerticle {
                                 v.printStackTrace();
                                 ctx.response().setStatusCode(400).end(v.getMessage());
                             });
-                });
+                    }catch (IllegalArgumentException e){
+                        e.printStackTrace();
+                        ctx.response().setStatusCode(500).end("UUID is not correct");
 
+                    }catch (NullPointerException ex){
+                        ctx.response().setStatusCode(500).end(ex.getMessage());
+
+                    }catch(Exception e){
+                        ctx.response().setStatusCode(500).end(e.getMessage());
+
+                    }
+                });
 
 
 
@@ -156,38 +192,49 @@ public class VerticleApi extends AbstractVerticle {
                         .setUploadsDirectory(String.valueOf(Paths.get("images").toAbsolutePath()))
                 )
                 .handler(ctx->{
-                    FileUpload file = ctx.fileUploads().get(0);
-                    String description = ctx.request().getParam("desc");
-                    if(file.contentType().split("/")[0].equals("image")){
-                        final String fileExt = "." + file.fileName()
-                                                         .split("[.]")[file.fileName()
-                                                         .split("[.]").length-1];
-                        final String savedFileName = file.uploadedFileName()
-                                                         .split("/")[file.uploadedFileName()
-                                                         .split("/").length-1]+fileExt;
+                    try {
+                        FileUpload file = Objects.requireNonNull(
+                                                ctx.fileUploads().get(0));
+                        String description = Objects.requireNonNull(
+                                                ctx.request().getParam("desc"));
+                        if (file.contentType().split("/")[0].equals("image")) {
+                            final String fileExt = "." + file.fileName()
+                                    .split("[.]")[file.fileName()
+                                    .split("[.]").length - 1];
+                            final String savedFileName = file.uploadedFileName()
+                                    .split("/")[file.uploadedFileName()
+                                    .split("/").length - 1] + fileExt;
 
 
-                        vertx.fileSystem().move(file.uploadedFileName(),
-                                                file.uploadedFileName() + fileExt)
-                                .compose(w -> {
-                                    return postService.addPost(UUID.fromString(ctx.pathParam("userid")),savedFileName,description)
-                                            .onSuccess(f ->{
-                                                ctx.response().setStatusCode(200).end(savedFileName);
-                                            })
-                                            .onFailure(e -> {
-                                                ctx.response().setStatusCode(400).end(e.getMessage());
-                                            });
-                                });
-                    } else {
-                        vertx.fileSystem().delete(file.uploadedFileName());
-                        ctx.response().setStatusCode(400).end();
+                            vertx.fileSystem().move(file.uploadedFileName(),
+                                            file.uploadedFileName() + fileExt)
+                                    .compose(w -> {
+                                        return postService.addPost(UUID.fromString(ctx.pathParam("userid")), savedFileName, description)
+                                                .onSuccess(f -> {
+                                                    ctx.response().setStatusCode(200).end(savedFileName);
+                                                })
+                                                .onFailure(e -> {
+                                                    ctx.response().setStatusCode(400).end(e.getMessage());
+                                                });
+                                    });
+                        } else {
+                            vertx.fileSystem().delete(file.uploadedFileName());
+                            ctx.response().setStatusCode(400).end();
+                        }
+                    }catch(NullPointerException e){
+                        ctx.response().setStatusCode(500).end(e.getMessage());
+                    }catch (Exception e){
+                        ctx.response().setStatusCode(500).end(e.getMessage());
                     }
                 });
+
+
 
         router
                 .put("/user/:userid/post/:postid")
                 .handler(BodyHandler.create())
                 .handler(ctx -> {
+                    try{
                     UUID userid = UUID.fromString(ctx.pathParam("userid"));
                     UUID postid = UUID.fromString(ctx.pathParam("postid"));
                     String description = ctx.body().asJsonObject().getString("desc");
@@ -200,12 +247,21 @@ public class VerticleApi extends AbstractVerticle {
                                 System.out.println(e);
                                 ctx.response().setStatusCode(400).end(e.getMessage());
                             });
+                    }catch (IllegalArgumentException e){
+                        e.printStackTrace();
+                        ctx.response().setStatusCode(500).end("UUID is not correct");
+
+                    }catch(Exception e){
+                        ctx.response().setStatusCode(500).end(e.getMessage());
+
+                    }
                 });
 
 
         router
                 .delete("/user/:userid/post/:postid")
                 .handler(ctx -> {
+                    try{
                     UUID userid = UUID.fromString(ctx.pathParam("userid"));
                     UUID postid = UUID.fromString(ctx.pathParam("postid"));
 
@@ -216,7 +272,14 @@ public class VerticleApi extends AbstractVerticle {
                             .onSuccess(s -> {
                                 ctx.response().setStatusCode(200).end();
                             });
+                    }catch (IllegalArgumentException e){
+                        e.printStackTrace();
+                        ctx.response().setStatusCode(500).end("UUID is not correct");
 
+                    }catch(Exception e){
+                        ctx.response().setStatusCode(500).end(e.getMessage());
+
+                    }
                 });
 
 
@@ -230,50 +293,84 @@ public class VerticleApi extends AbstractVerticle {
                 .post("/user/:userid/comment/:postid")
                 .handler(BodyHandler.create())
                 .handler(ctx ->{
-                    UUID userid = UUID.fromString(ctx.pathParam("userid"));
-                    UUID postid = UUID.fromString(ctx.pathParam("postid"));
-                    String comment = ctx.body().asJsonObject().getString("comment");
+                    try{
+                    UUID userid    = UUID.fromString(
+                                            Objects.requireNonNull(
+                                            ctx.pathParam("userid")));
+                    UUID postid    = UUID.fromString(
+                                            Objects.requireNonNull(
+                                            ctx.pathParam("postid")));
+                    String comment = Objects.requireNonNull(
+                                            ctx.body().asJsonObject().getString("comment"));
 
-                    this.commentService.addComment(userid, postid,comment)
+                    this.commentService.addComment(userid, postid, comment)
                             .onSuccess(s -> {
                                 ctx.response().setStatusCode(200).end(comment);
                             })
                             .onFailure(e -> {
                                 ctx.response().setStatusCode(400).end(e.getMessage());
                             });
+                    }catch (IllegalArgumentException e){
+                        e.printStackTrace();
+                        ctx.response().setStatusCode(500).end("UUID is not correct");
+
+                    }catch(Exception e){
+                        ctx.response().setStatusCode(500).end(e.getMessage());
+
+                    }
                 });
 
         router
                 .put("/user/:userid/comment/:commentid")
                 .handler(BodyHandler.create())
                 .handler(ctx -> {
-                    UUID userid = UUID.fromString(ctx.pathParam("userid"));
-                    UUID commentid = UUID.fromString(ctx.pathParam("commentid"));
-                    String comment = ctx.body().asJsonObject().getString("comment");
+                    try{
+                        UUID userid = UUID.fromString(
+                                            Objects.requireNonNull(
+                                                    ctx.pathParam("userid")));
+                        UUID commentid = UUID.fromString(
+                                            Objects.requireNonNull(
+                                                    ctx.pathParam("commentid")));
+                        String comment = Objects.requireNonNull(ctx.body().asJsonObject().getString("comment"));
                     this.commentService.changeComment(userid, commentid, comment)
                             .onSuccess(s ->{
                                 ctx.response().setStatusCode(200).end("The comment updated!");
-                            })
-                            .onFailure(e -> {
+                            }).onFailure(e -> {
                                 e.printStackTrace();
                                 ctx.response().setStatusCode(400).end("The comment is not updated!");
-
                             });
+                    }catch (IllegalArgumentException e){
+                        e.printStackTrace();
+                        ctx.response().setStatusCode(500).end("UUID is not correct");
+
+                    }catch(Exception e){
+                        ctx.response().setStatusCode(500).end(e.getMessage());
+
+                    }
                 });
         router
                 .delete("/user/:userid/comment/:commentid")
                 .handler(ctx -> {
-                    UUID userid = UUID.fromString(ctx.pathParam("userid"));
-                    UUID commentid = UUID.fromString(ctx.pathParam("commentid"));
-                    String success = "Comment deleted!";
-                    String failed = "Comment deleted unsuccessfully!";
-                    this.commentService.deleteComment(userid, commentid)
-                            .onFailure(e -> {
-                                ctx.response().setStatusCode(400).end(failed);
-                            })
-                            .onSuccess(s -> {
-                                ctx.response().setStatusCode(200).end(success);
-                            });
+                    try{
+                        UUID userid = UUID.fromString(ctx.pathParam("userid"));
+                        UUID commentid = UUID.fromString(ctx.pathParam("commentid"));
+                        String success = "Comment deleted!";
+                        String failed = "Comment deleted unsuccessfully!";
+                        this.commentService.deleteComment(userid, commentid)
+                                .onFailure(e -> {
+                                    ctx.response().setStatusCode(400).end(failed);
+                                })
+                                .onSuccess(s -> {
+                                    ctx.response().setStatusCode(200).end(success);
+                                });
+                    }catch (IllegalArgumentException e){
+                        e.printStackTrace();
+                        ctx.response().setStatusCode(500).end("UUID is not correct");
+
+                    }catch(Exception e){
+                        ctx.response().setStatusCode(500).end(e.getMessage());
+
+                    }
                 });
 
 
@@ -286,38 +383,51 @@ public class VerticleApi extends AbstractVerticle {
 //         Retrieve Post
 //         Retrieve Post
 
-        router
-                .get("/user/:userId/posts")
-                .handler(ctx -> {
-                            this.postQueryModelStore.findPostPageByUid(UUID.fromString(ctx.pathParam("userId")))
-                                    .onSuccess(posts -> {
-                                        ctx.response().setStatusCode(200).end(posts.encode());
-                                    })
-                                    .onFailure(err -> {
-                                        ctx.response().setStatusCode(400).end("There is not posts!");
-                                    });
-                });
         // Post page
         router
                 .get("/user/:userId/posts/page")
                 .handler(ctx -> {
-                    String startFrom = ctx.request().getParam("startFrom");
-                    String size = ctx.request().getParam("size");
-                    System.out.println(startFrom + " and " + size);
-                    if (startFrom != null && size != null){
+
+                        try{
+                            String startFrom = Objects.requireNonNull(
+                                                        ctx.request().getParam("startFrom"));
+                            String size      = Objects.requireNonNull(
+                                                        ctx.request().getParam("size"));
+                            System.out.println(startFrom + " and " + size);
+
+
+
                         this.postQueryModelStore.findPostPageByUid(
                                     UUID.fromString(ctx.pathParam("userId")),
                                     Integer.valueOf(startFrom),
                                     Integer.valueOf(size)
                                 ).onSuccess(posts -> {
-                                    ctx.response().setStatusCode(200).end(posts.toString());
+                                    JsonArray jsonArray = new JsonArray();
+                                    posts.forEach(re ->{
+                                        jsonArray.add(new JsonObject()
+                                                .put("postid"       , re.postid().toString())
+                                                .put("createdDate"  , re.createdDate().toString())
+                                                .put("filename"     , re.filename())
+                                                .put("description"  , re.description())
+                                                .put("userid"       , re.userid().toString())
+                                                .put("username"     , re.username())
+                                        );
+                                    });
+                                    ctx.response().setStatusCode(200).end(jsonArray.toString());
                                 })
                                 .onFailure(err -> {
                                     ctx.response().setStatusCode(400).end("There is not posts!");
                                 });
-                    }else {
-                        ctx.response().setStatusCode(400).end("check the null values!");
-                    }
+                        }catch (IllegalArgumentException e){
+
+                            e.printStackTrace();
+                            ctx.response().setStatusCode(500).end(e.getMessage());
+
+                        }catch(Exception e){
+                            ctx.response().setStatusCode(500).end(e.getMessage());
+
+                        }
+
 
                 });
 
@@ -326,23 +436,50 @@ public class VerticleApi extends AbstractVerticle {
         router
                 .get("/post/:postId/comments/page")
                 .handler(ctx -> {
-                    String startFrom = ctx.request().getParam("startFrom");
-                    String size = ctx.request().getParam("size");
-                    System.out.println(startFrom + " and " + size);
-                    if (startFrom != null && size != null){
+                    String startFrom = Objects.requireNonNull(
+                                                ctx.request().getParam("startFrom"));
+                    String size      = Objects.requireNonNull(
+                                                ctx.request().getParam("size"));
+
+                    try{
                         this.commentQueryModelStore.findCommentPageByUid(
                                         UUID.fromString(ctx.pathParam("postId")),
                                         Integer.valueOf(startFrom),
                                         Integer.valueOf(size)
-                                ).onSuccess(posts -> {
-                                    ctx.response().setStatusCode(200).end(posts.toString());
+                                ).onSuccess(comments -> {
+                                    JsonArray jsonArray = new JsonArray();
+                                    comments.forEach(re ->{
+                                        jsonArray.add(new JsonObject()
+                                                .put("commentid"  ,  re.commentid().toString())
+                                                .put("createdate" ,  re.createdate().toString())
+                                                .put("comment"    ,  re.comment())
+                                                .put("userid"     ,  re.userid().toString())
+                                                .put("username"   ,  re.username())
+                                                .put("postid"     ,  re.postid().toString())
+                                        );
+                                    });
+
+                                    ctx.response().setStatusCode(200).end(jsonArray.toString());
                                 })
                                 .onFailure(err -> {
+                                    err.printStackTrace();
                                     ctx.response().setStatusCode(400).end("There is no comments!");
                                 });
-                    }else {
-                        ctx.response().setStatusCode(400).end("check the null values!");
+                    }catch (NullPointerException exception){
+
+                            exception.printStackTrace();
+                            ctx.response().setStatusCode(500).end("check the null values!");
+
+                    }catch (IllegalArgumentException e){
+
+                            e.printStackTrace();
+                            ctx.response().setStatusCode(500).end(e.getMessage());
+
+                    }catch(Exception e){
+                            ctx.response().setStatusCode(500).end(e.getMessage());
+
                     }
+
                 });
 
 
@@ -350,15 +487,28 @@ public class VerticleApi extends AbstractVerticle {
         router
                 .get("/user/:userId/posts/count")
                 .handler(ctx -> {
-                    this.postQueryModelStore.countAllPostsbyUid(UUID.fromString(ctx.pathParam("userId")))
-                            .onSuccess(count -> {
-                                System.out.println(count);
-                                ctx.response().setStatusCode(200).end(count);
-                            })
-                            .onFailure(err -> {
-                                err.printStackTrace();
-                                ctx.response().setStatusCode(400).end("0");
-                            });
+                    try{
+                        UUID userid = UUID.fromString(ctx.pathParam("userId"));
+                        this.postQueryModelStore.countAllPostsbyUid(userid)
+                                .onSuccess(count -> {
+                                    System.out.println(count);
+                                    ctx.response().setStatusCode(200).end(count);
+                                })
+                                .onFailure(err -> {
+                                    err.printStackTrace();
+                                    ctx.response().setStatusCode(400).end("0");
+                                });
+                    }catch (IllegalArgumentException e){
+                        e.printStackTrace();
+                        ctx.response().setStatusCode(500).end("UUID is not correct");
+
+                    }catch(Exception e){
+                        ctx.response().setStatusCode(500).end(e.getMessage());
+
+                    }
+
+
+
                 });
 
 
@@ -366,14 +516,24 @@ public class VerticleApi extends AbstractVerticle {
         router
                 .get("/post/:postId/comments/count")
                 .handler(ctx -> {
-                    String postid = ctx.pathParam("postId");
-                    this.commentQueryModelStore.countAllCommentsByPid(postid)
-                            .onSuccess(suc -> {
-                                ctx.response().setStatusCode(200).end(suc);
-                            })
-                            .onFailure(err -> {
-                                ctx.response().setStatusCode(400).end("0");
-                            });
+                    try{
+                        UUID postid = UUID.fromString(ctx.pathParam("postId"));
+                        this.commentQueryModelStore.countAllCommentsByPid(postid)
+                                .onSuccess(suc -> {
+                                    ctx.response().setStatusCode(200).end(suc);
+                                })
+                                .onFailure(err -> {
+                                    ctx.response().setStatusCode(400).end("0");
+                                });
+                    }catch (IllegalArgumentException e){
+                        e.printStackTrace();
+                        ctx.response().setStatusCode(500).end("UUID is not correct");
+
+                    }catch(Exception e){
+                        ctx.response().setStatusCode(500).end(e.getMessage());
+
+                    }
+
                 });
 
 
@@ -382,42 +542,36 @@ public class VerticleApi extends AbstractVerticle {
         router
                 .get("/user/:userId/post/:postid")
                 .handler(ctx -> {
+                    try{
                     UUID postid = UUID.fromString(ctx.pathParam("postid"));
                     this.postQueryModelStore.findById(postid)
                             .onSuccess(res -> {
-                                System.out.println();
-                                ctx.response().setStatusCode(200).end(Json.encode(res));
+                                ctx.response().setStatusCode(200).end(
+                                        new JsonObject()
+                                                .put("postid"        ,  res.postid().toString())
+                                                .put("createdDate"   ,  res.createdDate().toString())
+                                                .put("filename"      ,  res.filename())
+                                                .put("description"   ,  res.description())
+                                                .put("userid"        ,  res.userid().toString())
+                                                .put("username"      ,  res.username()
+                                                ).toString()
+                                );
                             })
                             .onFailure(err -> {
                                 ctx.response().setStatusCode(400).end();
                             });
+                    }catch (IllegalArgumentException e){
+                        e.printStackTrace();
+                        ctx.response().setStatusCode(500).end("UUID is not correct");
 
+                    }catch(Exception e){
+                        ctx.response().setStatusCode(500).end(e.getMessage());
+
+                    }
 
                 });
 
 
-
-
-
-//         Retrieve Comments
-//         Retrieve Comments
-
-
-
-        router
-                .get("/post/:postid/comments")
-                .handler(ctx -> {
-                    UUID postid = UUID.fromString(ctx.pathParam("postid"));
-                    this.commentQueryModelStore.findAllByPostId(postid)
-                            .onFailure(err -> {
-                                err.printStackTrace();
-                                ctx.response().setStatusCode(400).end("There is no comments!");
-                            })
-                            .onSuccess(res -> {
-
-                                ctx.response().setStatusCode(200).end(res.toString());
-                            });
-                });
 
 
 
@@ -434,7 +588,16 @@ public class VerticleApi extends AbstractVerticle {
         router
                 .get("/post/:filename")
                 .handler(ctx -> {
-                    ctx.response().sendFile(String.valueOf(Paths.get("images",ctx.pathParam("filename")).toAbsolutePath()));
+                    String filename = ctx.pathParam("filename");
+                    vertx
+                            .fileSystem()
+                            .readFile(String.valueOf(Paths.get("images",filename).toAbsolutePath()))
+                            .onSuccess(suc -> {
+                                ctx.response().sendFile(String.valueOf(Paths.get("images",filename).toAbsolutePath()));
+                            }).onFailure(err -> {
+                                err.printStackTrace();
+                                ctx.response().setStatusCode(404).end("Check filename!");
+                            });
                 });
         server.requestHandler(router).listen(8080);
 

@@ -7,6 +7,7 @@ import io.vertx.core.Vertx;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class CommentService {
@@ -54,20 +55,25 @@ public class CommentService {
                                     e.printStackTrace();
                                 })
                                 .compose(w -> {
-                                    return this.commentStore.update(
-                                            new Comment(
-                                                    w.commentid(),
-                                                    w.createdate(),
-                                                    OffsetDateTime.now(),
-                                                    comment,
-                                                    w.userid(),
-                                                    w.postid()));
+                                    if (comment.isBlank()){
+                                        return this.commentStore.deleteById(w.commentid());
+                                    }else {
+                                        return this.commentStore.update(
+                                                new Comment(
+                                                        w.commentid(),
+                                                        w.createdate(),
+                                                        OffsetDateTime.now(),
+                                                        comment,
+                                                        w.userid(),
+                                                        w.postid()));
+                                    }
                                 });
                     } else {
                         return Future.failedFuture(new IllegalArgumentException("userid of Comment entity and given userid are not the same!"));
                     }
                 });
    }
+
 
    public Future<Void> deleteComment(UUID userid, UUID commentid){
         return this.usersStore.findUserByUserid(userid)

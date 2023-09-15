@@ -13,5 +13,4 @@ public record CommentQueryModel (
         UUID userid,
         String username,
         UUID postid
-){
-}
+){}
