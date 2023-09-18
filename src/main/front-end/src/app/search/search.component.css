@@ -1,20 +1,49 @@
-.searchCaption{
-  margin: 0;
 
-}
-.wrapperSearch{
+.grid-container {
+  box-shadow: 0px 0px 15px rgba(150,150,150,1);
   display: grid;
-  grid-template-rows: 10% 90%;
+  grid-template-rows: 100px 300px;
+  width: 400px;
+  margin: 55px auto;
+  padding: 10px;
+  row-gap: 10px;
+  border-radius: 15px;
+  background-color: white;
+}
+.grid-item {
+  font-size: 35px;
+
+
+  font-family: Lato;
   border: 1px solid black;
-  margin: 15px;
 }
 
-.nestedSecondRow{
-  min-height: 550px;
+.wrapper{
+  max-width: 280px;
+  padding-left: 4%;
+  background-color: white;
 }
 
-ul{
+.caption{
+  color: gray;
+  font-size: small;
+  font-weight: bold;
+  margin-top: 12px;
+}
+
+input {
+  padding: 2%;
+  border: 1px solid rgba(150, 150, 150, 0.5);
+  border-radius: 5px;
+  display: grid;
+  font-size: large;
+  width: 260px;
+  align: left;
+  outline: 0;
+}
+.wrapperUl{
   list-style-type: none;
   margin: 0;
-  padding: 0;
+  padding: 10px 0;
+  font-size: large;
 }
