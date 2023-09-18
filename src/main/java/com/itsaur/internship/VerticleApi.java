@@ -5,7 +5,9 @@ import com.itsaur.internship.comment.CommentService;
 import com.itsaur.internship.comment.query.CommentQueryModelStore;
 import com.itsaur.internship.post.PostService;
 import com.itsaur.internship.post.query.PostQueryModelStore;
+import com.itsaur.internship.user.User;
 import com.itsaur.internship.user.UserService;
+import com.itsaur.internship.user.query.UserQueryModelStore;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServer;
@@ -25,19 +27,22 @@ public class VerticleApi extends AbstractVerticle {
     final private PostService postService;
     final private PostQueryModelStore postQueryModelStore;
     final private CommentQueryModelStore commentQueryModelStore;
+    final private UserQueryModelStore userQueryModelStore;
 
 
 
     public VerticleApi(
             UserService userService, CommentService commentService,
             PostService postService, PostQueryModelStore postQueryModelStore,
-            CommentQueryModelStore commentQueryModelStore
+            CommentQueryModelStore commentQueryModelStore,
+            UserQueryModelStore userQueryModelStore
     ) {
         this.userService = userService;
         this.commentService = commentService;
         this.postService = postService;
         this.postQueryModelStore = postQueryModelStore;
         this.commentQueryModelStore = commentQueryModelStore;
+        this.userQueryModelStore = userQueryModelStore;
 
         System.out.println("VerticleAPI : Start! (emerged by constructor)");
     }
@@ -569,6 +574,37 @@ public class VerticleApi extends AbstractVerticle {
 
                     }
 
+                });
+
+
+        router
+                .get("/user/:username/search")
+                .handler(ctx -> {
+                    try{
+                        String username = ctx.pathParam("username");
+
+                        this.userQueryModelStore.findAllUsersByUsername(username)
+                                .onSuccess(res -> {
+                                    JsonArray jsonArray = new JsonArray();
+                                    res.forEach(re ->{
+                                        jsonArray.add(new JsonObject()
+                                                .put("uid"  ,  re.userid().toString())
+                                                .put("username" ,  re.username())
+                                        );
+                                    });
+
+                                    ctx.response().setStatusCode(200).end(jsonArray.toString());
+                                }).onFailure(err -> {
+                                    ctx.response().setStatusCode(400).end("There is no users!");
+
+                                });
+                    }catch(IllegalArgumentException ex){
+                        ex.printStackTrace();
+                        ctx.response().setStatusCode(500).end(ex.getMessage());
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        ctx.response().setStatusCode(500).end(e.getMessage());
+                    }
                 });
 
 

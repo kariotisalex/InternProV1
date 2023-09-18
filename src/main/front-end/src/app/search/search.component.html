@@ -4,7 +4,7 @@
     <div class="wrapper">
 
       <div class="caption" >Search a user</div>
-      <input type="text" class="inputs"
+      <input type="text" class="inputs" id="inputText"
                 placeholder="write a part of or full username"
       [(ngModel)]="value">
 
@@ -12,8 +12,9 @@
   </div>
   <div class="grid-item">
     <ul class="wrapperUl">
-      <li>{{value}}</li>
-
+      <li *ngFor="let user of users">
+        {{user.username}}
+      </li>
     </ul>
   </div>
 </div>

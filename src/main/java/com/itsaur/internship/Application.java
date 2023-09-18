@@ -18,12 +18,17 @@ import com.itsaur.internship.post.query.PostgresPostQueryModelStore;
 import com.itsaur.internship.user.PostgresUsersStore;
 import com.itsaur.internship.user.UserService;
 import com.itsaur.internship.user.UsersStore;
+import com.itsaur.internship.user.query.PostgresUserQueryModelStore;
+import com.itsaur.internship.user.query.UserQueryModel;
+import com.itsaur.internship.user.query.UserQueryModelStore;
+import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.Json;
 import io.vertx.pgclient.PgPool;
 import io.vertx.sqlclient.PoolOptions;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 public class Application {
 
@@ -35,19 +40,22 @@ public class Application {
 
     final CommentQueryModelStore commentQueryModelStore;
 
+    final UserQueryModelStore userQueryModelStore;
 
     public Application(
             PostService postService,
             UserService userService,
             CommentService commentService,
             PostQueryModelStore postQueryModelStore,
-            CommentQueryModelStore commentQueryModelStore)
+            CommentQueryModelStore commentQueryModelStore,
+            UserQueryModelStore userQueryModelStore)
     {
         this.userService = userService;
         this.commentService = commentService;
         this.postService = postService;
         this.postQueryModelStore = postQueryModelStore;
         this.commentQueryModelStore = commentQueryModelStore;
+        this.userQueryModelStore =userQueryModelStore;
     }
 
 
@@ -81,7 +89,8 @@ public class Application {
                 new UserService(vertx, postgresPostStore, postgresUsersStore, postgresCommentStore),
                 new CommentService(postgresPostStore, postgresUsersStore, postgresCommentStore),
                 new PostgresPostQueryModelStore(pool),
-                new PostgresCommentQueryModelStore(pool)
+                new PostgresCommentQueryModelStore(pool),
+                new PostgresUserQueryModelStore(pool)
         );
 
         try{
@@ -104,7 +113,8 @@ public class Application {
                         application.commentService,
                         application.postService ,
                         application.postQueryModelStore,
-                        application.commentQueryModelStore
+                        application.commentQueryModelStore,
+                        application.userQueryModelStore
                     )
             ).onFailure(e -> {
                 e.printStackTrace();
