@@ -1,6 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {User} from "./interfaces/user";
 import {HttpClient} from "@angular/common/http";
+import {Observable} from "rxjs";
 
 
 
@@ -55,6 +56,9 @@ export class UserService {
     return true;
   }
 
+  getUsersByUsername(username : string): Observable<User[]>{
+    return this.http.get<User[]>(`/api/user/${username}/search`);
+  }
 
 
   getUid(){

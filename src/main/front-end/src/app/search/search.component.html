@@ -5,14 +5,15 @@
 
       <div class="caption" >Search a user</div>
       <input type="text" class="inputs"
-                formControlName="description"
-                placeholder="write a part of or full username">
+                placeholder="write a part of or full username"
+      [(ngModel)]="value">
 
     </div>
   </div>
   <div class="grid-item">
     <ul class="wrapperUl">
-      <li>asdfas</li>
+      <li>{{value}}</li>
+
     </ul>
   </div>
 </div>
