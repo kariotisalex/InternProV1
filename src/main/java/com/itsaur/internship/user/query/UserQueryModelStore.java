@@ -5,5 +5,6 @@ import io.vertx.core.Future;
 import java.util.List;
 
 public interface UserQueryModelStore {
-    public Future<List<UserQueryModel>> findAllUsersByUsername(String username);
+    public Future<List<UserQueryModel>> findUsersPageByUsername(String username, int startFrom, int size);
+    public Future<String> countAllUsersByUsername(String username);
 }

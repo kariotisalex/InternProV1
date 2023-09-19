@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {User} from "./interfaces/user";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
 
 
@@ -56,17 +56,25 @@ export class UserService {
     return true;
   }
 
-  getUsersByUsername(username : string): Observable<User[]>{
-    return this.http.get<User[]>(`/api/user/${username}/search`);
+  getUsersByUsername(username : string, startFrom : number, size: number): Observable<User[]>{
+    const params = new HttpParams()
+      .set('startFrom', startFrom)
+      .set('size', size);
+    return this.http.get<User[]>(`/api/user/${username}/search`,{params : params});
   }
+  countUsers(username : string) : Observable<number>{
+    return this.http.get<number>(`/api/user/${username}/search/count`);
 
+  }
 
   getUid(){
     return this.user.uid;
   }
+
   getUsername(){
     return this.user.username;
   }
+
   getUser(){
     return this.user;
   }

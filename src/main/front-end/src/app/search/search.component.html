@@ -5,16 +5,21 @@
 
       <div class="caption" >Search a user</div>
       <input type="text" class="inputs" id="inputText"
-                placeholder="write a part of or full username"
-      [(ngModel)]="value">
+                placeholder="Type a part of or full username"
+      [(ngModel)]="usernameValue">
 
     </div>
   </div>
   <div class="grid-item">
     <ul class="wrapperUl">
-      <li *ngFor="let user of users">
-        {{user.username}}
+      <li *ngFor="let user of users" >
+        <a [href]="">{{user.username}}</a>
       </li>
     </ul>
+  </div>
+  <div class="footerPagingComments" >
+  <app-footer-paging [pages]="searchPages"
+                     (myData)="getUsers($event)" ></app-footer-paging>
+
   </div>
 </div>

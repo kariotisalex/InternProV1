@@ -10,14 +10,23 @@ export class NavigationService {
     private router : Router
   ) { }
 
-  goToPosts(){
-    this.router.navigateByUrl('/home/profile');
+  goToMyProfile(){
+    this.router.navigateByUrl('/home/myprofile');
+  }
+  goToMyProfileString(){
+    return '/home/myprofile';
   }
   goToHome(){
     this.router.navigateByUrl('/home');
   }
+  goToHomeString(){
+    return '/home';
+  }
   goToAddPost(){
     this.router.navigateByUrl('/home/addpost');
+  }
+  goToAddPostString(){
+    return '/home/addpost'
   }
   goToLogin(){
     this.router.navigateByUrl('/login')
@@ -27,5 +36,11 @@ export class NavigationService {
   }
   goToSettings(){
     this.router.navigateByUrl('/home/settings');
+  }
+  goToSearch(){
+    this.router.navigateByUrl('/home/search');
+  }
+  goToSearchString(){
+    return '/home/search';
   }
 }

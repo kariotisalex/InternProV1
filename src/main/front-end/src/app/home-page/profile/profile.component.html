@@ -12,13 +12,12 @@
 
     <div class="wrapperResults">
       <div class="results">
-        <app-small-post-presentation *ngFor="let post of posts"
-                                     [post]="post"></app-small-post-presentation>
+        <app-small-post-presentation
+                                     [posts]="posts"></app-small-post-presentation>
       </div>
-      <div class="footerPagingPosts">
-        <div class="nestedWrapperPaging" *ngFor="let page of pages" >
-          <button class="paging" (click)="this.getPosts(page)" >{{page}}</button>
-        </div>
+      <div class="footerPagingPosts" >
+        <app-footer-paging [pages]="pages"
+                           (myData)="getPosts($event)" ></app-footer-paging>
       </div>
     </div>
 </div>

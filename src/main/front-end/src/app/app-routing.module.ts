@@ -16,6 +16,7 @@ import {PostDetailsComponent} from "./home-page/post-details/post-details.compon
 import {BrowserModule} from "@angular/platform-browser";
 import {FormsModule} from "@angular/forms";
 import {NgModel} from "@angular/forms";
+import {GuestProfileComponent} from "./home-page/guest-profile/guest-profile.component";
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full'},
@@ -23,11 +24,11 @@ const routes: Routes = [
   { path: 'signup', component: SignupComponent},
   { path: 'testing', component: ProfileComponent },
 
-  { path: 'home', component: HomePageComponent,
+  { path: 'home' , component: HomePageComponent,
     canActivate: [homeGuard], children:[
-      {path: 'profile', component: ProfileComponent},
-        { path: 'settings', component: SettingsComponent },
-
+      {path: 'myprofile', component: ProfileComponent},
+      { path: 'settings', component: SettingsComponent },
+      { path: 'guestprofile/:id', component: GuestProfileComponent },
       { path: 'post/:id', component: PostDetailsComponent },
       { path: 'search', component: SearchComponent },
       { path: 'addpost', component: AddPostComponent }

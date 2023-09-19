@@ -8,7 +8,7 @@ import {NavigationService} from "../../services/navigation.service";
   styleUrls: ['./small-post-presentation.component.css']
 })
 export class SmallPostPresentationComponent {
-  @Input() post! : Post;
+  @Input() posts! : Post[];
 
 
   constructor(

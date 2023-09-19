@@ -64,38 +64,11 @@
   margin: 0 auto;
 }
 .results {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(235px, auto));
-  column-gap: 5px;
 
-  row-gap: 14px;
-  overflow: scroll;
-  min-height: 480px;
 
 }
 
 .footerPagingPosts{
   padding: 5px 0;
   margin: auto auto 0 auto;
-}
-
-
-.nestedWrapperPaging{
-  display: inline-block;
-
-}
-.paging{
-  color: black;
-  float: left;
-  padding: 4px 8px;
-  background-color: rgba(255, 255, 255, 0.6);
-  border: none;
-}
-.paging:hover{
-  background-color: white;
-  font-weight: bold;
-}
-.paging:active{
-  background-color: rgba(80,80,80,0.5);
-  color:white;
 }

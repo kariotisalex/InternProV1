@@ -1,6 +1,12 @@
 .listing{
 
-  /*border: 1px solid black;*/
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(235px, auto));
+  column-gap: 5px;
+
+  row-gap: 14px;
+  overflow: scroll;
+  min-height: 480px;
 
 }
 .listing-photo {

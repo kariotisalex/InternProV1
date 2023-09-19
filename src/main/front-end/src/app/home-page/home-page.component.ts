@@ -18,7 +18,7 @@ export class HomePageComponent {
   constructor(
     private userService : UserService,
     private router : Router,
-    private navigation : NavigationService
+    public navigation : NavigationService
   ) {}
 
   get user(): User{
@@ -31,4 +31,7 @@ export class HomePageComponent {
     return true;
   }
 
+  myProfile(){
+    this.navigation.goToMyProfile();
+  }
 }

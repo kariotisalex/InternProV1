@@ -7,16 +7,16 @@
     </div>
     <div class="leftNested navButtons" >
       <div class="navButtonsNested" id="homeButton" >
-        <button class="buttons" [routerLink]="'/home'"><img class="images" src="assets/homeLogo.png">Home</button>
+        <button class="buttons" [routerLink]="this.navigation.goToHomeString()"><img class="images" src="assets/homeLogo.png">Home</button>
       </div>
       <div class="navButtonsNested" id="searchButton" >
-        <button class="buttons" [routerLink]="'/home/search'"><img class="images" src="assets/searchLogo.png">Search</button>
+        <button class="buttons" [routerLink]="this.navigation.goToSearchString()"><img class="images" src="assets/searchLogo.png">Search</button>
       </div>
       <div class="navButtonsNested" id="profileButton" >
-        <button class="buttons" [routerLink]="'/home/profile'"><img class="imageNavLogo" src="assets/DemoProfilePic.jpg">Profile</button>
+        <button class="buttons" [routerLink]="this.navigation.goToMyProfileString()"><img class="imageNavLogo" src="assets/DemoProfilePic.jpg">Profile</button>
       </div>
       <div class="navButtonsNested" id="profileButton" >
-        <button class="buttons" [routerLink]="'/home/addpost'"><img class="imageNavLogo" src="assets/addPost.png">Add Post</button>
+        <button class="buttons" [routerLink]="this.navigation.goToAddPostString()"><img class="imageNavLogo" src="assets/addPost.png">Add Post</button>
       </div>
     </div>
     <div class="leftNested logoutDiv" >

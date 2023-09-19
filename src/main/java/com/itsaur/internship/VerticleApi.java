@@ -581,15 +581,20 @@ public class VerticleApi extends AbstractVerticle {
                 .get("/user/:username/search")
                 .handler(ctx -> {
                     try{
-                        String username = ctx.pathParam("username");
 
-                        this.userQueryModelStore.findAllUsersByUsername(username)
+                        String username = ctx.pathParam("username");
+                        int startFrom = Integer.valueOf(Objects.requireNonNull(
+                                ctx.request().getParam("startFrom")));
+                        int size      = Integer.valueOf(Objects.requireNonNull(
+                                ctx.request().getParam("size")));
+
+                        this.userQueryModelStore.findUsersPageByUsername(username, startFrom, size)
                                 .onSuccess(res -> {
                                     JsonArray jsonArray = new JsonArray();
                                     res.forEach(re ->{
                                         jsonArray.add(new JsonObject()
-                                                .put("uid"  ,  re.userid().toString())
-                                                .put("username" ,  re.username())
+                                                .put( "uid"      ,  re.userid().toString() )
+                                                .put( "username" ,  re.username() )
                                         );
                                     });
 
@@ -607,6 +612,29 @@ public class VerticleApi extends AbstractVerticle {
                     }
                 });
 
+
+        router
+                .get("/user/:username/search/count")
+                .handler(
+                        ctx -> {
+                            try {
+                                String username = ctx.pathParam("username");
+
+                                this.userQueryModelStore.countAllUsersByUsername(username)
+                                        .onSuccess(res -> {
+                                            ctx.response().setStatusCode(200).end(res);
+                                        }).onFailure(err -> {
+                                            ctx.response().setStatusCode(400).end("There is no users!");
+
+                                        });
+                            } catch (IllegalArgumentException ex) {
+                                ex.printStackTrace();
+                                ctx.response().setStatusCode(500).end(ex.getMessage());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                ctx.response().setStatusCode(500).end(e.getMessage());
+                            }
+                        });
 
 
 

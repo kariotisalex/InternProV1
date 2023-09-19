@@ -41,6 +41,7 @@ export class PostDetailsComponent implements OnInit{
     this.getComments(1);
     this.countComments();
   }
+
   get user() : User{
     return this.userService.getUser();
   }
@@ -100,7 +101,7 @@ export class PostDetailsComponent implements OnInit{
   }
 
   getComments(page : number) {
-    let startFrom: number = (page - 1) * this.commentsPerPage;
+    const startFrom: number = (page - 1) * this.commentsPerPage;
 
     this.route.paramMap
       .subscribe({
@@ -300,6 +301,6 @@ export class PostDetailsComponent implements OnInit{
   }
 
   postsNav(){
-    this.navigation.goToPosts();
+    this.navigation.goToMyProfile();
   }
 }

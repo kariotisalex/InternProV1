@@ -21,6 +21,8 @@ import { PostDetailsComponent } from './home-page/post-details/post-details.comp
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CommonModule} from "@angular/common";
 import { SmallPostPresentationComponent } from './support/small-post-presentation/small-post-presentation.component';
+import { GuestProfileComponent } from './home-page/guest-profile/guest-profile.component';
+import { FooterPagingComponent } from './support/footer-paging/footer-paging.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,9 @@ import { SmallPostPresentationComponent } from './support/small-post-presentatio
     ProfileComponent,
     PostDetailsComponent,
     SearchComponent,
-    SmallPostPresentationComponent
+    SmallPostPresentationComponent,
+    GuestProfileComponent,
+    FooterPagingComponent
 
 
   ],

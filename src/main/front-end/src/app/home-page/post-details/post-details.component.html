@@ -21,9 +21,8 @@
       </div>
     </div>
     <div class="footerPagingComments" >
-      <div class="nestedWrapperPaging" *ngFor="let comment of commentPages" >
-        <button class="paging" (click)="this.getComments(comment)" >{{comment}}</button>
-      </div>
+      <app-footer-paging [pages]="commentPages"
+                         (myData)="getComments($event)" ></app-footer-paging>
     </div>
 
 
