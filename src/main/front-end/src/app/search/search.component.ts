@@ -4,6 +4,7 @@ import {UserService} from "../services/user.service";
 import {User} from "../services/interfaces/user";
 import {HttpErrorResponse} from "@angular/common/http";
 import {debounce, fromEvent, interval, Observable} from "rxjs";
+import {NavigationService} from "../services/navigation.service";
 
 @Component({
   selector: 'app-search',
@@ -20,7 +21,8 @@ export class SearchComponent implements OnInit{
   searchPages : number[] = [];
 
   constructor(
-    private userService : UserService
+    private userService : UserService,
+    public navigation : NavigationService
   ) {}
 
   ngOnInit() {

@@ -10,11 +10,11 @@ export class NavigationService {
     private router : Router
   ) { }
 
-  goToMyProfile(){
-    this.router.navigateByUrl('/home/myprofile');
+  goToProfile(){
+    this.router.navigateByUrl('/home/profile');
   }
-  goToMyProfileString(){
-    return '/home/myprofile';
+  goToProfileString(){
+    return '/home/profile';
   }
   goToHome(){
     this.router.navigateByUrl('/home');
@@ -42,5 +42,11 @@ export class NavigationService {
   }
   goToSearchString(){
     return '/home/search';
+  }
+  goToProfileView(id : string, username : string){
+    this.router.navigateByUrl(`/home/profile/${id}/${username}`);
+  }
+  goToProfileViewString(id : string, username : string){
+    return `/home/profile/${id}/${username}`;
   }
 }

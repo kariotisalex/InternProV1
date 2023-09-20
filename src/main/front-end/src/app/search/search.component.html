@@ -13,7 +13,7 @@
   <div class="grid-item">
     <ul class="wrapperUl">
       <li *ngFor="let user of users" >
-        <a [href]="">{{user.username}}</a>
+        <a [routerLink]="this.navigation.goToProfileViewString(user.uid, user.username)">{{user.username}}</a>
       </li>
     </ul>
   </div>

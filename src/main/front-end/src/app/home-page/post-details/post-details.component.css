@@ -1,15 +1,21 @@
 .fullWrapper{
   width: 800px;
   display: grid;
-  grid-template-columns: 400px 350px;
+  grid-template-columns: 400px 300px;
   /*border: 1px solid black;*/
   margin: 50px auto;
   column-gap: 30px;
 
 
 }
+.wrapperFirstColumn{
+  display: grid;
+  grid-template-rows: 400px 50px;
+  row-gap: 30px;
+
+}
 .wrapperImg{
-  height: 400px;
+  height: 450px;
   margin: 0 auto 0 auto;
   padding : 0;
 }
@@ -21,6 +27,7 @@
   height: 400px;
   object-fit: cover;
 }
+
 .datePost{
   font-size: smaller;
   color: #464646;
@@ -30,196 +37,10 @@
 }
 .wrapperSecColumn{
   display: grid;
-  height: 400px;
-  grid-template-rows: 50px 285px 25px 40px;
+  height: 450px;
   width: 350px;
   /*border: 1px solid black;*/
   padding: 0;
   margin: 0 auto;
 }
-.nestedDesc{
-  /*border: 1px solid black;*/
-  box-shadow: 0px 0px 3px gray;
-  padding: 2px;
-  font-size: large;
-  max-height: 200px;
-}
-.nestedComments{
-  box-shadow: 0px 0px 3px gray;
-  overflow: scroll;
-  font-size: medium;
-  margin: 5px 0 5px 0;
-}
-.usernmClass{
-  list-style-type: none;
-  margin: 0 3px 0 0;
-  padding: 0;
-}
-.textareas{
-  padding: 0;
-  margin: 0;
-  display: flow;
 
-}
-textarea{
-  resize: none;
-  width: 95%;
-
-}
-.nestedCommentNewComment{
-  display: grid;
-  grid-template-columns: 80% 20%;
-  padding: 0;
-  margin: 0;
-}
-.newCommentButtonClass{
-  border: none;
-  background-color: rgba(60, 55, 255, 1);
-  margin: 0;
-  height: 40px;
-  width: 40px;
-  font-size: small;
-  padding: 00px;
-  color: white;
-  border-radius: 50%;
-}
-
-.newCommentButtonClass:hover{
-  background-color: rgba(60, 55, 255, 1);
-  color: white;
-  font-weight: bold;
-  transform: translateY(1px);
-}
-
-.newCommentButtonClass:active{
-  background-color: white;
-  color: rgba(60, 55, 255, 1);
-  border: none;
-
-}
-.submitButtonClass{
-  margin: auto;
-}
-
-
-
-
-.nestedCommentUpdateOrDelete{
-
-  display: grid;
-  grid-template-columns: 10% 55% 20% 15%;
-  padding: 0;
-  margin: 0;
-}
-.nestedDeletePost{
-  display: grid;
-  grid-template-columns: 65% 20% 15%;
-  padding: 0;
-  margin: 0;
-}
-.backButtonComment{
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  margin: auto;
-
-  color: gray;
-  background-color: white;
-  border: 1px solid rgba(150, 150, 150, 0.5);
-}
-.backButtonComment:hover{
-  background-color: rgba(150, 150, 150, 0.1);
-}
-.backButtonComment:active{
-  color: white;
-  background-color: rgba(150, 150, 150, 0.5);
-}
-.deleteButtonClass{
-  border: none;
-  background-color: rgb(255, 0, 0);
-  margin: 0;
-  height: 40px;
-  width: 40px;
-  font-size: smaller;
-  padding: 00px;
-  color: white;
-  border-radius: 50%;
-
-}
-.deleteButtonClass:hover{
-   background-color: rgb(255, 0, 0);
-   color: white;
-   font-weight: bold;
-   transform: translateY(1px);
- }
-.deleteButtonClass:active{
-  background-color: white;
-  color: rgb(255, 0, 0);
-  border: none;
-}
-
-.updateButtonClass{
-  border: none;
-  background-color: rgba(60, 55, 255, 1);
-  margin: 0;
-  height: 40px;
-  width: 40px;
-  font-size: smaller;
-  padding: 00px;
-  color: white;
-  border-radius: 50%;
-}
-
-.updateButtonClass:hover{
-  background-color: rgba(60, 55, 255, 1);
-  color: white;
-  font-weight: bold;
-  transform: translateY(1px);
-}
-
-.updateButtonClass:active{
-  background-color: white;
-  color: rgba(60, 55, 255, 1);
-  border: none;
-
-}
-.nestedDescUpdateOrDelete{
-
-  display: grid;
-  grid-template-columns: 10% 75% 15%;
-  padding: 0;
-  margin: 0;
-}
-
-.liCommentView{
-  margin-bottom: 5px;
-}
-.footerPagingComments{
-  margin: 0 auto ;
-}
-.nestedWrapperPaging{
-  display: inline-block;
-
-}
-.paging{
-  color: black;
-  float: left;
-  padding: 4px 8px;
-  background-color: rgba(255, 255, 255, 0.6);
-  border: none;
-}
-.paging:hover{
-  background-color: white;
-  font-weight: bold;
-}
-.paging:active{
-  background-color: rgba(80,80,80,0.5);
-  color:white;
-}
-@media screen AND (max-width: 700px){
-  .fullWrapper{
-    display: grid;
-    grid-template-columns: none;
-    grid-templates-rows: auto auto;
-  }
-}

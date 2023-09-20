@@ -19,60 +19,17 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class PostgresPostQueryModelStore implements PostQueryModelStore{
+    final private int MIN_VALUE = 0;
+    final private int MAX_VALUE = 30;
+    final private int MIN_STARTFROM_VALUE = 0;
 
+    final private  int MAX_STARTFROM_VALUE = 100;
     private PgPool pool;
 
     public PostgresPostQueryModelStore(PgPool pool) {
         this.pool = pool;
     }
 
-    @Override
-    public Future<List<PostQueryModel>> findPostPageByUid(UUID uid){
-        return pool
-                .preparedQuery(
-                "SELECT P.postid, P.createdate, P.filename, P.description, P.userid, U.username " +
-                    "FROM posts AS P, users AS U " +
-                    "WHERE U.userid = P.userid AND P.userid=($1)" +
-                    "ORDER BY (createdate) DESC ")
-                .execute(Tuple.of(String.valueOf(uid)))
-                .onFailure(e -> {
-                    e.printStackTrace();
-                })
-                .compose(rows -> {
-
-                    List<PostQueryModel> queryModelList = new ArrayList<>();
-
-                    if (rows.iterator().hasNext()){
-                        for (Row row : rows){
-                            UUID postid                 = row.getUUID(0);
-                            OffsetDateTime createdate   = row.getOffsetDateTime(1);
-                            String filename             = row.getString(2);
-                            String description          = row.getString(3);
-                            UUID userid                 = row.getUUID(4);
-                            String username             = row.getString("username");
-
-                            queryModelList.add(
-                                    new PostQueryModel(
-                                            postid,
-                                            createdate,
-                                            filename,
-                                            description,
-                                            userid,
-                                            username)
-                                    );
-
-
-
-                        }
-                        return Future.succeededFuture(queryModelList);
-                    }else {
-                        return Future.failedFuture(new IllegalArgumentException("There is no post!"));
-                    }
-
-                }).onFailure(e ->{
-                    e.printStackTrace();
-                });
-    }
 
     @Override
     public Future<String> countAllPostsbyUid(UUID uid) {
@@ -140,11 +97,11 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
     }
     @Override
     public Future<List<PostQueryModel>> findPostPageByUid(UUID uid, int startFrom, int size){
-        if (size < 0 || size > 50){
-            throw new IllegalArgumentException("Posts : The size of comments is unacceptable");
+        if (!(MIN_VALUE < size && size < MAX_VALUE)){
+            throw new IllegalArgumentException("Comments : The size of comments is unacceptable");
         }
-        if(startFrom % size != 0 || startFrom < 0){
-            throw new IllegalArgumentException("Posts : The startFrom is not valid!");
+        if(!(startFrom % size == 0 && MIN_STARTFROM_VALUE <= startFrom && startFrom < MAX_STARTFROM_VALUE)){
+            throw new IllegalArgumentException("Comments : The startFrom is not valid!");
         }
         return pool
                 .preparedQuery(

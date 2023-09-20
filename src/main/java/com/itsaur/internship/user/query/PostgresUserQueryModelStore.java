@@ -72,6 +72,9 @@ public class PostgresUserQueryModelStore implements UserQueryModelStore{
 
     @Override
     public Future<String> countAllUsersByUsername(String username) {
+        if (!(MIN_VALUE < username.length() && username.length() < MAX_VALUE)){
+            throw new IllegalArgumentException("Unacceptable username");
+        }
         return pool
                 .preparedQuery(
                         "SELECT COUNT(U.userid) " +

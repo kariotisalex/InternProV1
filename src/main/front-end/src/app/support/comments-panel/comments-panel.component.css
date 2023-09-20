@@ -1,0 +1,144 @@
+.nestedComments{
+  box-shadow: 0px 0px 3px gray;
+  overflow: scroll;
+  font-size: medium;
+  margin: 5px 0 5px 0;
+  height: 400px;
+  width: 330px;
+}
+.usernmClass{
+  list-style-type: none;
+  margin: 0 3px 0 0;
+  padding: 0;
+}
+.textareas{
+  padding: 0;
+  margin: 0;
+  display: flow;
+
+}
+textarea{
+  resize: none;
+  width: 95%;
+
+}
+.nestedCommentNewComment{
+  display: grid;
+  grid-template-columns: 80% 20%;
+  padding: 0;
+  margin: 0;
+}
+.newCommentButtonClass{
+  border: none;
+  background-color: rgba(60, 55, 255, 1);
+  margin: 0;
+  height: 40px;
+  width: 40px;
+  font-size: small;
+  padding: 00px;
+  color: white;
+  border-radius: 50%;
+}
+
+.newCommentButtonClass:hover{
+  background-color: rgba(60, 55, 255, 1);
+  color: white;
+  font-weight: bold;
+  transform: translateY(1px);
+}
+
+.newCommentButtonClass:active{
+  background-color: white;
+  color: rgba(60, 55, 255, 1);
+  border: none;
+
+}
+.submitButtonClass{
+  margin: auto;
+}
+
+
+
+
+.nestedCommentUpdateOrDelete{
+
+  display: grid;
+  grid-template-columns: 10% 55% 20% 15%;
+  padding: 0;
+  margin: 0;
+}
+
+.backButtonComment{
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  margin: auto;
+
+  color: gray;
+  background-color: white;
+  border: 1px solid rgba(150, 150, 150, 0.5);
+}
+.backButtonComment:hover{
+  background-color: rgba(150, 150, 150, 0.1);
+}
+.backButtonComment:active{
+  color: white;
+  background-color: rgba(150, 150, 150, 0.5);
+}
+.deleteButtonClass{
+  border: none;
+  background-color: rgb(255, 0, 0);
+  margin: 0;
+  height: 40px;
+  width: 40px;
+  font-size: smaller;
+  padding: 00px;
+  color: white;
+  border-radius: 50%;
+
+}
+.deleteButtonClass:hover{
+  background-color: rgb(255, 0, 0);
+  color: white;
+  font-weight: bold;
+  transform: translateY(1px);
+}
+.deleteButtonClass:active{
+  background-color: white;
+  color: rgb(255, 0, 0);
+  border: none;
+}
+
+.updateButtonClass{
+  border: none;
+  background-color: rgba(60, 55, 255, 1);
+  margin: 0;
+  height: 40px;
+  width: 40px;
+  font-size: smaller;
+  padding: 00px;
+  color: white;
+  border-radius: 50%;
+}
+
+.updateButtonClass:hover{
+  background-color: rgba(60, 55, 255, 1);
+  color: white;
+  font-weight: bold;
+  transform: translateY(1px);
+}
+
+.updateButtonClass:active{
+  background-color: white;
+  color: rgba(60, 55, 255, 1);
+  border: none;
+
+}
+
+
+.liCommentView{
+  margin-bottom: 5px;
+}
+.footerPagingComments{
+  margin: 0 auto ;
+}

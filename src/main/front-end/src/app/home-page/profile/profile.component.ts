@@ -1,7 +1,7 @@
-import {Component, inject, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {User} from "../../services/interfaces/user";
 import {UserService} from "../../services/user.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Route, Router} from "@angular/router";
 import {Post} from "../../services/interfaces/post";
 import {PostService} from "../../services/post.service";
 import {map} from "rxjs";
@@ -17,23 +17,44 @@ export class ProfileComponent implements OnInit{
 
   postsPerPage : number = 6;
   pages : number[] = [];
+  user! : User;
 
 
   constructor(
     private userService : UserService,
     private router : Router,
     private postService : PostService,
-    private navigation : NavigationService
+    private navigation : NavigationService,
+    private route : ActivatedRoute
   ) {}
 
   ngOnInit(){
+    this.getFunc();
     this.getPosts(1);
     this.countPosts();
 
   }
-  get user() : User {
-    return this.userService.getUser();
+  getFunc(){
+    this.route.paramMap
+      .subscribe({
+        next: res => {
+          const uid = res.get('id');
+          const username = res.get('username')
+          if (uid && username) {
+            this.user = {
+              uid: uid,
+              username: username
+            }
+          } else {
+            console.log(this.userService.getUid())
+            this.user = this.userService.getUser()
+          }
+        }
+      });
   }
+
+
+
   get posts() : Post[]{
     return this.postService.posts;
   }
@@ -58,6 +79,7 @@ export class ProfileComponent implements OnInit{
   }
   getPosts(page : number){
     let startFrom : number = (page - 1) * this.postsPerPage;
+    this.postService.posts = [];
 
     this.postService.getPostsByUserid(this.user.uid,
       startFrom ,
@@ -72,6 +94,7 @@ export class ProfileComponent implements OnInit{
           this.postService.posts = x ;
         },
         error: (err : HttpErrorResponse) => {
+
           console.log(err.error);
         }
       });

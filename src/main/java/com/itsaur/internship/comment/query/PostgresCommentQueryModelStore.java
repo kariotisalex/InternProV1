@@ -18,6 +18,11 @@ import java.util.List;
 import java.util.UUID;
 
 public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
+    final private int MIN_VALUE = 0;
+    final private int MAX_VALUE = 30;
+    final private int MIN_STARTFROM_VALUE = 0;
+
+    final private  int MAX_STARTFROM_VALUE = 100;
     private PgPool pool;
 
     public PostgresCommentQueryModelStore(PgPool pool) {
@@ -30,7 +35,7 @@ public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
         return pool
                 .preparedQuery("SELECT C.commentid, C.createdate, C.comment, C.userid, U.username, C.postid " +
                         "FROM posts AS P , comments AS C, users AS U " +
-                        "WHERE P.postid = C.postid AND U.userid = P.userid AND P.postid=($1)" +
+                        "WHERE P.postid = C.postid AND U.userid = C.userid AND P.postid=($1)" +
                         "ORDER BY (createdate) DESC")
                 .execute(Tuple.of(String.valueOf(postid)))
                 .onFailure(err -> {
@@ -75,17 +80,18 @@ public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
 
     @Override
     public Future<List<CommentQueryModel>> findCommentPageByUid(UUID postid, int startFrom, int size) {
-        if (size < 0 || size > 50){
+        System.out.println(startFrom % size);
+        if (!(MIN_VALUE < size && size < MAX_VALUE)){
             throw new IllegalArgumentException("Comments : The size of comments is unacceptable");
         }
-        if(startFrom % size != 0 || startFrom < 0){
+        if(!((startFrom % size == 0) && (MIN_STARTFROM_VALUE <= startFrom && startFrom < MAX_STARTFROM_VALUE))){
             throw new IllegalArgumentException("Comments : The startFrom is not valid!");
         }
         return pool
                 .preparedQuery(
                         "SELECT C.commentid, C.createdate, C.comment, C.userid, U.username, C.postid " +
                                 "FROM posts AS P , comments AS C, users AS U " +
-                                "WHERE P.postid = C.postid AND U.userid = P.userid AND P.postid=($1)" +
+                                "WHERE P.postid = C.postid AND U.userid = C.userid AND P.postid=($1)" +
                                 "ORDER BY (createdate) DESC " +
                                 "OFFSET ($2) ROWS FETCH FIRST ($3) ROWS ONLY")
                 .execute(Tuple.of(

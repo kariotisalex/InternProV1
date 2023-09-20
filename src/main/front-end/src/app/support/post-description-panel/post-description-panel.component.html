@@ -1,0 +1,14 @@
+    <div class="nestedDesc" >
+
+      <div class="descClass" *ngIf="!isEditable" (click)="updateDescCalling()">{{post.description}}</div>
+
+      <div class="nestedDescUpdateOrDelete" *ngIf="isEditable">
+        <div><button (click)="backbuttonfunc()" class="backButtonComment"><</button></div>
+        <div class="textareas">
+          <textarea (focus)="clearingNewCommentTextarea()" [(ngModel)]="editor"></textarea>
+        </div>
+        <div class="submitButtonClass">
+          <button class="newCommentButtonClass" (click)="updateDescButtonFunc()">Uptes</button>
+        </div>
+      </div>
+    </div>

@@ -337,6 +337,7 @@ public class VerticleApi extends AbstractVerticle {
                                             Objects.requireNonNull(
                                                     ctx.pathParam("commentid")));
                         String comment = Objects.requireNonNull(ctx.body().asJsonObject().getString("comment"));
+
                     this.commentService.changeComment(userid, commentid, comment)
                             .onSuccess(s ->{
                                 ctx.response().setStatusCode(200).end("The comment updated!");

@@ -32,6 +32,6 @@ export class HomePageComponent {
   }
 
   myProfile(){
-    this.navigation.goToMyProfile();
+    this.navigation.goToProfile();
   }
 }
