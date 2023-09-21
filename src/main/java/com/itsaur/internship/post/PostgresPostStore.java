@@ -34,8 +34,8 @@ public class PostgresPostStore implements PostStore {
                             "SELECT ($1) , ($2) , ($3), ($4), userid " +
                             "FROM users WHERE userid=($5)")
                     .execute(Tuple.of(
-                            UUID.randomUUID(),
-                            OffsetDateTime.now(),
+                            post.postid(),
+                            post.createdDate(),
                             post.filename(),
                             post.description(),
                             post.userid())

@@ -1,6 +1,7 @@
 package com.itsaur.internship.post.query;
 
 import com.itsaur.internship.comment.query.CommentQueryModel;
+import com.itsaur.internship.follower.query.FollowerQueryModel;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
@@ -150,6 +151,49 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                 }).onFailure(e ->{
                     e.printStackTrace();
                 });
+    }
+
+    public Future<List<PostQueryModel>> customizeFeed(UUID userid){
+        return pool
+                .preparedQuery(
+                    "SELECT P.postid, P.createdate, P.filename, P.description, F.followerid, U.username " +
+                        "FROM followers AS F, users AS U, post AS P " +
+                        "WHERE F.followerid = P.userid AND F.followerid = U.userid AND F.userid = ($1)" +
+                        "ORDER BY (createdate) DESC")
+                .execute(Tuple.of(userid))
+                .compose(rows -> {
+                    if (rows.iterator().hasNext()){
+
+                        List<PostQueryModel> queryModelList = new ArrayList<>();
+
+                        for (Row row : rows){
+
+                            UUID postid                 = row.getUUID("postid");
+                            OffsetDateTime createdate   = row.getOffsetDateTime("createdate");
+                            String filename             = row.getString("filename");
+                            String description          = row.getString("description");
+                            UUID followerid             = row.getUUID("followerid");
+                            String username             = row.getString("username");
+
+
+                            queryModelList.add(
+                                    new PostQueryModel(
+                                            postid,
+                                            createdate,
+                                            filename,
+                                            description,
+                                            followerid,
+                                            username));
+                        };
+                        return Future.succeededFuture(queryModelList);
+                    }else {
+                        return Future.failedFuture(new IllegalArgumentException("There is no post!"));
+                    }
+
+                }).onFailure(err -> {
+                    err.printStackTrace();
+                });
+
     }
 
 

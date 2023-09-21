@@ -13,7 +13,6 @@ import { AddPostComponent } from "./add-post/add-post.component";
 import { PostDetailsComponent } from "./home-page/post-details/post-details.component";
 import { BrowserModule } from "@angular/platform-browser";
 import { FormsModule } from "@angular/forms";
-import { GuestProfileComponent } from "./home-page/guest-profile/guest-profile.component";
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full'},

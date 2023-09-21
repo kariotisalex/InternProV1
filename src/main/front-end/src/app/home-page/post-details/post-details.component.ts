@@ -63,7 +63,8 @@ export class PostDetailsComponent implements OnInit{
   }
 
   deletePostButtonFunc() {
-    if (confirm("Do you want to delete this post?")){
+    if(this.post.userid == this.user.uid){
+      if (confirm("Do you want to delete this post?")){
         this.postService.deletePost(this.user.uid, this.post.postid)
           .subscribe({
             next: x => {
@@ -74,7 +75,9 @@ export class PostDetailsComponent implements OnInit{
               console.log(err.error)
             }
           });
+      }
     }
+
 
   }
 }

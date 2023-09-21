@@ -3,6 +3,8 @@ package com.itsaur.internship;
 
 import com.itsaur.internship.comment.CommentService;
 import com.itsaur.internship.comment.query.CommentQueryModelStore;
+import com.itsaur.internship.follower.FollowerService;
+import com.itsaur.internship.follower.query.FollowerQueryModelStore;
 import com.itsaur.internship.post.PostService;
 import com.itsaur.internship.post.query.PostQueryModelStore;
 import com.itsaur.internship.user.User;
@@ -25,24 +27,34 @@ public class VerticleApi extends AbstractVerticle {
     final private UserService userService;
     final private CommentService commentService;
     final private PostService postService;
+    final private FollowerService followerService;
     final private PostQueryModelStore postQueryModelStore;
     final private CommentQueryModelStore commentQueryModelStore;
     final private UserQueryModelStore userQueryModelStore;
+    final private FollowerQueryModelStore followerQueryModelStore;
+
 
 
 
     public VerticleApi(
-            UserService userService, CommentService commentService,
-            PostService postService, PostQueryModelStore postQueryModelStore,
+            UserService userService,
+            CommentService commentService,
+            PostService postService,
+            FollowerService followerService,
+            PostQueryModelStore postQueryModelStore,
             CommentQueryModelStore commentQueryModelStore,
-            UserQueryModelStore userQueryModelStore
+            UserQueryModelStore userQueryModelStore,
+            FollowerQueryModelStore followerQueryModelStore
     ) {
+
         this.userService = userService;
         this.commentService = commentService;
         this.postService = postService;
+        this.followerService = followerService;
         this.postQueryModelStore = postQueryModelStore;
         this.commentQueryModelStore = commentQueryModelStore;
         this.userQueryModelStore = userQueryModelStore;
+        this.followerQueryModelStore = followerQueryModelStore;
 
         System.out.println("VerticleAPI : Start! (emerged by constructor)");
     }
@@ -380,13 +392,18 @@ public class VerticleApi extends AbstractVerticle {
                 });
 
 
+        router
+                .post("/user/:userid/follow/:followerid")
+                .handler(ctx -> {
+
+                });
 
 
 
 
 
 
-//         Retrieve Post
+//         Retrieve
 //         Retrieve Post
 
         // Post page

@@ -10,6 +10,11 @@ import com.itsaur.internship.comment.CommentStore;
 import com.itsaur.internship.comment.PostgresCommentStore;
 import com.itsaur.internship.comment.query.CommentQueryModelStore;
 import com.itsaur.internship.comment.query.PostgresCommentQueryModelStore;
+import com.itsaur.internship.follower.FollowerService;
+import com.itsaur.internship.follower.FollowerStore;
+import com.itsaur.internship.follower.PostgresFollowerStore;
+import com.itsaur.internship.follower.query.FollowerQueryModelStore;
+import com.itsaur.internship.follower.query.PostgresFollowerQueryModelStore;
 import com.itsaur.internship.post.PostService;
 import com.itsaur.internship.post.PostStore;
 import com.itsaur.internship.post.PostgresPostStore;
@@ -36,26 +41,32 @@ public class Application {
     final UserService userService;
     final CommentService commentService;
     final PostService postService;
+    final FollowerService followerService;
     final PostQueryModelStore postQueryModelStore;
 
     final CommentQueryModelStore commentQueryModelStore;
 
     final UserQueryModelStore userQueryModelStore;
+    final FollowerQueryModelStore followerQueryModelStore;
 
     public Application(
             PostService postService,
             UserService userService,
             CommentService commentService,
+            FollowerService followerService,
             PostQueryModelStore postQueryModelStore,
             CommentQueryModelStore commentQueryModelStore,
-            UserQueryModelStore userQueryModelStore)
-    {
+            UserQueryModelStore userQueryModelStore,
+            FollowerQueryModelStore followerQueryModelStore
+    ){
         this.userService = userService;
         this.commentService = commentService;
         this.postService = postService;
+        this.followerService = followerService;
         this.postQueryModelStore = postQueryModelStore;
         this.commentQueryModelStore = commentQueryModelStore;
-        this.userQueryModelStore =userQueryModelStore;
+        this.userQueryModelStore = userQueryModelStore;
+        this.followerQueryModelStore = followerQueryModelStore;
     }
 
 
@@ -78,19 +89,25 @@ public class Application {
                 new PoolOptions()
                         .setMaxSize(5));
 
-        PostStore postgresPostStore                   = new PostgresPostStore (pool);
-        UsersStore postgresUsersStore                 = new PostgresUsersStore (pool);
-        CommentStore postgresCommentStore             = new PostgresCommentStore (pool);
-        PostQueryModelStore postQueryModelStore       = new PostgresPostQueryModelStore(pool);
-        CommentQueryModelStore commentQueryModelStore = new PostgresCommentQueryModelStore(pool);
+        PostStore postgresPostStore                     = new PostgresPostStore (pool);
+        UsersStore postgresUsersStore                   = new PostgresUsersStore (pool);
+        CommentStore postgresCommentStore               = new PostgresCommentStore (pool);
+        FollowerStore postgresFollowerStore             = new PostgresFollowerStore(pool);
+
+        PostQueryModelStore postQueryModelStore         = new PostgresPostQueryModelStore(pool);
+        CommentQueryModelStore commentQueryModelStore   = new PostgresCommentQueryModelStore(pool);
+        UserQueryModelStore userQueryModelStore         = new PostgresUserQueryModelStore(pool);
+        FollowerQueryModelStore followerQueryModelStore = new PostgresFollowerQueryModelStore(pool);
 
         Application application = new Application(
                 new PostService(vertx, postgresPostStore, postgresUsersStore, postgresCommentStore),
-                new UserService(vertx, postgresPostStore, postgresUsersStore, postgresCommentStore),
+                new UserService(vertx, postgresPostStore, postgresUsersStore, postgresCommentStore, postgresFollowerStore),
                 new CommentService(postgresPostStore, postgresUsersStore, postgresCommentStore),
-                new PostgresPostQueryModelStore(pool),
-                new PostgresCommentQueryModelStore(pool),
-                new PostgresUserQueryModelStore(pool)
+                new FollowerService(postgresFollowerStore),
+                postQueryModelStore,
+                commentQueryModelStore,
+                userQueryModelStore,
+                followerQueryModelStore
         );
 
         try{
@@ -112,9 +129,11 @@ public class Application {
                         application.userService,
                         application.commentService,
                         application.postService ,
+                        application.followerService,
                         application.postQueryModelStore,
                         application.commentQueryModelStore,
-                        application.userQueryModelStore
+                        application.userQueryModelStore,
+                        application.followerQueryModelStore
                     )
             ).onFailure(e -> {
                 e.printStackTrace();

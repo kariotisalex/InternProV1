@@ -4,7 +4,9 @@ CREATE TABLE users
     createdate timestamptz,
     updatedate timestamptz,
     username varchar,
-    password varchar
+    password varchar,
+    caption varchar,
+    photoprofile varchar
 );
 
 CREATE TABLE posts (
@@ -25,3 +27,10 @@ CREATE TABLE comments
     userid uuid references users(userid),
     postid uuid references posts(postid)
 );
+CREATE TABLE followers
+(
+    followid uuid not null primary key,
+    userid uuid references users(userid),
+    createdate timestamptz,
+    followerid uuid references users(userid)
+)

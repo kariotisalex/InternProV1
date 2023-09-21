@@ -21,7 +21,6 @@ import { PostDetailsComponent } from './home-page/post-details/post-details.comp
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CommonModule} from "@angular/common";
 import { SmallPostPresentationComponent } from './support/small-post-presentation/small-post-presentation.component';
-import { GuestProfileComponent } from './home-page/guest-profile/guest-profile.component';
 import { FooterPagingComponent } from './support/footer-paging/footer-paging.component';
 import { CommentsPanelComponent } from './support/comments-panel/comments-panel.component';
 import { PostDescriptionPanelComponent } from './support/post-description-panel/post-description-panel.component';
@@ -35,7 +34,6 @@ import { PostDescriptionPanelComponent } from './support/post-description-panel/
     PostDetailsComponent,
     SearchComponent,
     SmallPostPresentationComponent,
-    GuestProfileComponent,
     FooterPagingComponent,
     CommentsPanelComponent,
     PostDescriptionPanelComponent

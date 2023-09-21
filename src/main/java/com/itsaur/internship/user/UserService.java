@@ -1,5 +1,7 @@
 package com.itsaur.internship.user;
 import com.itsaur.internship.comment.CommentStore;
+import com.itsaur.internship.follower.FollowerService;
+import com.itsaur.internship.follower.FollowerStore;
 import com.itsaur.internship.post.PostService;
 import com.itsaur.internship.post.PostStore;
 import io.vertx.core.Future;
@@ -14,12 +16,14 @@ public class UserService {
     private PostStore postStore;
     private UsersStore usersStore;
     private CommentStore commentStore;
+    private FollowerStore followerStore;
 
-    public UserService( Vertx vertx, PostStore postStore, UsersStore usersStore, CommentStore commentStore) {
-        this.vertx = vertx;
-        this.postStore = postStore;
-        this.usersStore = usersStore;
-        this.commentStore = commentStore;
+    public UserService( Vertx vertx, PostStore postStore, UsersStore usersStore, CommentStore commentStore,FollowerStore followerStore) {
+        this.vertx         = vertx;
+        this.postStore     = postStore;
+        this.usersStore    = usersStore;
+        this.commentStore  = commentStore;
+        this.followerStore = followerStore;
     }
 
 
@@ -64,9 +68,14 @@ public class UserService {
 
                         return new PostService(vertx, postStore,usersStore,commentStore)
                                 .deleteAllPosts(userid)
-                                .compose(q -> {
-                                    return usersStore.delete(userid);
+                                .compose(w -> {
+                                    return new FollowerService(followerStore)
+                                            .deleteAllFollows(userid)
+                                            .compose(q -> {
+                                                return usersStore.delete(userid);
+                                            });
                                 });
+
                     });
     }
 

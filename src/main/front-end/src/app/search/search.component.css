@@ -47,7 +47,8 @@ input {
   font-size: large;
 }
 ul li{
-  margin-bottom: 10px;
+  padding: 7px;
+
 }
 .footerPagingPosts{
   padding: 5px 0;
@@ -59,4 +60,17 @@ ul li{
 .nestedWrapperPaging {
   display: inline-block;
 
+}
+.aTagClass{
+  color: #1f1f1f;
+  text-decoration: none;
+  padding: 7px;
+  border-radius: 10px;
+}
+.aTagClass:hover{
+  background-color: lightsteelblue;
+}
+.aTagClass:active{
+  color: white;
+  font-weight: bold;
 }
