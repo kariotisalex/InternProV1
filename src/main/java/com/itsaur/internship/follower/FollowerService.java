@@ -12,6 +12,7 @@ public class FollowerService {
     public FollowerService(FollowerStore followerStore) {
         this.followerStore = followerStore;
     }
+
     public Future<Void> addFollow(UUID userid, UUID followerid){
         return this.followerStore.findByUseridFollowerid(userid,followerid)
                 .otherwiseEmpty()

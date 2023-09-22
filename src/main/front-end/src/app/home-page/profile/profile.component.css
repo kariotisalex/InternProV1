@@ -9,13 +9,39 @@
   margin: 0;
 }
 .profileNestedA{
+  margin: auto;
   /*border: 1px solid black;*/
   display: grid;
-  grid-template-columns: minmax(auto,250px) minmax(auto,55%) 100px;
+  grid-template-columns: 150px 450px 100px;
+
 
 }
+.profileCenterNested{
+  display: grid;
+  grid-template-columns: 160px 100px 100px;
 
+  /*border: 1px solid black;*/
+  font-size: large;
+  margin:auto;
+  height : 70px;
+}
+.usernameClass{
+  margin: auto;
 
+}
+.spanFollow{
+  font-size: small;
+  color: #595959;
+}
+.followClass{
+  margin: auto;
+  /*border: 1px solid black;*/
+  display: grid;
+  grid-template-rows: 60% 40%;
+}
+.numberFollow{
+  margin: auto;
+}
 #photoProfCircle{
   object-fit: cover;
   height: 100px;
@@ -25,12 +51,7 @@
   box-shadow: 0px 0px 7px teal;
   /*border: 1px solid black;*/
 }
-#profName{
 
-  font-size: large;
-  margin: auto auto auto 0px;
-
-}
 #settingButton{
   height: 50px;
   width: 50px;

@@ -395,10 +395,70 @@ public class VerticleApi extends AbstractVerticle {
         router
                 .post("/user/:userid/follow/:followerid")
                 .handler(ctx -> {
+                    try{
+                        UUID userid = UUID.fromString(ctx.pathParam("userid"));
+                        UUID followerid = UUID.fromString(ctx.pathParam("followerid"));
+
+                        this.followerService.addFollow(userid,followerid)
+                                .onSuccess(suc -> {
+                                    ctx.response().setStatusCode(200).end();
+                                }).onFailure(err -> {
+                                    ctx.response().setStatusCode(400).end();
+                                });
+
+                    }catch (IllegalArgumentException e){
+                        e.printStackTrace();
+                        ctx.response().setStatusCode(500).end(e.getMessage());
+                    }catch (Exception ex){
+                        ex.printStackTrace();
+                        ctx.response().setStatusCode(500).end(ex.getMessage());
+                    }
 
                 });
 
+        router
+                .delete("/user/:userid/follow/:followerid")
+                .handler(ctx -> {
+                    try{
+                        UUID userid = UUID.fromString(ctx.pathParam("userid"));
+                        UUID followerid = UUID.fromString(ctx.pathParam("followerid"));
 
+                        this.followerService.deleteFollow(userid,followerid)
+                                .onSuccess(suc -> {
+                                    ctx.response().setStatusCode(200).end();
+                                }).onFailure(err -> {
+                                    ctx.response().setStatusCode(400).end();
+                                });
+
+                    }catch (IllegalArgumentException e){
+                        e.printStackTrace();
+                        ctx.response().setStatusCode(500).end(e.getMessage());
+                    }catch (Exception ex){
+                        ex.printStackTrace();
+                        ctx.response().setStatusCode(500).end(ex.getMessage());
+                    }
+
+                });
+        router
+                .get("/user/:userid/isRelation/:followerid")
+                .handler(ctx -> {
+                    try {
+                        UUID userid = UUID.fromString(ctx.pathParam("userid"));
+                        UUID followerid = UUID.fromString(ctx.pathParam("followerid"));
+
+                        this.followerService.findRelation(userid, followerid)
+                                .onSuccess(suc -> {
+                                    ctx.response().setStatusCode(200).end();
+                                }).onFailure(err -> {
+                                    ctx.response().setStatusCode(400).end();
+                                });
+
+
+                    }catch (IllegalArgumentException e){
+                        e.printStackTrace();
+                        ctx.response().setStatusCode(500).end(e.getMessage());
+                    }
+                });
 
 
 
@@ -412,18 +472,19 @@ public class VerticleApi extends AbstractVerticle {
                 .handler(ctx -> {
 
                         try{
-                            String startFrom = Objects.requireNonNull(
-                                                        ctx.request().getParam("startFrom"));
-                            String size      = Objects.requireNonNull(
-                                                        ctx.request().getParam("size"));
+                            UUID userid = UUID.fromString(Objects.requireNonNull(ctx.pathParam("userId")));
+                            int startFrom = Integer.valueOf(Objects.requireNonNull(
+                                                        ctx.request().getParam("startFrom")));
+                            int size      = Integer.valueOf(Objects.requireNonNull(
+                                                        ctx.request().getParam("size")));
                             System.out.println(startFrom + " and " + size);
 
 
 
                         this.postQueryModelStore.findPostPageByUid(
-                                    UUID.fromString(ctx.pathParam("userId")),
-                                    Integer.valueOf(startFrom),
-                                    Integer.valueOf(size)
+                                    userid,
+                                    startFrom,
+                                    size
                                 ).onSuccess(posts -> {
                                     JsonArray jsonArray = new JsonArray();
                                     posts.forEach(re ->{
@@ -562,27 +623,29 @@ public class VerticleApi extends AbstractVerticle {
 
 
 
+        // Retrieve post
         router
                 .get("/user/:userId/post/:postid")
                 .handler(ctx -> {
                     try{
-                    UUID postid = UUID.fromString(ctx.pathParam("postid"));
-                    this.postQueryModelStore.findById(postid)
-                            .onSuccess(res -> {
-                                ctx.response().setStatusCode(200).end(
-                                        new JsonObject()
-                                                .put("postid"        ,  res.postid().toString())
-                                                .put("createdDate"   ,  res.createdDate().toString())
-                                                .put("filename"      ,  res.filename())
-                                                .put("description"   ,  res.description())
-                                                .put("userid"        ,  res.userid().toString())
-                                                .put("username"      ,  res.username()
-                                                ).toString()
-                                );
-                            })
-                            .onFailure(err -> {
-                                ctx.response().setStatusCode(400).end();
-                            });
+                        UUID postid = UUID.fromString(ctx.pathParam("postid"));
+
+                        this.postQueryModelStore.findById(postid)
+                                .onSuccess(res -> {
+                                    ctx.response().setStatusCode(200).end(
+                                            new JsonObject()
+                                                    .put("postid"        ,  res.postid().toString())
+                                                    .put("createdDate"   ,  res.createdDate().toString())
+                                                    .put("filename"      ,  res.filename())
+                                                    .put("description"   ,  res.description())
+                                                    .put("userid"        ,  res.userid().toString())
+                                                    .put("username"      ,  res.username()
+                                                    ).toString()
+                                    );
+                                })
+                                .onFailure(err -> {
+                                    ctx.response().setStatusCode(400).end();
+                                });
                     }catch (IllegalArgumentException e){
                         e.printStackTrace();
                         ctx.response().setStatusCode(500).end("UUID is not correct");
@@ -595,6 +658,7 @@ public class VerticleApi extends AbstractVerticle {
                 });
 
 
+        // Retrieve users (for search user page)
         router
                 .get("/user/:username/search")
                 .handler(ctx -> {
@@ -631,6 +695,7 @@ public class VerticleApi extends AbstractVerticle {
                 });
 
 
+        // count users (on search page)
         router
                 .get("/user/:username/search/count")
                 .handler(
@@ -653,6 +718,156 @@ public class VerticleApi extends AbstractVerticle {
                                 ctx.response().setStatusCode(500).end(e.getMessage());
                             }
                         });
+
+        router
+                .get("/user/:userid/feed")
+                .handler(ctx -> {
+                    try{
+                        UUID userid = UUID.fromString(Objects.requireNonNull(ctx.pathParam("userid")));
+                        int startFrom = Integer.valueOf(Objects.requireNonNull(
+                                ctx.request().getParam("startFrom")));
+                        int size      = Integer.valueOf(Objects.requireNonNull(
+                                ctx.request().getParam("size")));
+
+                        this.postQueryModelStore.customizeFeed(userid,startFrom,size)
+                                .onSuccess(posts -> {
+                                    JsonArray jsonArray = new JsonArray();
+                                    posts.forEach(re ->{
+                                        jsonArray.add(new JsonObject()
+                                                .put("postid"       , re.postid().toString())
+                                                .put("createdDate"  , re.createdDate().toString())
+                                                .put("filename"     , re.filename())
+                                                .put("description"  , re.description())
+                                                .put("userid"       , re.userid().toString())
+                                                .put("username"     , re.username())
+                                        );
+                                    });
+                                    ctx.response().setStatusCode(200).end(jsonArray.toString());
+                                })
+                                .onFailure(err -> {
+                                    ctx.response().setStatusCode(400).end("There is not posts!");
+                                });
+
+                    }catch (IllegalArgumentException e){
+                        e.printStackTrace();
+                        ctx.response().setStatusCode(500).end(e.getMessage());
+                    }catch (Exception ex){
+                        ex.printStackTrace();
+                        ctx.response().setStatusCode(500).end(ex.getMessage());
+                    }
+                });
+
+        // count following
+        router
+                .get("/user/:userid/following/count")
+                .handler(ctx -> {
+                    try{
+                        UUID userid = UUID.fromString(Objects.requireNonNull(ctx.pathParam("userid")));
+
+                        this.followerQueryModelStore.countfollowingUsers(userid)
+                                .onSuccess(suc -> {
+                                    ctx.response().setStatusCode(200).end(suc);
+                                })
+                                .onFailure(err -> {
+                                    err.printStackTrace();
+                                    ctx.response().setStatusCode(400).end(err.getMessage());
+                                });
+                    }catch (IllegalArgumentException e){
+                        e.printStackTrace();
+                        ctx.response().setStatusCode(500).end(e.getMessage());
+                    }catch (Exception er){
+                        er.printStackTrace();
+                        ctx.response().setStatusCode(500).end(er.getMessage());
+                    }
+
+                });
+
+        // count followers
+        router
+                .get("/user/:userid/followers/count")
+                .handler(ctx -> {
+                    try{
+                        UUID userid = UUID.fromString(Objects.requireNonNull(ctx.pathParam("userid")));
+
+                        this.followerQueryModelStore.countFollowers(userid)
+                                .onSuccess(suc -> {
+                                    ctx.response().setStatusCode(200).end(suc);
+                                })
+                                .onFailure(err -> {
+                                    err.printStackTrace();
+                                    ctx.response().setStatusCode(400).end(err.getMessage());
+                                });
+                    }catch (IllegalArgumentException e){
+                        e.printStackTrace();
+                        ctx.response().setStatusCode(500).end(e.getMessage());
+                    }
+                });
+
+        router
+                .get("/user/:userid/followers")
+                .handler(ctx -> {
+                    try{
+                        UUID userid = UUID.fromString(Objects.requireNonNull(ctx.pathParam("userid")));
+
+                        this.followerQueryModelStore.followers(userid)
+                                .onSuccess(follow -> {
+                                    JsonArray jsonArray = new JsonArray();
+                                    follow.forEach(re ->{
+                                        jsonArray.add(new JsonObject()
+                                                 .put("followid"           , re.followid().toString())
+                                                 .put("userid"             , re.userid().toString())
+                                                 .put("usernameUserid"     , re.usernameUserid())
+                                                 .put("createdate"         , re.createdate().toString())
+                                                 .put("followerid"         , re.userid().toString())
+                                                 .put("followeridUsername" , re.followeridUsername())
+                                        );
+                                    });
+                                    ctx.response().setStatusCode(200).end(jsonArray.toString());
+                                })
+                                .onFailure(err -> {
+                                    ctx.response().setStatusCode(400).end("There is not posts!");
+                                });
+                    }catch (IllegalArgumentException e){
+                        e.printStackTrace();
+                        ctx.response().setStatusCode(500).end(e.getMessage());
+                    }catch (Exception ex){
+                        ex.getMessage();
+                        ctx.response().setStatusCode(500).end(ex.getMessage());
+                    }
+                });
+
+        router
+                .get("/user/:userid/following")
+                .handler(ctx -> {
+                    try{
+                        UUID userid = UUID.fromString(Objects.requireNonNull(ctx.pathParam("userid")));
+
+                        this.followerQueryModelStore.followingUsers(userid)
+                                .onSuccess(following -> {
+                                    JsonArray jsonArray = new JsonArray();
+                                    following.forEach(re ->{
+                                        jsonArray.add(new JsonObject()
+                                                .put("followid"           , re.followid().toString())
+                                                .put("userid"             , re.userid().toString())
+                                                .put("usernameUserid"     , re.usernameUserid())
+                                                .put("createdate"         , re.createdate().toString())
+                                                .put("followerid"         , re.userid().toString())
+                                                .put("followeridUsername" , re.followeridUsername())
+                                        );
+                                    });
+                                    ctx.response().setStatusCode(200).end(jsonArray.toString());
+                                })
+                                .onFailure(err -> {
+                                    ctx.response().setStatusCode(400).end("There is not posts!");
+                                });
+                    }catch (IllegalArgumentException e){
+                        e.printStackTrace();
+                        ctx.response().setStatusCode(500).end(e.getMessage());
+                    }catch (Exception ex){
+                        ex.getMessage();
+                        ctx.response().setStatusCode(500).end(ex.getMessage());
+                    }
+                });
 
 
 

@@ -152,7 +152,7 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                     e.printStackTrace();
                 });
     }
-
+    @Override
     public Future<List<PostQueryModel>> customizeFeed(UUID userid){
         return pool
                 .preparedQuery(
@@ -196,6 +196,60 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
 
     }
 
+    @Override
+    public Future<List<PostQueryModel>> customizeFeed(UUID userid, int startFrom, int size){
+        if (!(MIN_VALUE < size && size < MAX_VALUE)){
+            throw new IllegalArgumentException("Comments : The size of comments is unacceptable");
+        }
+        if(!(startFrom % size == 0 && MIN_STARTFROM_VALUE <= startFrom && startFrom < MAX_STARTFROM_VALUE)){
+            throw new IllegalArgumentException("Comments : The startFrom is not valid!");
+        }
+        return pool
+                .preparedQuery(
+                        "SELECT P.postid, P.createdate, P.filename, P.description, F.followerid, U.username " +
+                                "FROM followers AS F, users AS U, post AS P " +
+                                "WHERE F.followerid = P.userid AND F.followerid = U.userid AND F.userid = ($1)" +
+                                "ORDER BY (createdate) DESC " +
+                                "OFFSET ($2) ROWS FETCH FIRST ($3) ROWS ONLY")
+                .execute(Tuple.of(
+                        String.valueOf(userid),
+                        startFrom,
+                        size
+                ))
+                .compose(rows -> {
+                    if (rows.iterator().hasNext()){
+
+                        List<PostQueryModel> queryModelList = new ArrayList<>();
+
+                        for (Row row : rows){
+
+                            UUID postid                 = row.getUUID("postid");
+                            OffsetDateTime createdate   = row.getOffsetDateTime("createdate");
+                            String filename             = row.getString("filename");
+                            String description          = row.getString("description");
+                            UUID followerid             = row.getUUID("followerid");
+                            String username             = row.getString("username");
+
+
+                            queryModelList.add(
+                                    new PostQueryModel(
+                                            postid,
+                                            createdate,
+                                            filename,
+                                            description,
+                                            followerid,
+                                            username));
+                        };
+                        return Future.succeededFuture(queryModelList);
+                    }else {
+                        return Future.failedFuture(new IllegalArgumentException("There is no post!"));
+                    }
+
+                }).onFailure(err -> {
+                    err.printStackTrace();
+                });
+
+    }
 
 
 }

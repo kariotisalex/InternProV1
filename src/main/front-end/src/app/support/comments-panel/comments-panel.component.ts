@@ -59,23 +59,21 @@ export class CommentsPanelComponent implements OnInit{
 
   getComments(page : number) {
     const startFrom: number = (page - 1) * this.commentsPerPage;
+      this.commentService.getPageCommentsByPostid(
+                                                  this.post.postid,
+                                                  startFrom,
+                                                  this.commentsPerPage)
+        .subscribe({
+          next: listOfComments => {
+            this.isAnyCommentExist = true;
+            this.comments = listOfComments;
+          },
+          error: (err: HttpErrorResponse) => {
+            this.isAnyCommentExist = false;
+            this.commentPages = [0];
 
-
-            this.commentService.getPageCommentsByPostid(
-                                                        this.post.postid,
-                                                        startFrom,
-                                                        this.commentsPerPage)
-              .subscribe({
-                next: listOfComments => {
-                  this.isAnyCommentExist = true;
-                  this.comments = listOfComments;
-                },
-                error: (err: HttpErrorResponse) => {
-                  this.isAnyCommentExist = false;
-                  this.commentPages = [0];
-
-                }
-              });
+          }
+        });
 
   }
 

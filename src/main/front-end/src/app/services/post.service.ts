@@ -46,13 +46,15 @@ export class PostService {
     return this.http.get<number>(`/api/user/${uid}/posts/count`);
   }
 
-  getPostsByUserid(uid : string, startFrom : number, size : number){
+  getPostsByUserid(uid : string, startFrom : number, size : number) : Observable<Post[]>{
     const params = new HttpParams()
       .set('startFrom', startFrom )
       .set('size',size );
     return this.http.get<Post[]>(`/api/user/${uid}/posts/page`, {params: params});
   }
 
-
+  getFeed(uid : string) : Observable<Post[]>{
+    return this.http.get<Post[]>(`/api/user/${uid}/feed`)
+  }
 
 }

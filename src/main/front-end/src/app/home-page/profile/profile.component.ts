@@ -7,6 +7,7 @@ import {PostService} from "../../services/post.service";
 import {map} from "rxjs";
 import {HttpErrorResponse} from "@angular/common/http";
 import {NavigationService} from "../../services/navigation.service";
+import {FollowerService} from "../../services/follower.service";
 
 @Component({
   selector: 'app-profile',
@@ -14,7 +15,8 @@ import {NavigationService} from "../../services/navigation.service";
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit{
-
+  followers : number = 500;
+  following : number = 1000;
   postsPerPage : number = 6;
   pages : number[] = [];
   user! : User;
@@ -24,6 +26,7 @@ export class ProfileComponent implements OnInit{
     private userService : UserService,
     private router : Router,
     private postService : PostService,
+    private follower : FollowerService,
     private navigation : NavigationService,
     private route : ActivatedRoute
   ) {}
@@ -32,7 +35,7 @@ export class ProfileComponent implements OnInit{
     this.getFunc();
     this.getPosts(1);
     this.countPosts();
-
+    this.getFollowersCount();
   }
   getFunc(){
     this.route.paramMap
@@ -104,8 +107,18 @@ export class ProfileComponent implements OnInit{
     this.navigation.goToPostDetail(pst)
   }
 
+  getFollowersCount(){
+    this.follower.getCountFollowers(this.user.uid)
+      .subscribe({
+        next: res=> {
+          this.followers = res;
+        },
 
+      });
+  }
+  getFollowingCount(){
 
+  }
 
 
   routing(){

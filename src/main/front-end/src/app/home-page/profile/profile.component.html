@@ -1,12 +1,30 @@
 <div class="profileWrapper">
   <div class="profileNestedA">
 
-      <img id="photoProfCircle" src="../../../assets/DemoProfilePic.jpg" alt="">
+    <img id="photoProfCircle" src="../../../assets/DemoProfilePic.jpg" alt="">
 
-    <div id="profName">{{user.username}}</div>
+    <div class="profileCenterNested">
+      <div class="usernameClass">
+        {{user.username}}
+      </div>
+      <div class="followClass">
+        <div class="numberFollow">{{followers}}</div>
+        <div class="spanFollow">followers</div>
+
+
+      </div>
+      <div class="followClass">
+        <div class="numberFollow">{{following}}</div>
+        <div class="spanFollow">following</div>
+
+      </div>
+
+    </div>
+
     <div class="settingButtonDiv">
       <button id="settingButton" (click)="routing()">. . .</button>
     </div>
+
   </div>
 
 
