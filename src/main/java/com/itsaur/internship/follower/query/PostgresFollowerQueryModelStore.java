@@ -84,7 +84,7 @@ public class PostgresFollowerQueryModelStore implements FollowerQueryModelStore 
 
                     if (rows.iterator().hasNext()){
                         Row row = rows.iterator().next();
-                        return Future.succeededFuture(row.getString(0));
+                        return Future.succeededFuture(String.valueOf(row.getLong(0)));
                     } else {
                         return Future.failedFuture(
                                 new IllegalArgumentException("There is no followers")
@@ -105,7 +105,7 @@ public class PostgresFollowerQueryModelStore implements FollowerQueryModelStore 
 
                     if (rows.iterator().hasNext()){
                         Row row = rows.iterator().next();
-                        return Future.succeededFuture(row.getString(0));
+                        return Future.succeededFuture(String.valueOf(row.getLong(0)));
                     } else {
                         return Future.failedFuture(new IllegalArgumentException("There is no followingUsers"));
                     }

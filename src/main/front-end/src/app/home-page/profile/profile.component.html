@@ -5,7 +5,12 @@
 
     <div class="profileCenterNested">
       <div class="usernameClass">
-        {{user.username}}
+        <div >
+          {{user.username}}
+        </div>
+        <div *ngIf="!isRelation && !isMyProfile"><button class="followButton">Follow</button></div>
+        <div *ngIf="isRelation  && !isMyProfile"><button class="unfollowButton">Unfollow</button></div>
+
       </div>
       <div class="followClass">
         <div class="numberFollow">{{followers}}</div>

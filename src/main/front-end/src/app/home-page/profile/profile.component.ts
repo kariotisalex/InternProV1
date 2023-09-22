@@ -15,6 +15,8 @@ import {FollowerService} from "../../services/follower.service";
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit{
+  isMyProfile : boolean = true;
+  isRelation : boolean = false;
   followers : number = 500;
   following : number = 1000;
   postsPerPage : number = 6;
@@ -36,6 +38,7 @@ export class ProfileComponent implements OnInit{
     this.getPosts(1);
     this.countPosts();
     this.getFollowersCount();
+    this.getFollowingCount();
   }
   getFunc(){
     this.route.paramMap
@@ -48,6 +51,7 @@ export class ProfileComponent implements OnInit{
               uid: uid,
               username: username
             }
+            this.isMyProfile = false;
           } else {
             console.log(this.userService.getUid())
             this.user = this.userService.getUser()
@@ -113,10 +117,31 @@ export class ProfileComponent implements OnInit{
         next: res=> {
           this.followers = res;
         },
+        error: (err : HttpErrorResponse) =>{
+          console.log(err.error);
+          this.followers = 0;
+        }
 
       });
   }
+
   getFollowingCount(){
+    this.follower.getCountFollowingUser(this.user.uid)
+      .subscribe({
+        next: res => {
+          this.following = res;
+        },
+        error: (err : HttpErrorResponse) =>{
+          console.log(err.error);
+          this.following = 0;
+        }
+
+      });
+  }
+
+  getIsRelation(){
+    this.follower.getIsRelation(this.userService.getUid(),this.user.uid)
+      .subscribe(fasdfasdf) //todo
 
   }
 

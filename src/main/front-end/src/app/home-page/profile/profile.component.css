@@ -14,11 +14,10 @@
   display: grid;
   grid-template-columns: 150px 450px 100px;
 
-
 }
 .profileCenterNested{
   display: grid;
-  grid-template-columns: 160px 100px 100px;
+  grid-template-columns: 200px 100px 100px;
 
   /*border: 1px solid black;*/
   font-size: large;
@@ -26,7 +25,11 @@
   height : 70px;
 }
 .usernameClass{
+  /*border: 1px solid black;*/
+
   margin: auto;
+  display: grid;
+  grid-template-rows: 80% 20%;
 
 }
 .spanFollow{
@@ -38,6 +41,45 @@
   /*border: 1px solid black;*/
   display: grid;
   grid-template-rows: 60% 40%;
+}
+.followButton{
+  border: 1px solid rgba(150, 150, 150, 0.5);
+  background-color: rgba(60, 55, 255, 1);
+  width: 65px;
+  height: 23px;
+  color: white;
+  border-radius: 5px;
+}
+
+.followButton:hover{
+  background-color: rgba(60, 55, 255, 1);
+  color: white;
+  font-weight: bold;
+  transform: translateY(1px);
+}
+
+.followButton:active{
+  background-color: white;
+  color: rgba(60, 55, 255, 1);
+  border: 1px solid rgba(60, 55, 255, 1);
+
+}
+.unfollowButton{
+  /*border: 1px solid black;*/
+  margin: auto;
+  background-color: rgba(255, 0, 0, 0.73);
+  color: white;
+  border-radius: 5px;
+  width: 65px;
+  height: 23px;
+  border: none;
+}
+.unfollowButton:hover{
+  background-color: crimson;
+  font-weight: bold;
+}
+.unfollowButton:active{
+  background-color: brown;
 }
 .numberFollow{
   margin: auto;

@@ -28,6 +28,10 @@ export class FollowerService {
     return this.http.get<Follower[]>(`/api/user/${userid}/following`);
   }
 
+  getIsRelation(userid :string, followerid:string){
+    return this.http.get<Follower>(`/api/user/${userid}/isRelation/${followerid}`);
+  }
+
 
 
 
