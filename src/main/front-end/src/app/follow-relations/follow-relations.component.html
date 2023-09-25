@@ -1,0 +1,46 @@
+<div class="grid-container">
+  <div class="grid-item">
+    <button id="backButton" (click)="backButtonNav()"><</button>
+  </div>
+  <div class="grid-item wrapperDelUpdate">
+    <div class="tabBarWrapper">
+      <div class="buttons">
+        <button class=" buttonClass" (click)="this.updater()" [ngClass]="this.followersPointer ?
+                       'updateButtonClass':''">Followers</button>
+      </div>
+      <div class="buttons">
+        <button class=" buttonClass" [ngClass]="!this.followersPointer ?
+                      'deleteButtonClass':''" (click)="deleter()">Following</button>
+      </div>
+    </div>
+
+    <div class="updateDivWrapper">
+      <div *ngIf="followersPointer" >
+        <ul *ngFor="let follower of followers" >
+          <li (click)="this.navigation.goToProfileView(follower.userid,follower.usernameUserid)">{{follower.usernameUserid}}</li>
+        </ul>
+
+      </div>
+
+
+
+
+
+      <div *ngIf="!followersPointer" >
+        <ul *ngFor="let following of followings">
+          <li (click)="this.navigation.goToProfileView(following.followerid,following.followeridUsername)">{{following.followeridUsername}} </li>
+        </ul>
+
+
+      </div>
+
+
+
+
+
+    </div>
+
+  </div>
+
+</div>
+

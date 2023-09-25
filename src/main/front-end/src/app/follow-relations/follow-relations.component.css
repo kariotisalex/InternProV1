@@ -1,0 +1,187 @@
+.grid-container {
+  box-shadow: 0px 0px 15px rgba(150,150,150,1);
+  display: grid;
+  grid-template-columns: 20% 80%;
+  max-width: 400px;
+  margin: 55px auto;
+  border-radius: 15px;
+  background-color: white;
+}
+.grid-item {
+  font-size: 35px;
+  border-radius: 15px;
+  margin: 3%;
+  font-family: Lato;
+}
+
+
+.wrapperDelUpdate{
+  display: grid;
+  grid-template-rows: 30px 290px ;
+}
+.tabBarWrapper{
+  display: grid;
+  grid-template-columns: 50% 50%;
+}
+.buttons{
+  display: grid;
+}
+.buttonClass{
+  background-color: white;
+  border: none;
+  border-radius: 4px;
+}
+.buttonClass:hover{
+  background-color: rgba(176,196,222,0.4);
+
+}
+.buttonClass:active {
+  background-color: rgba(176,196,222,0.8);
+}
+
+.delDivWrapper{
+
+}
+.updateDivWrapper{
+  max-width: 280px;
+  margin-top: 10px;
+  padding-left: 4%;
+  background-color: white;
+  overflow: scroll;
+}
+
+.caption{
+  color: gray;
+  font-size: small;
+  font-weight: bold;
+  margin-top: 12px;
+}
+input {
+  padding: 2%;
+  border: 1px solid rgba(150, 150, 150, 0.5);
+  border-radius: 5px;
+  display: grid;
+  font-size: large;
+  width: 260px;
+  align: left;
+  outline: 0;
+}
+
+.newPasswdWrapper{
+  display: flex;
+  margin-top: 0;
+}
+#passwdP{
+  flex-grow: 8;
+}
+#inv{
+  flex-grow: 2;
+
+}
+
+.inputButtonUpdate{
+  border: 1px solid rgba(150, 150, 150, 0.5);
+  background-color: rgba(60, 55, 255, 1);
+  margin: 15px 0 10px 100px;
+  height: 75px;
+  width: 75px;
+  font-size: medium;
+  padding: 10px;
+  color: white;
+  border-radius: 50%;
+}
+
+.inputButtonUpdate:hover{
+  background-color: rgba(60, 55, 255, 1);
+  color: white;
+  font-weight: bold;
+  transform: translateY(1px);
+}
+
+.inputButtonUpdate:active{
+  background-color: white;
+  color: rgba(60, 55, 255, 1);
+  border: 1px solid rgba(60, 55, 255, 1);
+
+}
+.inputButtonDelete{
+  border: 1px solid rgba(150, 150, 150, 0.5);
+
+  background-color: rgba(60, 55, 255, 1);
+  margin: 15px 0 10px 100px;
+
+  height: 75px;
+  width: 75px;
+  font-size: medium;
+  padding: 10px;
+  color: white;
+  border-radius: 50%;
+}
+
+.inputButtonDelete:hover{
+  background-color: rgba(60, 55, 255, 1);
+  color: white;
+  font-weight: bold;
+  transform: translateY(1px);
+}
+
+.inputButtonDelete:active{
+  background-color: white;
+  color: rgba(60, 55, 255, 1);
+  border: 1px solid rgba(60, 55, 255, 1);
+
+}
+
+.disabled{
+  background-color: rgb(51, 49, 49);
+}
+
+#backButton{
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  margin: auto;
+  font-size: x-large;
+  color: gray;
+  margin-top: 23px;
+  margin-left: 10px;
+  background-color: white;
+  border: 1px solid rgba(150, 150, 150, 0.5);
+}
+#backButton:hover{
+  background-color: rgba(150, 150, 150, 0.1);
+}
+#backButton:active{
+  color: white;
+  background-color: rgba(150, 150, 150, 0.5);
+}
+.switchUpdate{
+  display:none;
+}
+.switchDelete{
+  display: none;
+}
+.updateButtonClass{
+  background-color: rgba(176,196,222,0.8);
+}
+.deleteButtonClass{
+  background-color: rgba(176,196,222,0.8);
+}
+.redClassBorder{
+  border: 1px solid red;
+}
+.greenClassBorder{
+  border: 1px solid lightgreen;
+}
+.redClassFont{
+  color: rgba(255, 0, 0, 0.64);
+}
+.greenClassFont{
+  color: rgba(0,180,22,0.81);
+}
+ul{
+  list-style-type: none;
+  font-size: medium;
+  padding: 0px;
+  margin: 0;
+}

@@ -12,19 +12,19 @@ export class FollowerService {
     private http : HttpClient
   ) { }
 
-  getCountFollowers(userid : string) : Observable<number>{
-    return this.http.get<number>(`/api/user/${userid}/followers/count`);
-  }
-
   getCountFollowingUser(userid : string) : Observable<number>{
     return this.http.get<number>(`/api/user/${userid}/following/count`);
   }
 
-  getFollowers(userid : string) : Observable<Follower[]>{
-    return this.http.get<Follower[]>(`/api/user/${userid}/followers`);
+  getCountFollowers(userid : string) : Observable<number>{
+    return this.http.get<number>(`/api/user/${userid}/followers/count`);
   }
 
   getFollowingUser(userid : string) : Observable<Follower[]>{
+    return this.http.get<Follower[]>(`/api/user/${userid}/followers`);
+  }
+
+  getFollowers(userid : string) : Observable<Follower[]>{
     return this.http.get<Follower[]>(`/api/user/${userid}/following`);
   }
 
@@ -32,6 +32,13 @@ export class FollowerService {
     return this.http.get<Follower>(`/api/user/${userid}/isRelation/${followerid}`);
   }
 
+  setFollow(userid : string, followerid : string){
+    return this.http.post(`/api/user/${userid}/follow/${followerid}`,{});
+  }
+
+  setUnfollow(userid : string, followerid : string){
+    return this.http.delete(`/api/user/${userid}/follow/${followerid}`);
+  }
 
 
 

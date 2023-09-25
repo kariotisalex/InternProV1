@@ -74,12 +74,12 @@ public class PostgresFollowerQueryModelStore implements FollowerQueryModelStore 
     }
 
     @Override
-    public Future<String> countFollowers(UUID userid){
+    public Future<String> countFollowers(UUID followerid){
         return pool
                 .preparedQuery("SELECT COUNT(F.followid) " +
                                     "FROM followers AS F " +
-                                    "WHERE F.userid = ($1)")
-                .execute(Tuple.of(userid))
+                                    "WHERE F.followerid = ($1) ")
+                .execute(Tuple.of(followerid))
                 .compose(rows -> {
 
                     if (rows.iterator().hasNext()){
@@ -95,12 +95,12 @@ public class PostgresFollowerQueryModelStore implements FollowerQueryModelStore 
     }
 
     @Override
-    public Future<String> countfollowingUsers(UUID followerid) {
+    public Future<String> countfollowingUsers(UUID userid) {
         return pool
                 .preparedQuery("SELECT COUNT(F.followid) " +
-                        "FROM followers AS F, users AS U1, users AS U2 " +
-                        "WHERE F.userid = U1.userid AND F.followerid = U2.userid AND F.followerid = ($1)")
-                .execute(Tuple.of(followerid))
+                        "FROM followers AS F " +
+                        "WHERE  F.userid = ($1)")
+                .execute(Tuple.of(userid))
                 .compose(rows -> {
 
                     if (rows.iterator().hasNext()){

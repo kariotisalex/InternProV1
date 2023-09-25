@@ -52,8 +52,13 @@ public class FollowerService {
     public Future<Follower> findRelation(UUID userid, UUID followerid){
 
         return this.followerStore.findByUseridFollowerid(userid, followerid)
+                .onFailure(err -> {
+                    System.out.println("na xame");
+                    err.printStackTrace();
+                })
                 .otherwiseEmpty()
                 .compose(suc -> {
+                    System.out.println("asdf " + suc);
                     if (suc == null){
                         return Future.failedFuture(new IllegalArgumentException("There is no relation!"));
                     }else{

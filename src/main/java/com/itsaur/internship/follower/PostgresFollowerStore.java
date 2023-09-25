@@ -18,7 +18,7 @@ public class PostgresFollowerStore implements FollowerStore{
     public Future<Void> insert(Follower follower) {
         return pool
                 .preparedQuery("INSERT INTO followers(followid, userid, createdate, followerid)" +
-                        "VALUES ($1) , ($2) , ($3) , ($4)")
+                                   "VALUES ($1 , $2 , $3 , $4)")
                 .execute(Tuple.of(
                         follower.followid(),
                         follower.userid(),
@@ -26,6 +26,7 @@ public class PostgresFollowerStore implements FollowerStore{
                         follower.followerid()
                 ))
                 .onFailure(err -> {
+                    System.out.println("hxame");
                     err.printStackTrace();
                 }).mapEmpty();
     }
@@ -55,11 +56,13 @@ public class PostgresFollowerStore implements FollowerStore{
     @Override
     public Future<Follower> findByUseridFollowerid(UUID userid, UUID followerid){
         return pool
-                .preparedQuery("SELECT followid, userid, createdate, followerid" +
-                        "FROM follower" +
+                .preparedQuery(
+                    "SELECT followid, userid, createdate, followerid " +
+                        "FROM followers " +
                         "WHERE userid = ($1) AND followerid = ($2)")
                 .execute(Tuple.of(userid,followerid))
                 .compose(rows -> {
+                    System.out.println(rows.iterator().next().getUUID(0));
                     if (rows.iterator().hasNext()){
                         Row row = rows.iterator().next();
                         return Future.succeededFuture(new Follower(

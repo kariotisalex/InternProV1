@@ -8,21 +8,21 @@
         <div >
           {{user.username}}
         </div>
-        <div *ngIf="!isRelation && !isMyProfile"><button class="followButton">Follow</button></div>
-        <div *ngIf="isRelation  && !isMyProfile"><button class="unfollowButton">Unfollow</button></div>
+        <div *ngIf="!isRelation && !isMyProfile"><button class="followButton" (click)="followButton()">Follow</button></div>
+        <div *ngIf="isRelation  && !isMyProfile"><button class="unfollowButton" (click)="unfollowButton()">Unfollow</button></div>
 
       </div>
-      <div class="followClass">
-        <div class="numberFollow">{{followers}}</div>
+      <button class="followClass" (click)="profileShowFunc(false,true)">
+        <div class="numberFollow">{{followersCount}}</div>
         <div class="spanFollow">followers</div>
 
 
-      </div>
-      <div class="followClass">
-        <div class="numberFollow">{{following}}</div>
+      </button>
+      <button class="followClass" (click)="profileShowFunc(false,false)">
+        <div class="numberFollow">{{followingCount}}</div>
         <div class="spanFollow">following</div>
 
-      </div>
+      </button>
 
     </div>
 
@@ -33,7 +33,7 @@
   </div>
 
 
-    <div class="wrapperResults">
+    <div class="wrapperResults" *ngIf="profileShow">
       <div class="results">
         <app-small-post-presentation [posts]="posts" ></app-small-post-presentation>
       </div>
@@ -42,4 +42,11 @@
                            (myData)="getPosts($event)" ></app-footer-paging>
       </div>
     </div>
+  <div *ngIf="!profileShow" class="followUsernamesClass">
+
+    <app-follow-relations (data)="profileShowFunc(true,false)"
+                          [followersPointer]="followersPointer"
+                          [followings]="followings"
+                          [followers]="followers" ></app-follow-relations>
+  </div>
 </div>

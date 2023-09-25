@@ -1,13 +1,14 @@
-import {Component, OnInit} from '@angular/core';
-import {User} from "../../services/interfaces/user";
-import {UserService} from "../../services/user.service";
-import {ActivatedRoute, Route, Router} from "@angular/router";
-import {Post} from "../../services/interfaces/post";
-import {PostService} from "../../services/post.service";
-import {map} from "rxjs";
-import {HttpErrorResponse} from "@angular/common/http";
-import {NavigationService} from "../../services/navigation.service";
-import {FollowerService} from "../../services/follower.service";
+import { Component, OnInit} from '@angular/core';
+import { User } from "../../services/interfaces/user";
+import { UserService } from "../../services/user.service";
+import { ActivatedRoute, Route, Router } from "@angular/router";
+import { Post } from "../../services/interfaces/post";
+import { PostService } from "../../services/post.service";
+import { map } from "rxjs";
+import { HttpErrorResponse } from "@angular/common/http";
+import { NavigationService } from "../../services/navigation.service";
+import { FollowerService } from "../../services/follower.service";
+import { Follower } from "../../services/interfaces/follower";
 
 @Component({
   selector: 'app-profile',
@@ -17,18 +18,22 @@ import {FollowerService} from "../../services/follower.service";
 export class ProfileComponent implements OnInit{
   isMyProfile : boolean = true;
   isRelation : boolean = false;
-  followers : number = 500;
-  following : number = 1000;
+  followersCount : number = 0;
+  followingCount : number = 0;
   postsPerPage : number = 6;
   pages : number[] = [];
   user! : User;
+  profileShow : boolean = true;
+  followersPointer! : boolean;
+  followers : Follower[] = [];
+  followings : Follower[] = [];
 
 
   constructor(
     private userService : UserService,
     private router : Router,
     private postService : PostService,
-    private follower : FollowerService,
+    private followerService : FollowerService,
     private navigation : NavigationService,
     private route : ActivatedRoute
   ) {}
@@ -39,7 +44,16 @@ export class ProfileComponent implements OnInit{
     this.countPosts();
     this.getFollowersCount();
     this.getFollowingCount();
+    this.getFollowers();
+    this.getFollowingUser();
+
+
   }
+  profileShowFunc(status :  boolean, pointer : boolean){
+    this.followersPointer = pointer;
+    this.profileShow = status;
+  }
+
   getFunc(){
     this.route.paramMap
       .subscribe({
@@ -51,16 +65,39 @@ export class ProfileComponent implements OnInit{
               uid: uid,
               username: username
             }
+            this.getFollowers();
+            this.getFollowingUser();
             this.isMyProfile = false;
+            this.getIsRelation(this.userService.getUid(), this.user.uid);
           } else {
-            console.log(this.userService.getUid())
-            this.user = this.userService.getUser()
+            console.log(this.userService.getUid());
+            this.user = this.userService.getUser();
           }
         }
       });
   }
 
-
+  getFollowers(){
+    this.followerService.getFollowers(this.user.uid)
+      .subscribe({
+        next: x => {
+          this.followers = x;
+        }, error: (err : HttpErrorResponse) => {
+          console.log(err.error)
+          this.followers = [];
+        }
+      })
+  }
+  getFollowingUser(){
+    this.followerService.getFollowingUser(this.user.uid)
+      .subscribe({
+        next: x => {
+          this.followings = x;
+        }, error: err => {
+          this.followings = [];
+        }
+      })
+  }
 
   get posts() : Post[]{
     return this.postService.posts;
@@ -110,39 +147,81 @@ export class ProfileComponent implements OnInit{
   postNav (pst : string) : void {
     this.navigation.goToPostDetail(pst)
   }
+  getIsRelation(loggedInUserid : string, guestUserid : string){
+    this.followerService.getIsRelation(loggedInUserid, guestUserid)
+      .subscribe({
+        next: x => {
+          this.isRelation = true;
+        }, error: (err:HttpErrorResponse) => {
+          console.log(err.error)
+          this.isRelation = false;
+        }
+      })
+  }
 
   getFollowersCount(){
-    this.follower.getCountFollowers(this.user.uid)
+    this.followerService.getCountFollowers(this.user.uid)
       .subscribe({
         next: res=> {
-          this.followers = res;
+          this.followersCount = res;
         },
         error: (err : HttpErrorResponse) =>{
           console.log(err.error);
-          this.followers = 0;
+          this.followersCount = 0;
         }
 
       });
   }
 
   getFollowingCount(){
-    this.follower.getCountFollowingUser(this.user.uid)
+    this.followerService.getCountFollowingUser(this.user.uid)
       .subscribe({
         next: res => {
-          this.following = res;
+          this.followingCount = res;
         },
         error: (err : HttpErrorResponse) =>{
           console.log(err.error);
-          this.following = 0;
+          this.followingCount = 0;
         }
 
       });
   }
 
-  getIsRelation(){
-    this.follower.getIsRelation(this.userService.getUid(),this.user.uid)
-      .subscribe(fasdfasdf) //todo
+  followButton(){
+    const loggedInUserid = this.userService.getUid();
+    const guestUserid = this.user.uid;
+    this.followerService.setFollow(loggedInUserid, guestUserid)
+      .subscribe({
+        next: x => {
+          this.isRelation = true;
+          this.getFollowersCount();
+          this.getFollowingCount();
+        },
+        error: err => {
+          this.isRelation = false;
+          this.getFollowersCount();
+          this.getFollowingCount();
+        }
+      })
 
+  }
+
+  unfollowButton(){
+    const loggedInUserid = this.userService.getUid();
+    const guestUserid = this.user.uid;
+    this.followerService.setUnfollow(loggedInUserid , guestUserid )
+      .subscribe({
+        next: x => {
+          this.isRelation = false;
+          this.getFollowersCount();
+          this.getFollowingCount();
+        },
+        error: err => {
+          this.isRelation = true;
+          this.getFollowersCount();
+          this.getFollowingCount();
+        }
+      })
   }
 
 

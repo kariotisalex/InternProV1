@@ -450,6 +450,7 @@ public class VerticleApi extends AbstractVerticle {
                                 .onSuccess(suc -> {
                                     ctx.response().setStatusCode(200).end();
                                 }).onFailure(err -> {
+                                    err.printStackTrace();
                                     ctx.response().setStatusCode(400).end();
                                 });
 
@@ -818,7 +819,7 @@ public class VerticleApi extends AbstractVerticle {
                                                  .put("userid"             , re.userid().toString())
                                                  .put("usernameUserid"     , re.usernameUserid())
                                                  .put("createdate"         , re.createdate().toString())
-                                                 .put("followerid"         , re.userid().toString())
+                                                 .put("followerid"         , re.followerid().toString())
                                                  .put("followeridUsername" , re.followeridUsername())
                                         );
                                     });
@@ -851,7 +852,7 @@ public class VerticleApi extends AbstractVerticle {
                                                 .put("userid"             , re.userid().toString())
                                                 .put("usernameUserid"     , re.usernameUserid())
                                                 .put("createdate"         , re.createdate().toString())
-                                                .put("followerid"         , re.userid().toString())
+                                                .put("followerid"         , re.followerid().toString())
                                                 .put("followeridUsername" , re.followeridUsername())
                                         );
                                     });
