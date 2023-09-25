@@ -1,9 +1,10 @@
 <div class="fullWrapper" *ngFor="let post of posts">
   <div class="wrapperFirstColumn ">
+
     <div class="wrapperImg">
       <img [src]="post.filename" class="detailImg"
            (click)="deletePostButtonFunc()">
-      <div class="datePost">{{post.createdDate | date}}</div>
+      <div >{{post.username}} : <span class="datePost">{{post.createdDate | date}}</span></div>
 
 
     </div>

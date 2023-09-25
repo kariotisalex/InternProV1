@@ -9,9 +9,11 @@ export class FooterPagingComponent {
 
   @Input() pages : number[] = [];
   @Output() myData = new EventEmitter<number>();
+  customPages : number[] = [];
 
 
   btnclick(page : number){
     this.myData.emit(page);
   }
+
 }
