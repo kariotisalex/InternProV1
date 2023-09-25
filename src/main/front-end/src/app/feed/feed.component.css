@@ -1,0 +1,49 @@
+.fullWrapper{
+  width: 800px;
+  display: grid;
+  grid-template-columns: 400px 300px;
+  /*border: 1px solid black;*/
+  margin: 50px auto;
+  column-gap: 30px;
+
+
+}
+.wrapperFirstColumn{
+  display: grid;
+  grid-template-rows: 400px 50px;
+  row-gap: 30px;
+
+}
+.wrapperImg{
+  height: 450px;
+  margin: 0 auto 0 auto;
+  padding : 0;
+}
+
+.detailImg{
+  margin: 0;
+  padding: 0;
+  width: 400px;
+  height: 400px;
+  object-fit: cover;
+}
+
+.datePost{
+  font-size: smaller;
+  color: #464646;
+  padding: 0;
+  margin: 0;
+
+}
+.wrapperSecColumn{
+  display: grid;
+  height: 450px;
+  width: 350px;
+  /*border: 1px solid black;*/
+  padding: 0;
+  margin: 0 auto;
+}
+
+.footerPagingFeed{
+  margin: 0 auto;
+}

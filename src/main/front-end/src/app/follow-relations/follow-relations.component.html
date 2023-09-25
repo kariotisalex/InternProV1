@@ -17,7 +17,8 @@
     <div class="updateDivWrapper">
       <div *ngIf="followersPointer" >
         <ul *ngFor="let follower of followers" >
-          <li (click)="this.navigation.goToProfileView(follower.userid,follower.usernameUserid)">{{follower.usernameUserid}}</li>
+          <li (click)="this.navigation.goToProfileView(follower.userid ,
+          follower.usernameUserid)">{{follower.usernameUserid}}</li>
         </ul>
 
       </div>
@@ -28,7 +29,8 @@
 
       <div *ngIf="!followersPointer" >
         <ul *ngFor="let following of followings">
-          <li (click)="this.navigation.goToProfileView(following.followerid,following.followeridUsername)">{{following.followeridUsername}} </li>
+          <li (click)="this.navigation.goToProfileView(following.followerid ,
+          following.followeridUsername)">{{following.followeridUsername}} </li>
         </ul>
 
 

@@ -1,0 +1,37 @@
+<div class="fullWrapper" *ngFor="let post of posts">
+  <div class="wrapperFirstColumn ">
+    <div class="wrapperImg">
+      <img [src]="post.filename" class="detailImg"
+           (click)="deletePostButtonFunc()">
+      <div class="datePost">{{post.createdDate | date}}</div>
+
+
+    </div>
+
+    <div class="wrapperDesc">
+      <app-post-description-panel [post]="post"
+                                  [uid]="user.uid"
+                                  (trigger)="getPost()"></app-post-description-panel>
+
+    </div>
+
+  </div>
+  <div class="wrapperSecColumn">
+
+    <div>
+      <app-comments-panel [post]="post"
+                          [user]="user"></app-comments-panel>
+
+
+    </div>
+
+  </div>
+</div>
+<div >
+  <div class="footerPagingFeed">
+    <app-footer-paging [pages]="pages"
+                       (myData)="getFeed($event)" ></app-footer-paging>
+  </div>
+
+</div>
+

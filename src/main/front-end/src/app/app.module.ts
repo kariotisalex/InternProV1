@@ -19,6 +19,7 @@ import { FooterPagingComponent } from './support/footer-paging/footer-paging.com
 import { CommentsPanelComponent } from './support/comments-panel/comments-panel.component';
 import { PostDescriptionPanelComponent } from './support/post-description-panel/post-description-panel.component';
 import { FollowRelationsComponent } from './follow-relations/follow-relations.component';
+import { FeedComponent } from './feed/feed.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { FollowRelationsComponent } from './follow-relations/follow-relations.co
     FooterPagingComponent,
     CommentsPanelComponent,
     PostDescriptionPanelComponent,
-    FollowRelationsComponent
+    FollowRelationsComponent,
+    FeedComponent
 
 
   ],

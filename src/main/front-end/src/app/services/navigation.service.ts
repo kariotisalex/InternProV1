@@ -49,4 +49,7 @@ export class NavigationService {
   goToProfileViewString(id : string, username : string){
     return `/home/profile/${id}/${username}`;
   }
+  goToFeedString(){
+    return `/home/feed`;
+  }
 }

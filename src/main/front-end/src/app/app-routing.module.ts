@@ -13,6 +13,7 @@ import { AddPostComponent } from "./add-post/add-post.component";
 import { PostDetailsComponent } from "./home-page/post-details/post-details.component";
 import { BrowserModule } from "@angular/platform-browser";
 import { FormsModule } from "@angular/forms";
+import {FeedComponent} from "./feed/feed.component";
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full'},
@@ -21,6 +22,7 @@ const routes: Routes = [
   { path: 'testing', component: ProfileComponent },
   { path: 'home' , component: HomePageComponent,
     canActivate: [homeGuard], children:[
+      { path:'feed' , component: FeedComponent},
       { path: 'profile', component: ProfileComponent },
       { path: 'settings', component: SettingsComponent },
       { path: 'profile/:id/:username', component: ProfileComponent },

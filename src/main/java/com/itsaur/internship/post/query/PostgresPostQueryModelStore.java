@@ -152,49 +152,7 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                     e.printStackTrace();
                 });
     }
-    @Override
-    public Future<List<PostQueryModel>> customizeFeed(UUID userid){
-        return pool
-                .preparedQuery(
-                    "SELECT P.postid, P.createdate, P.filename, P.description, F.followerid, U.username " +
-                        "FROM followers AS F, users AS U, post AS P " +
-                        "WHERE F.followerid = P.userid AND F.followerid = U.userid AND F.userid = ($1)" +
-                        "ORDER BY (createdate) DESC")
-                .execute(Tuple.of(userid))
-                .compose(rows -> {
-                    if (rows.iterator().hasNext()){
 
-                        List<PostQueryModel> queryModelList = new ArrayList<>();
-
-                        for (Row row : rows){
-
-                            UUID postid                 = row.getUUID("postid");
-                            OffsetDateTime createdate   = row.getOffsetDateTime("createdate");
-                            String filename             = row.getString("filename");
-                            String description          = row.getString("description");
-                            UUID followerid             = row.getUUID("followerid");
-                            String username             = row.getString("username");
-
-
-                            queryModelList.add(
-                                    new PostQueryModel(
-                                            postid,
-                                            createdate,
-                                            filename,
-                                            description,
-                                            followerid,
-                                            username));
-                        };
-                        return Future.succeededFuture(queryModelList);
-                    }else {
-                        return Future.failedFuture(new IllegalArgumentException("There is no post!"));
-                    }
-
-                }).onFailure(err -> {
-                    err.printStackTrace();
-                });
-
-    }
 
     @Override
     public Future<List<PostQueryModel>> customizeFeed(UUID userid, int startFrom, int size){
@@ -207,7 +165,7 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
         return pool
                 .preparedQuery(
                         "SELECT P.postid, P.createdate, P.filename, P.description, F.followerid, U.username " +
-                                "FROM followers AS F, users AS U, post AS P " +
+                                "FROM followers AS F, users AS U, posts AS P " +
                                 "WHERE F.followerid = P.userid AND F.followerid = U.userid AND F.userid = ($1)" +
                                 "ORDER BY (createdate) DESC " +
                                 "OFFSET ($2) ROWS FETCH FIRST ($3) ROWS ONLY")
@@ -249,6 +207,36 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                     err.printStackTrace();
                 });
 
+    }
+
+    @Override
+    public Future<String> customizeFeedCount(UUID uid) {
+        return pool
+                .preparedQuery(
+                        "SELECT COUNT(P.postid)  " +
+                        "FROM followers AS F, users AS U, posts AS P " +
+                                "WHERE F.followerid = P.userid AND F.followerid = U.userid AND F.userid = ($1)"
+                                )
+                .execute(Tuple.of(
+                        String.valueOf(uid)
+
+                ))
+                .compose(rows -> {
+                    if (rows.iterator().hasNext()){
+
+
+
+
+                        return Future.succeededFuture(
+                                String.valueOf(rows.iterator().next().getLong(0))
+                        );
+                    }else {
+                        return Future.failedFuture(new IllegalArgumentException("There is no post!"));
+                    }
+
+                }).onFailure(err -> {
+                    err.printStackTrace();
+                });
     }
 
 

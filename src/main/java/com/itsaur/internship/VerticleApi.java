@@ -597,6 +597,32 @@ public class VerticleApi extends AbstractVerticle {
                 });
 
 
+        // Count Feed
+        router
+                .get("/user/:userid/feed/count")
+                .handler(ctx -> {
+                    try{
+                        UUID uid = UUID.fromString(ctx.pathParam("userid"));
+                        this.postQueryModelStore.customizeFeedCount(uid)
+                                .onSuccess(suc -> {
+                                    ctx.response().setStatusCode(200).end(suc);
+                                })
+                                .onFailure(err -> {
+                                    ctx.response().setStatusCode(400).end("0");
+                                });
+                    }catch (IllegalArgumentException e){
+                        e.printStackTrace();
+                        ctx.response().setStatusCode(500).end("UUID is not correct");
+
+                    }catch(Exception e){
+                        ctx.response().setStatusCode(500).end(e.getMessage());
+
+                    }
+
+                });
+
+
+
         // Comment count
         router
                 .get("/post/:postId/comments/count")
