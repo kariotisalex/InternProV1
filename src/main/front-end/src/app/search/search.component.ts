@@ -1,5 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {FormsModule} from "@angular/forms";
+import {Component, OnInit} from '@angular/core';
 import {UserService} from "../services/user.service";
 import {User} from "../services/interfaces/user";
 import {HttpErrorResponse} from "@angular/common/http";
@@ -34,7 +33,7 @@ export class SearchComponent implements OnInit{
       debounce(() => interval(500)))
       .subscribe({
         next: x => {
-          this.countResults();
+
           this.getUsers( 1);
         },error: (err : HttpErrorResponse) => {
           console.log(err.error)
@@ -43,38 +42,41 @@ export class SearchComponent implements OnInit{
 
   }
 
-  countResults(){
-    this.searchPages = [];
-    this.userService.countUsers(this.usernameValue)
-      .subscribe({
-        next: amountOfCount => {
-          console.log('xxx' + amountOfCount);
-          if (amountOfCount % this.resultPerPage != 0) {
-            for (let i = 1; i <= (amountOfCount / this.resultPerPage) + 1; i++) {
-              this.searchPages.push(i);
-            }
-          } else {
-            for (let i = 1; i <= (amountOfCount / this.resultPerPage); i++) {
-              this.searchPages.push(i);
-            }
-          }
-        }
-      })
-  }
   getUsers( page : number ){
     const startFrom : number = (page - 1) * this.resultPerPage;
 
     this.users = [];
+
     this.userService.getUsersByUsername(this.usernameValue, startFrom, this.resultPerPage)
       .subscribe({
         next: x => {
-          this.users = x;
-        },error: (err : HttpErrorResponse) => {
+          this.searchPages = [];
+
+          for (let user of x){
+
+            if (user.uid){
+                this.users.push(user);
+            }else {
+              const amountOfCount = user.username as unknown as number;
+              if (amountOfCount % this.resultPerPage != 0) {
+                for (let i = 1; i <= (amountOfCount / this.resultPerPage) + 1; i++) {
+                  this.searchPages.push(i);
+                }
+              } else {
+                for (let i = 1; i <= (amountOfCount / this.resultPerPage); i++) {
+                  this.searchPages.push(i);
+                }
+              }
+            }
+
+
+          }
+        }
+        , error: (err: HttpErrorResponse) => {
           console.log(err.error);
         }
       });
   }
-
 
 
 }

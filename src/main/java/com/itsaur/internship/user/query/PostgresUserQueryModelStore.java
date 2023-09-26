@@ -40,7 +40,7 @@ public class PostgresUserQueryModelStore implements UserQueryModelStore{
 
         return pool
                 .preparedQuery(
-                    "SELECT U.userid , U.username " +
+                    "SELECT U.userid , U.username, COUNT(*) OVER () as TotalCount " +
                             "FROM users AS U " +
                             "WHERE U.username LIKE ($1)" +
                             "OFFSET ($2) ROWS FETCH FIRST ($3) ROWS ONLY")
@@ -54,6 +54,9 @@ public class PostgresUserQueryModelStore implements UserQueryModelStore{
                 .compose(rows -> {
                     if (rows.iterator().hasNext()) {
                         List<UserQueryModel> usersQueryModel = new ArrayList<>();
+                        usersQueryModel.add(new UserQueryModel(
+                                null,
+                                String.valueOf(rows.iterator().next().getLong("totalcount"))));
                         for (Row row : rows){
 
                             usersQueryModel.add(new UserQueryModel(row.getUUID(0),
@@ -66,33 +69,6 @@ public class PostgresUserQueryModelStore implements UserQueryModelStore{
                     }
 
     }).onFailure(e ->{
-                    e.printStackTrace();
-                });
-    }
-
-    @Override
-    public Future<String> countAllUsersByUsername(String username) {
-        if (!(MIN_VALUE < username.length() && username.length() < MAX_VALUE)){
-            throw new IllegalArgumentException("Unacceptable username");
-        }
-        return pool
-                .preparedQuery(
-                        "SELECT COUNT(U.userid) " +
-                                "FROM users AS U " +
-                                "WHERE U.username LIKE ($1)")
-                .execute(Tuple.of("%"+username+"%"))
-                .onFailure(e -> {
-                    e.printStackTrace();
-                })
-                .compose(rows -> {
-                    if (rows.iterator().hasNext()) {
-                        Row row = rows.iterator().next();
-                        return Future.succeededFuture(String.valueOf(row.getLong(0)));
-                    }else {
-                        return Future.failedFuture(new IllegalArgumentException("0"));
-                    }
-
-                }).onFailure(e ->{
                     e.printStackTrace();
                 });
     }

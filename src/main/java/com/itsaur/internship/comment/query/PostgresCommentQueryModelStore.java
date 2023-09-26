@@ -29,53 +29,6 @@ public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
         this.pool = pool;
     }
 
-    @Override
-    public Future<List<CommentQueryModel>> findAllByPostId(UUID postid){
-
-        return pool
-                .preparedQuery("SELECT C.commentid, C.createdate, C.comment, C.userid, U.username, C.postid " +
-                        "FROM posts AS P , comments AS C, users AS U " +
-                        "WHERE P.postid = C.postid AND U.userid = C.userid AND P.postid=($1)" +
-                        "ORDER BY (createdate) DESC")
-                .execute(Tuple.of(String.valueOf(postid)))
-                .onFailure(err -> {
-                    err.printStackTrace();
-                })
-                .compose(rows -> {
-                    List<CommentQueryModel> commentQueryModelList = new ArrayList<>();
-
-                    JsonArray jsonArray = new JsonArray();
-                    if (rows.iterator().hasNext()){
-                        for (Row row : rows){
-
-                            UUID commentid              = row.getUUID("commentid");
-                            OffsetDateTime createdate   = row.getOffsetDateTime("createdate");
-                            String comment              = row.getString("comment");
-                            UUID userid                 = row.getUUID("userid");
-                            String username             = row.getString("username");
-
-
-                            commentQueryModelList.add(
-                                    new CommentQueryModel(
-                                            commentid,
-                                            createdate,
-                                            comment,
-                                            userid,
-                                            username,
-                                            postid
-                                    )
-                            );
-                        }
-                        return Future.succeededFuture(commentQueryModelList);
-                    }else{
-                        return Future.failedFuture(new IllegalArgumentException("There is no comments!"));
-                    }
-
-                }).onFailure(err ->{
-                    err.printStackTrace();
-                });
-    }
-
 
 
     @Override
@@ -89,7 +42,7 @@ public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
         }
         return pool
                 .preparedQuery(
-                        "SELECT C.commentid, C.createdate, C.comment, C.userid, U.username, C.postid " +
+                        "SELECT C.commentid, C.createdate, C.comment, C.userid, U.username, C.postid, COUNT(*) OVER () as TotalCount " +
                                 "FROM posts AS P , comments AS C, users AS U " +
                                 "WHERE P.postid = C.postid AND U.userid = C.userid AND P.postid=($1)" +
                                 "ORDER BY (createdate) DESC " +
@@ -102,11 +55,18 @@ public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
                     err.printStackTrace();
                 })
                 .compose(rows -> {
-
-
                     List<CommentQueryModel> commentQueryModelList = new ArrayList<>();
-
                     if (rows.iterator().hasNext()){
+
+                        commentQueryModelList.add(
+                                new CommentQueryModel(
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        String.valueOf(rows.iterator().next().getLong("totalcount")),
+                                        null));
+
                         for (Row row : rows){
 
                             UUID commentid              = row.getUUID("commentid");
@@ -138,22 +98,5 @@ public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
 
     }
 
-    @Override
-    public Future<String> countAllCommentsByPid(UUID pid) {
-        return pool
-                .preparedQuery("SELECT count(commentid) " +
-                        "FROM comments AS C, posts AS P " +
-                        "WHERE C.postid = P.postid AND C.postid=($1)")
-                .execute(Tuple.of(String.valueOf(pid)))
-                .onFailure(e -> {
-                    e.printStackTrace();
-                })
-                .compose(rows ->{
-                    if(rows.iterator().hasNext()){
-                        return Future.succeededFuture(String.valueOf(rows.iterator().next().getLong("count")));
-                    }else{
-                        return Future.failedFuture(new IllegalArgumentException("There is no posts!"));
-                    }
-                });
-    }
+
 }

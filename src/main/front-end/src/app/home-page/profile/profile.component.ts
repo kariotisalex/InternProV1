@@ -41,9 +41,6 @@ export class ProfileComponent implements OnInit{
   ngOnInit(){
     this.getFunc();
     this.getPosts(1);
-    this.countPosts();
-    this.getFollowersCount();
-    this.getFollowingCount();
     this.getFollowers();
     this.getFollowingUser();
 
@@ -81,61 +78,98 @@ export class ProfileComponent implements OnInit{
     this.followerService.getFollowers(this.user.uid)
       .subscribe({
         next: x => {
-          this.followers = x;
+          console.log(x)
+          this.followers = [];
+          for(let follower of x){
+            if(follower.followid){
+              this.followers.push(follower);
+            }else {
+              console.log(follower)
+              this.followersCount = follower.usernameUserid as unknown as number;
+
+
+            }
+          }
         }, error: (err : HttpErrorResponse) => {
           console.log(err.error)
           this.followers = [];
+          this.followersCount = 0;
         }
       })
   }
+
+
+
+
+
+
+
   getFollowingUser(){
     this.followerService.getFollowingUser(this.user.uid)
       .subscribe({
         next: x => {
-          this.followings = x;
+          this.followings = [];
+          for(let followingUser of x){
+            if(followingUser.followid){
+
+              this.followings.push(followingUser);
+
+            }else {
+              this.followingCount = followingUser.usernameUserid as unknown as number;
+
+
+            }
+          }
+
+
         }, error: err => {
           this.followings = [];
+          this.followingCount = 0;
         }
       })
   }
+
+
+
+
 
   get posts() : Post[]{
     return this.postService.posts;
   }
 
-  countPosts(){
-    this.postService.countPosts(this.user.uid)
-      .subscribe({
-        next: x => {
-          if (x % this.postsPerPage != 0){
-            for (let i = 1; i <= (x / this.postsPerPage) + 1; i++){
-              this.pages.push(i);
-            }
-          }else {
-            for (let i = 1; i <= (x / this.postsPerPage); i++){
-              this.pages.push(i);
-            }
-          }
-        },error: err => {
-
-        }
-      })
-  }
   getPosts(page : number){
     let startFrom : number = (page - 1) * this.postsPerPage;
     this.postService.posts = [];
+    this.pages =[];
 
     this.postService.getPostsByUserid(this.user.uid,
       startFrom ,
       this.postsPerPage )
       .pipe(map(x => x.map(z =>{
-        z.filename = `/api/post/${z.filename}`
+        if(z.userid){
+          z.filename = `/api/post/${z.filename}`
+        }
         return z;
       })))
       .subscribe({
         next: x => {
+          this.postService.posts = [];
+          this.pages = [];
+          const head = x[0].username as unknown as number;
 
-          this.postService.posts = x ;
+          if (head % this.postsPerPage != 0) {
+            for (let i = 1; i <= (head / this.postsPerPage) + 1; i++) {
+              this.pages.push(i);
+            }
+          } else {
+            for (let i = 1; i <= (head / this.postsPerPage); i++) {
+              this.pages.push(i);
+            }
+          }
+          for (let i = 1; i < x.length; i++) {
+            this.postService.posts.push(x[i])
+          }
+          console.log(x)
         },
         error: (err : HttpErrorResponse) => {
 
@@ -159,33 +193,7 @@ export class ProfileComponent implements OnInit{
       })
   }
 
-  getFollowersCount(){
-    this.followerService.getCountFollowers(this.user.uid)
-      .subscribe({
-        next: res=> {
-          this.followersCount = res;
-        },
-        error: (err : HttpErrorResponse) =>{
-          console.log(err.error);
-          this.followersCount = 0;
-        }
 
-      });
-  }
-
-  getFollowingCount(){
-    this.followerService.getCountFollowingUser(this.user.uid)
-      .subscribe({
-        next: res => {
-          this.followingCount = res;
-        },
-        error: (err : HttpErrorResponse) =>{
-          console.log(err.error);
-          this.followingCount = 0;
-        }
-
-      });
-  }
 
   followButton(){
     const loggedInUserid = this.userService.getUid();
@@ -194,13 +202,13 @@ export class ProfileComponent implements OnInit{
       .subscribe({
         next: x => {
           this.isRelation = true;
-          this.getFollowersCount();
-          this.getFollowingCount();
+          this.getFollowers();
+          this.getFollowingUser();
         },
         error: err => {
           this.isRelation = false;
-          this.getFollowersCount();
-          this.getFollowingCount();
+          this.getFollowers();
+          this.getFollowingUser();
         }
       })
 
@@ -213,13 +221,13 @@ export class ProfileComponent implements OnInit{
       .subscribe({
         next: x => {
           this.isRelation = false;
-          this.getFollowersCount();
-          this.getFollowingCount();
+          this.getFollowers();
+          this.getFollowingUser();
         },
         error: err => {
           this.isRelation = true;
-          this.getFollowersCount();
-          this.getFollowingCount();
+          this.getFollowers();
+          this.getFollowingUser();
         }
       })
   }

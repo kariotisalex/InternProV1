@@ -12,14 +12,6 @@ export class FollowerService {
     private http : HttpClient
   ) { }
 
-  getCountFollowingUser(userid : string) : Observable<number>{
-    return this.http.get<number>(`/api/user/${userid}/following/count`);
-  }
-
-  getCountFollowers(userid : string) : Observable<number>{
-    return this.http.get<number>(`/api/user/${userid}/followers/count`);
-  }
-
   getFollowingUser(userid : string) : Observable<Follower[]>{
     return this.http.get<Follower[]>(`/api/user/${userid}/followers`);
   }

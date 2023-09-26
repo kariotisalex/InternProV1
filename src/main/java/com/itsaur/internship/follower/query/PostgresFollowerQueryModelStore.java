@@ -8,6 +8,7 @@ import io.vertx.sqlclient.Tuple;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 public class PostgresFollowerQueryModelStore implements FollowerQueryModelStore {
 
@@ -21,13 +22,23 @@ public class PostgresFollowerQueryModelStore implements FollowerQueryModelStore 
     @Override
     public Future<List<FollowerQueryModel>> followingUsers(UUID followerid) {
         return pool
-                .preparedQuery("SELECT F.followid, F.userid, U1.username, F.createdate, F.followerid, U2.username " +
+                .preparedQuery("SELECT F.followid, F.userid, U1.username, F.createdate, F.followerid, U2.username, COUNT(*) OVER () as TotalCount " +
                         "FROM followers AS F, users AS U1, users AS U2 " +
                         "WHERE F.userid = U1.userid AND F.followerid = U2.userid AND F.followerid = ($1)")
                 .execute(Tuple.of(followerid))
                 .compose(rows -> {
                     if (rows.iterator().hasNext()){
                         List<FollowerQueryModel> followerQueryModels = new ArrayList<>();
+                        followerQueryModels.add(
+                                new FollowerQueryModel(
+                                        null,
+                                        null,
+                                        String.valueOf(rows.iterator().next().getLong("totalcount")),
+                                        null,
+                                        null,
+                                        null
+                                ));
+
                         for (Row row : rows){
                             followerQueryModels.add(
                                     new FollowerQueryModel(
@@ -49,13 +60,23 @@ public class PostgresFollowerQueryModelStore implements FollowerQueryModelStore 
     @Override
     public Future<List<FollowerQueryModel>> followers(UUID userid) {
         return pool
-                .preparedQuery("SELECT F.followid, F.userid, U1.username, F.createdate, F.followerid, U2.username " +
+                .preparedQuery("SELECT F.followid, F.userid, U1.username, F.createdate, F.followerid, U2.username, COUNT(*) OVER () as TotalCount  " +
                 "FROM followers AS F, users AS U1, users AS U2 " +
                 "WHERE F.userid = U1.userid AND F.followerid = U2.userid AND F.userid = ($1)")
                 .execute(Tuple.of(userid))
                 .compose(rows -> {
                     if (rows.iterator().hasNext()){
                         List<FollowerQueryModel> followerQueryModels = new ArrayList<>();
+
+                        followerQueryModels.add(new FollowerQueryModel(
+                                null,
+                                null,
+                                String.valueOf(rows.iterator().next().getLong("totalcount")),
+                                null,
+                                null,
+                                null
+                        ));
+
                         for (Row row : rows){
                             followerQueryModels.add(new FollowerQueryModel(
                                     row.getUUID(0),
@@ -73,46 +94,9 @@ public class PostgresFollowerQueryModelStore implements FollowerQueryModelStore 
                 });
     }
 
-    @Override
-    public Future<String> countFollowers(UUID followerid){
-        return pool
-                .preparedQuery("SELECT COUNT(F.followid) " +
-                                    "FROM followers AS F " +
-                                    "WHERE F.followerid = ($1) ")
-                .execute(Tuple.of(followerid))
-                .compose(rows -> {
 
-                    if (rows.iterator().hasNext()){
-                        Row row = rows.iterator().next();
-                        return Future.succeededFuture(String.valueOf(row.getLong(0)));
-                    } else {
-                        return Future.failedFuture(
-                                new IllegalArgumentException("There is no followers")
-                        );
-                    }
 
-                });
-    }
 
-    @Override
-    public Future<String> countfollowingUsers(UUID userid) {
-        return pool
-                .preparedQuery("SELECT COUNT(F.followid) " +
-                        "FROM followers AS F " +
-                        "WHERE  F.userid = ($1)")
-                .execute(Tuple.of(userid))
-                .compose(rows -> {
-
-                    if (rows.iterator().hasNext()){
-                        Row row = rows.iterator().next();
-                        return Future.succeededFuture(String.valueOf(row.getLong(0)));
-                    } else {
-                        return Future.failedFuture(new IllegalArgumentException("There is no followingUsers"));
-                    }
-
-                });
-
-    }
 
 
 

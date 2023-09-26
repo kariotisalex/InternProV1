@@ -28,45 +28,45 @@ export class FeedComponent implements OnInit{
   ) {}
 
   ngOnInit(): void {
-    this.countFeed();
     this.getFeed(1);
 
   }
 
-  countFeed(){
-    this.pages = [];
-    this.postService.getFeedCount(this.userService.getUid())
-      .subscribe({
-        next: amountOfCount => {
-          console.log('xxx_ ' + amountOfCount);
-          if (amountOfCount % this.postsPerPage != 0) {
-            for (let i = 1; i <= (amountOfCount / this.postsPerPage) + 1; i++) {
-              this.pages.push(i);
-            }
-          } else {
-            for (let i = 1; i <= (amountOfCount / this.postsPerPage); i++) {
-              this.pages.push(i);
-            }
-            console.log(this.pages)
-          }
-        }
-      });
-  }
   getFeed(page : number){
 
     let startFrom : number = (page - 1) * this.postsPerPage;
 
     this.postService.getFeed(this.userService.getUid(), startFrom,this.postsPerPage)
       .pipe(map(x => x.map(z =>{
-        z.filename = `/api/post/${z.filename}`
+        if(z.userid){
+          z.filename = `/api/post/${z.filename}`
+        }
         return z;
       })))
       .subscribe({
         next: x => {
+          this.posts = [];
+          this.pages = [];
+          const head = x[0].username as unknown as number;
+
+          if (head % this.postsPerPage != 0) {
+            for (let i = 1; i <= (head / this.postsPerPage) + 1; i++) {
+              this.pages.push(i);
+            }
+          } else {
+            for (let i = 1; i <= (head / this.postsPerPage); i++) {
+              this.pages.push(i);
+            }
+          }
+          for (let i = 1; i < x.length; i++) {
+            this.posts.push(x[i])
+          }
+          console.log(x)
+
           console.log("afdadfas")
-          this.posts = x;
         },error: err => {
           this.posts = [];
+          this.pages = [];
         }
       })
 

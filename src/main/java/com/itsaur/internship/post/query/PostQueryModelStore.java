@@ -11,7 +11,7 @@ public interface PostQueryModelStore {
 
 
     public Future<List<PostQueryModel>> customizeFeed(UUID userid, int startFrom, int size);
-    public Future<String> customizeFeedCount(UUID uid);
-    public Future<String> countAllPostsbyUid(UUID uid);
+
+
     public Future<List<PostQueryModel>> findPostPageByUid(UUID uid, int startFrom, int size);
 }

@@ -59,8 +59,6 @@ export class PostService {
       .set('size',size );
     return this.http.get<Post[]>(`/api/user/${uid}/feed`, {params : params})
   }
-  getFeedCount(uid : string){
-    return this.http.get<number>(`/api/user/${uid}/feed/count`);
-  }
+
 
 }

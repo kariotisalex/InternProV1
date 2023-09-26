@@ -32,24 +32,7 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
     }
 
 
-    @Override
-    public Future<String> countAllPostsbyUid(UUID uid) {
-        return pool
-                .preparedQuery("SELECT count(filename) " +
-                        "FROM posts " +
-                        "WHERE userid=($1)")
-                .execute(Tuple.of(String.valueOf(uid)))
-                .onFailure(e -> {
-                    e.printStackTrace();
-                })
-                .compose(rows ->{
-                    if(rows.iterator().hasNext()){
-                        return Future.succeededFuture(String.valueOf(rows.iterator().next().getLong("count")));
-                    }else{
-                        return Future.failedFuture(new IllegalArgumentException("There is no posts!"));
-                    }
-                });
-    }
+
 
     @Override
     public Future<PostQueryModel> findById(UUID postId) {
@@ -106,7 +89,7 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
         }
         return pool
                 .preparedQuery(
-                    "SELECT P.postid, P.createdate, P.filename, P.description, P.userid, U.username  " +
+                    "SELECT P.postid, P.createdate, P.filename, P.description, P.userid, U.username , COUNT(*) OVER () as TotalCount " +
                         "FROM posts AS P, users AS U " +
                         "WHERE U.userid = P.userid AND P.userid=($1)" +
                         "ORDER BY (createdate) DESC " +
@@ -123,6 +106,13 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                     if (rows.iterator().hasNext()){
 
                         List<PostQueryModel> queryModelList = new ArrayList<>();
+                        queryModelList.add(new PostQueryModel(
+                                            null,
+                                            null,
+                                            null,
+                                            null,
+                                            null,
+                                String.valueOf(rows.iterator().next().getLong("totalcount"))));
 
                         for (Row row : rows){
 
@@ -164,7 +154,7 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
         }
         return pool
                 .preparedQuery(
-                        "SELECT P.postid, P.createdate, P.filename, P.description, F.followerid, U.username " +
+                        "SELECT P.postid, P.createdate, P.filename, P.description, F.followerid, U.username , COUNT(*) OVER () as TotalCount " +
                                 "FROM followers AS F, users AS U, posts AS P " +
                                 "WHERE F.followerid = P.userid AND F.followerid = U.userid AND F.userid = ($1)" +
                                 "ORDER BY (createdate) DESC " +
@@ -178,6 +168,13 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                     if (rows.iterator().hasNext()){
 
                         List<PostQueryModel> queryModelList = new ArrayList<>();
+                        queryModelList.add(new PostQueryModel(
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                String.valueOf(rows.iterator().next().getLong("totalcount"))));
 
                         for (Row row : rows){
 
@@ -185,7 +182,6 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                             OffsetDateTime createdate   = row.getOffsetDateTime("createdate");
                             String filename             = row.getString("filename");
                             String description          = row.getString("description");
-                            UUID followerid             = row.getUUID("followerid");
                             String username             = row.getString("username");
 
 
@@ -195,7 +191,7 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                                             createdate,
                                             filename,
                                             description,
-                                            followerid,
+                                            userid,
                                             username));
                         };
                         return Future.succeededFuture(queryModelList);
@@ -209,35 +205,6 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
 
     }
 
-    @Override
-    public Future<String> customizeFeedCount(UUID uid) {
-        return pool
-                .preparedQuery(
-                        "SELECT COUNT(P.postid)  " +
-                        "FROM followers AS F, users AS U, posts AS P " +
-                                "WHERE F.followerid = P.userid AND F.followerid = U.userid AND F.userid = ($1)"
-                                )
-                .execute(Tuple.of(
-                        String.valueOf(uid)
-
-                ))
-                .compose(rows -> {
-                    if (rows.iterator().hasNext()){
-
-
-
-
-                        return Future.succeededFuture(
-                                String.valueOf(rows.iterator().next().getLong(0))
-                        );
-                    }else {
-                        return Future.failedFuture(new IllegalArgumentException("There is no post!"));
-                    }
-
-                }).onFailure(err -> {
-                    err.printStackTrace();
-                });
-    }
 
 
 }

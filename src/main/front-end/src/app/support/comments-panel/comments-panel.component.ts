@@ -34,28 +34,10 @@ export class CommentsPanelComponent implements OnInit{
 
   ngOnInit(){
     this.getComments(1);
-    this.countComments();
+
   }
 
 
-  countComments(){
-    this.commentPages = [];
-            this.commentService.countComments(this.post.postid)
-              .subscribe({
-                next: amountOfCount => {
-                  console.log('xxx' + amountOfCount);
-                  if (amountOfCount % this.commentsPerPage != 0) {
-                    for (let i = 1; i <= (amountOfCount / this.commentsPerPage) + 1; i++) {
-                      this.commentPages.push(i);
-                    }
-                  } else {
-                    for (let i = 1; i <= (amountOfCount / this.commentsPerPage); i++) {
-                      this.commentPages.push(i);
-                    }
-                  }
-                }
-              });
-  }
 
   getComments(page : number) {
     const startFrom: number = (page - 1) * this.commentsPerPage;
@@ -65,8 +47,28 @@ export class CommentsPanelComponent implements OnInit{
                                                   this.commentsPerPage)
         .subscribe({
           next: listOfComments => {
+            this.commentPages = [];
+            this.comments = [];
+            listOfComments.forEach(re => {
+
+              if (re.postid){
+                this.comments.push(re);
+                this.isAnyCommentExist = true;
+              }else {
+                const amountOfCount = re.username as unknown as number;
+                if (amountOfCount % this.commentsPerPage != 0) {
+                    for (let i = 1; i <= (amountOfCount / this.commentsPerPage) + 1; i++) {
+                      this.commentPages.push(i);
+                    }
+                  } else {
+                    for (let i = 1; i <= (amountOfCount / this.commentsPerPage); i++) {
+                      this.commentPages.push(i);
+                    }
+                  }
+              }
+            })
             this.isAnyCommentExist = true;
-            this.comments = listOfComments;
+
           },
           error: (err: HttpErrorResponse) => {
             this.isAnyCommentExist = false;
@@ -120,7 +122,7 @@ export class CommentsPanelComponent implements OnInit{
                   next: x => {
                     this.valuees = "This comment posted successfully!";
                     this.getComments(1);
-                    this.countComments();
+
                   },
                   error: err => {
                     this.valuees = "This comment failed to post!"
@@ -156,7 +158,7 @@ export class CommentsPanelComponent implements OnInit{
         next: x => {
           this.valuees = 'The comment updated!'
           this.getComments(1);
-          this.countComments();
+
           this.backbuttonfunc();
         },
         error: err => {
@@ -171,7 +173,7 @@ export class CommentsPanelComponent implements OnInit{
           next: x => {
             this.valuees = "The comment deleted!"
             this.getComments(1);
-            this.countComments();
+
             this.backbuttonfunc();
           },
           error: err => {

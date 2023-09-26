@@ -6,26 +6,18 @@
            (click)="deletePostButtonFunc()">
       <div >{{post.username}} : <span class="datePost">{{post.createdDate | date}}</span></div>
 
-
     </div>
-
     <div class="wrapperDesc">
       <app-post-description-panel [post]="post"
                                   [uid]="user.uid"
                                   (trigger)="getPost()"></app-post-description-panel>
-
     </div>
-
   </div>
   <div class="wrapperSecColumn">
-
     <div>
       <app-comments-panel [post]="post"
                           [user]="user"></app-comments-panel>
-
-
     </div>
-
   </div>
 </div>
 <div >
@@ -33,6 +25,5 @@
     <app-footer-paging [pages]="pages"
                        (myData)="getFeed($event)" ></app-footer-paging>
   </div>
-
 </div>
 
