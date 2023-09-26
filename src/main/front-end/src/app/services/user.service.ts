@@ -10,11 +10,11 @@ import {Observable} from "rxjs";
 })
 export class UserService {
 
-  user : User
-    = {
-    uid:"12cfaf83-6928-4bd6-9886-a17b77c5e626",
-    username:"asdf"
-  }
+  user! : User
+  //   = {
+  //   uid:"12cfaf83-6928-4bd6-9886-a17b77c5e626",
+  //   username:"asdf"
+  // }
   ;
 
   constructor(
@@ -28,7 +28,7 @@ export class UserService {
   }
 
   loggedinUser(x : User){
-    this.user = x;
+    window.localStorage.setItem('user',JSON.stringify(x));
   }
 
   signup(username: string, password: string){
@@ -68,15 +68,31 @@ export class UserService {
   }
 
   getUid(){
-    return this.user.uid;
+    const uid = window.localStorage.getItem('uid');
+    return uid;
   }
 
   getUsername(){
-    return this.user.username;
+    const username = window.localStorage.getItem('username');
+    return username;
   }
 
-  getUser(){
-    return this.user;
+  getUser() : User{
+    const uid = window.localStorage.getItem("uid");
+    const username = window.localStorage.getItem("username");
+    if (uid && username){
+      const user = {
+        uid : uid,
+        username : username
+      }
+      return user;
+    }
+
+    const user = {
+      uid : "",
+      username : ""
+    }
+    return user;
   }
 
 }
