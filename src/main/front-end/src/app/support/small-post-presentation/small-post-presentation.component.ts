@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {Post} from "../../services/interfaces/post";
+import {Post, Posts} from "../../services/interfaces/post";
 import {NavigationService} from "../../services/navigation.service";
 
 @Component({
@@ -8,7 +8,7 @@ import {NavigationService} from "../../services/navigation.service";
   styleUrls: ['./small-post-presentation.component.css']
 })
 export class SmallPostPresentationComponent {
-  @Input() posts! : Post[];
+  @Input() posts! : Posts[];
 
 
   constructor(

@@ -42,6 +42,7 @@ export class LoginComponent {
       next: x => {
         this.userService.loggedinUser(x);
         this.navigation.goToHome();
+        this.userService.getUid();
       },
       error: (err: HttpErrorResponse) => {
         this.error = err.error;

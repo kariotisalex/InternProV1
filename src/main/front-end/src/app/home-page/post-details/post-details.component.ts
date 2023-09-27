@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Post} from "../../services/interfaces/post";
+import {Post, Posts} from "../../services/interfaces/post";
 import {PostService} from "../../services/post.service";
 import {UserService} from "../../services/user.service";
 import {User} from "../../services/interfaces/user";
@@ -18,7 +18,7 @@ import {NavigationService} from "../../services/navigation.service";
 })
 export class PostDetailsComponent implements OnInit{
   commentsPerPage : number = 10;
-  post! : Post;
+  post! : Posts;
 
 
   constructor(
@@ -44,10 +44,10 @@ export class PostDetailsComponent implements OnInit{
         const pid = res.get('id');
         if (pid) {
             this.postService.getPostByPostid(this.user.uid, pid)
-              .pipe(map(post =>{
-                post.filename = `/api/post/${post.filename}`
-                console.log("show me " + post.postid);
-                return post;
+              .pipe(map(posts =>{
+                posts.filename = `/api/post/${posts.filename}`
+                console.log("show me " + posts.postid);
+                return posts;
               }))
               .subscribe({
                 next: res => {

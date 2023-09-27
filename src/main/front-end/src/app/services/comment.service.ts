@@ -13,9 +13,7 @@ export class CommentService {
     private http: HttpClient
   ) { }
 
-  getAllCommentsByPostid(postid : string) : Observable<Comment[]>{
-    return this.http.get<Comment[]>(`/api/post/${postid}/comments`);
-  }
+
 
 
   addNewComment(uid : string, pid : string, newComment : string) : Observable<any>{
@@ -33,11 +31,11 @@ export class CommentService {
   countComments(pid : string) : Observable<number>{
     return this.http.get<number>(`/api/post/${pid}/comments/count`);
   }
-  getPageCommentsByPostid(pid : string, startFrom : number, size : number) : Observable<Comment[]>{
+  getPageCommentsByPostid(pid : string, startFrom : number, size : number) : Observable<Comment>{
     const params = new HttpParams()
       .set('startFrom', startFrom )
       .set('size',size);
-    return this.http.get<Comment[]>(`/api/post/${pid}/comments/page`, {params: params});
+    return this.http.get<Comment>(`/api/post/${pid}/comments/page`, {params: params});
   }
 
 }

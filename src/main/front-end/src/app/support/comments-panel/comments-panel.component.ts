@@ -3,9 +3,9 @@ import {HttpErrorResponse} from "@angular/common/http";
 import {CommentService} from "../../services/comment.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {NavigationService} from "../../services/navigation.service";
-import {Comment} from "../../services/interfaces/comment";
+import {Comments} from "../../services/interfaces/comment";
 import {User} from "../../services/interfaces/user";
-import {Post} from "../../services/interfaces/post";
+import {Posts} from "../../services/interfaces/post";
 
 @Component({
   selector: 'app-comments-panel',
@@ -15,8 +15,9 @@ import {Post} from "../../services/interfaces/post";
 export class CommentsPanelComponent implements OnInit{
   @Input() user! : User;
   private cid! : string;
-  @Input() post! : Post;
-  comments! : Comment[];
+  @Input() post! : Posts;
+  comments! : Comments[];
+
 
   isUpdateCommentTabEnable : boolean = false;
   isAnyCommentExist : boolean = false;
@@ -49,24 +50,20 @@ export class CommentsPanelComponent implements OnInit{
           next: listOfComments => {
             this.commentPages = [];
             this.comments = [];
-            listOfComments.forEach(re => {
 
-              if (re.postid){
-                this.comments.push(re);
-                this.isAnyCommentExist = true;
-              }else {
-                const amountOfCount = re.username as unknown as number;
-                if (amountOfCount % this.commentsPerPage != 0) {
-                    for (let i = 1; i <= (amountOfCount / this.commentsPerPage) + 1; i++) {
-                      this.commentPages.push(i);
-                    }
-                  } else {
-                    for (let i = 1; i <= (amountOfCount / this.commentsPerPage); i++) {
-                      this.commentPages.push(i);
-                    }
-                  }
+            const amountOfCount = listOfComments.count;
+            if (amountOfCount % this.commentsPerPage != 0) {
+              for (let i = 1; i <= (amountOfCount / this.commentsPerPage) + 1; i++) {
+                this.commentPages.push(i);
               }
-            })
+            } else {
+              for (let i = 1; i <= (amountOfCount / this.commentsPerPage); i++) {
+                this.commentPages.push(i);
+              }
+            }
+
+            this.isAnyCommentExist = true;
+            this.comments = listOfComments.comments;
             this.isAnyCommentExist = true;
 
           },
@@ -135,7 +132,7 @@ export class CommentsPanelComponent implements OnInit{
 
 
 // callings
-  updateCommentCalling(comment : Comment){
+  updateCommentCalling(comment : Comments){
     if(comment.userid == this.user.uid){
       this.isUpdateCommentTabEnable = true;
       this.valuees = comment.comment;

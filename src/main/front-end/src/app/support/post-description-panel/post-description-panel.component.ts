@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {Post} from "../../services/interfaces/post";
+import {Post, Posts} from "../../services/interfaces/post";
 import {ActivatedRoute} from "@angular/router";
 import {PostService} from "../../services/post.service";
 
@@ -10,7 +10,7 @@ import {PostService} from "../../services/post.service";
 })
 export class PostDescriptionPanelComponent {
   @Input() uid! : string;
-  @Input() post! : Post;
+  @Input() post! : Posts;
   isEditable : boolean = false;
 
   editor! : string;

@@ -10,12 +10,24 @@ import {Observable} from "rxjs";
 })
 export class UserService {
 
-  user! : User
+  get user() : any {
+    const uid = localStorage.getItem("uid");
+    const username = localStorage.getItem("username");
+    if (uid && username){
+      const user : User = {
+        uid: uid,
+        username: username
+      }
+      return user;
+    }
+
+  }
+  // user! : User
   //   = {
   //   uid:"12cfaf83-6928-4bd6-9886-a17b77c5e626",
   //   username:"asdf"
   // }
-  ;
+  // ;
 
   constructor(
     private http: HttpClient
@@ -24,11 +36,15 @@ export class UserService {
   logIn(username: string, password: string){
     const body = { username: username,
                    password: password }
-    return this.http.post<User>("/api/user/login", body);
+    localStorage.setItem("user", JSON.stringify(body));
+    return this.http.post<User>("/api/user/login", body)
+      ;
   }
 
   loggedinUser(x : User){
-    window.localStorage.setItem('user',JSON.stringify(x));
+    localStorage.setItem("user",JSON.stringify(x))
+    // this.user = x;
+    return true;
   }
 
   signup(username: string, password: string){
@@ -49,10 +65,13 @@ export class UserService {
   }
 
   logout(): boolean{
-    this.user = {
-      uid:'',
-      username:''
-    };
+    localStorage.clear();
+
+    // this.user = {
+    //   uid:'',
+    //   username:''
+    // };
+
     return true;
   }
 
@@ -68,31 +87,21 @@ export class UserService {
   }
 
   getUid(){
-    const uid = window.localStorage.getItem('uid');
-    return uid;
+    const data : any = localStorage.getItem('user');
+    const sess = JSON.parse(data);
+    console.log(sess.uid)
+    return this.user.uid;
   }
 
   getUsername(){
-    const username = window.localStorage.getItem('username');
-    return username;
+    const data : any = localStorage.getItem('user');
+    const sess = JSON.parse(data);
+    console.log(sess.username)
+    return this.user.username;
   }
 
   getUser() : User{
-    const uid = window.localStorage.getItem("uid");
-    const username = window.localStorage.getItem("username");
-    if (uid && username){
-      const user = {
-        uid : uid,
-        username : username
-      }
-      return user;
-    }
-
-    const user = {
-      uid : "",
-      username : ""
-    }
-    return user;
+    return this.user
   }
 
 }

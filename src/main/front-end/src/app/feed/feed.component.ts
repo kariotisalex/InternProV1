@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Post} from "../services/interfaces/post";
+import {Post, Posts} from "../services/interfaces/post";
 import {PostService} from "../services/post.service";
 import {User} from "../services/interfaces/user";
 import {UserService} from "../services/user.service";
@@ -16,8 +16,11 @@ import {HttpErrorResponse} from "@angular/common/http";
 })
 export class FeedComponent implements OnInit{
   pages : number[] = [];
-  posts : Post[] = [];
+  posts : Posts[] = [];
   postsPerPage : number = 6;
+  commentsPerPage : number = 10;
+  post! : Posts;
+
 
   constructor(
     private postService : PostService,
@@ -37,17 +40,19 @@ export class FeedComponent implements OnInit{
     let startFrom : number = (page - 1) * this.postsPerPage;
 
     this.postService.getFeed(this.userService.getUid(), startFrom,this.postsPerPage)
-      .pipe(map(x => x.map(z =>{
+      .pipe(map(x => {x.posts.map(z =>{
         if(z.userid){
           z.filename = `/api/post/${z.filename}`
         }
         return z;
-      })))
+      })
+      return x;
+      }))
       .subscribe({
         next: x => {
           this.posts = [];
           this.pages = [];
-          const head = x[0].username as unknown as number;
+          const head = x.count;
 
           if (head % this.postsPerPage != 0) {
             for (let i = 1; i <= (head / this.postsPerPage) + 1; i++) {
@@ -58,13 +63,12 @@ export class FeedComponent implements OnInit{
               this.pages.push(i);
             }
           }
-          for (let i = 1; i < x.length; i++) {
-            this.posts.push(x[i])
-          }
+          this.posts = x.posts;
           console.log(x)
 
           console.log("afdadfas")
-        },error: err => {
+        },error: (err : HttpErrorResponse) => {
+          console.log(err.error)
           this.posts = [];
           this.pages = [];
         }
@@ -72,10 +76,6 @@ export class FeedComponent implements OnInit{
 
 
   }
-  commentsPerPage : number = 10;
-  post! : Post;
-
-
 
 
   get user() : User{
@@ -91,7 +91,6 @@ export class FeedComponent implements OnInit{
             this.postService.getPostByPostid(this.user.uid, pid)
               .pipe(map(post =>{
                 post.filename = `/api/post/${post.filename}`
-                console.log("show me " + post.postid);
                 return post;
               }))
               .subscribe({

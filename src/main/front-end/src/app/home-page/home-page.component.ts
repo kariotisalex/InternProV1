@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { UserService } from "../services/user.service";
 import { User } from "../services/interfaces/user";
 import {Router} from "@angular/router";
@@ -9,17 +9,18 @@ import {NavigationService} from "../services/navigation.service";
   templateUrl: './home-page.component.html',
   styleUrls: ['./home-page.component.css']
 })
-export class HomePageComponent {
+export class HomePageComponent implements OnInit{
 
-  private emptyUser: User={
-    uid: '',
-    username:''
-  }
+
   constructor(
     private userService : UserService,
     private router : Router,
     public navigation : NavigationService
   ) {}
+
+  ngOnInit(): void {
+    this.userService.getUsername();
+  }
 
   get user(): User{
     return this.userService.getUser();
@@ -31,7 +32,5 @@ export class HomePageComponent {
     return true;
   }
 
-  myProfile(){
-    this.navigation.goToProfile();
-  }
+
 }

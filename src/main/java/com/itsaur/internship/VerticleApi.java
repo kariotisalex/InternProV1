@@ -491,27 +491,24 @@ public class VerticleApi extends AbstractVerticle {
                                     startFrom,
                                     size
                                 ).onSuccess(posts -> {
+                                    JsonObject jsonObject = new JsonObject();
                                     JsonArray jsonArray = new JsonArray();
 
-                                    jsonArray.add(new JsonObject()
-                                                    .put("postid"       , null)
-                                                    .put("createdDate"  , null)
-                                                    .put("filename"     , null)
-                                                    .put("description"  , null)
-                                                    .put("userid"       , null)
-                                                    .put("username"     , posts.get(0).username()));
-                                    IntStream.range(1,posts.size()).forEach(re ->{
+                                    jsonObject.put("count", posts.count());
+
+
+                                    posts.postsQueryModels().forEach(re ->{
                                         jsonArray.add(new JsonObject()
-                                                .put("postid"       , posts.get(re).postid().toString())
-                                                .put("createdDate"  , posts.get(re).createdDate().toString())
-                                                .put("filename"     , posts.get(re).filename())
-                                                .put("description"  , posts.get(re).description())
-                                                .put("userid"       , posts.get(re).userid().toString())
-                                                .put("username"     , posts.get(re).username())
+                                                .put("postid"       , re.postid().toString())
+                                                .put("createdDate"  , re.createdDate().toString())
+                                                .put("filename"     , re.filename())
+                                                .put("description"  , re.description())
+                                                .put("userid"       , re.userid().toString())
+                                                .put("username"     , re.username())
                                         );
                                     });
-
-                                    ctx.response().setStatusCode(200).end(jsonArray.toString());
+                                    jsonObject.put("posts", jsonArray);
+                                    ctx.response().setStatusCode(200).end(jsonObject.toString());
                                 })
                                 .onFailure(err -> {
                                     ctx.response().setStatusCode(400).end("There is not posts!");
@@ -545,30 +542,26 @@ public class VerticleApi extends AbstractVerticle {
                                         Integer.valueOf(startFrom),
                                         Integer.valueOf(size)
                                 ).onSuccess(comments -> {
+                                    JsonObject jsonObject = new JsonObject();
+
+                                    jsonObject
+                                            .put("count"  ,  comments.count());
+
                                     JsonArray jsonArray = new JsonArray();
-
-                                    jsonArray.add(new JsonObject()
-                                            .put("commentid"  ,  null)
-                                            .put("createdate" ,  null)
-                                            .put("comment"    ,  null)
-                                            .put("userid"     ,  null)
-                                            .put("username"   ,  comments.get(0).username())
-                                            .put("postid"     ,  null)
-                                    );
-                                    IntStream.range(1,comments.size()).forEach(re ->{
-
+                                    comments.commentQueryModels().forEach(re ->{
                                         jsonArray.add(new JsonObject()
-                                                .put("commentid"  ,  comments.get(re).commentid().toString())
-                                                .put("createdate" ,  comments.get(re).createdate().toString())
-                                                .put("comment"    ,  comments.get(re).comment())
-                                                .put("userid"     ,  comments.get(re).userid().toString())
-                                                .put("username"   ,  comments.get(re).username())
-                                                .put("postid"     ,  comments.get(re).postid().toString())
+                                                .put("commentid"  ,  re.commentid().toString())
+                                                .put("createdate" ,  re.createdate().toString())
+                                                .put("comment"    ,  re.comment())
+                                                .put("userid"     ,  re.userid().toString())
+                                                .put("username"   ,  re.username())
+                                                .put("postid"     ,  re.postid().toString())
                                         );
                                     });
 
+                                    jsonObject.put("comments", jsonArray);
 
-                                    ctx.response().setStatusCode(200).end(jsonArray.toString());
+                                    ctx.response().setStatusCode(200).end(jsonObject.toString());
                                 })
                                 .onFailure(err -> {
                                     err.printStackTrace();
@@ -643,8 +636,8 @@ public class VerticleApi extends AbstractVerticle {
                                 .onSuccess(res -> {
                                     JsonArray jsonArray = new JsonArray();
                                     jsonArray.add(new JsonObject()
-                                            .put("uid", null)
-                                            .put("username", res.get(0).username()));
+                                             .put("uid", null)
+                                             .put("username", res.get(0).username()));
                                     IntStream.range(1,res.size()).forEach(re -> {
                                         jsonArray.add(new JsonObject()
                                                 .put( "uid"      ,  res.get(re).userid().toString() )
@@ -680,27 +673,27 @@ public class VerticleApi extends AbstractVerticle {
 
                         this.postQueryModelStore.customizeFeed(userid,startFrom,size)
                                 .onSuccess(posts -> {
+
+                                    JsonObject jsonObject = new JsonObject();
                                     JsonArray jsonArray = new JsonArray();
 
-                                    jsonArray.add(new JsonObject()
-                                            .put("postid"       , null)
-                                            .put("createdDate"  , null)
-                                            .put("filename"     , null)
-                                            .put("description"  , null)
-                                            .put("userid"       , null)
-                                            .put("username"     , posts.get(0).username()));
-                                    IntStream.range(1,posts.size()).forEach(re ->{
+                                    jsonObject.put("count", posts.count());
+
+
+                                    posts.postsQueryModels().forEach(re ->{
                                         jsonArray.add(new JsonObject()
-                                                .put("postid"       , posts.get(re).postid().toString())
-                                                .put("createdDate"  , posts.get(re).createdDate().toString())
-                                                .put("filename"     , posts.get(re).filename())
-                                                .put("description"  , posts.get(re).description())
-                                                .put("userid"       , posts.get(re).userid().toString())
-                                                .put("username"     , posts.get(re).username())
+                                                .put("postid"       , re.postid().toString())
+                                                .put("createdDate"  , re.createdDate().toString())
+                                                .put("filename"     , re.filename())
+                                                .put("description"  , re.description())
+                                                .put("userid"       , re.userid().toString())
+                                                .put("username"     , re.username())
                                         );
                                     });
 
-                                    ctx.response().setStatusCode(200).end(jsonArray.toString());
+                                    jsonObject.put("posts", jsonArray);
+                                    ctx.response().setStatusCode(200).end(jsonObject.toString());
+
                                 })
                                 .onFailure(err -> {
                                     ctx.response().setStatusCode(400).end("There is not posts!");

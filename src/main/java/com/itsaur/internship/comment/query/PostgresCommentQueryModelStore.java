@@ -32,7 +32,7 @@ public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
 
 
     @Override
-    public Future<List<CommentQueryModel>> findCommentPageByUid(UUID postid, int startFrom, int size) {
+    public Future<CommentQueryModel> findCommentPageByUid(UUID postid, int startFrom, int size) {
         System.out.println(startFrom % size);
         if (!(MIN_VALUE < size && size < MAX_VALUE)){
             throw new IllegalArgumentException("Comments : The size of comments is unacceptable");
@@ -55,17 +55,9 @@ public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
                     err.printStackTrace();
                 })
                 .compose(rows -> {
-                    List<CommentQueryModel> commentQueryModelList = new ArrayList<>();
-                    if (rows.iterator().hasNext()){
 
-                        commentQueryModelList.add(
-                                new CommentQueryModel(
-                                        null,
-                                        null,
-                                        null,
-                                        null,
-                                        String.valueOf(rows.iterator().next().getLong("totalcount")),
-                                        null));
+                    List<CommentQueryModel.CommentsQueryModel> commentQueryModelList = new ArrayList<>();
+                    if (rows.iterator().hasNext()){
 
                         for (Row row : rows){
 
@@ -77,7 +69,7 @@ public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
 
 
                             commentQueryModelList.add(
-                                    new CommentQueryModel(
+                                    new CommentQueryModel.CommentsQueryModel(
                                             commentid,
                                             createdate,
                                             comment,
@@ -87,7 +79,14 @@ public class PostgresCommentQueryModelStore implements CommentQueryModelStore{
                                     )
                             );
                         }
-                        return Future.succeededFuture(commentQueryModelList);
+
+
+                        return Future.succeededFuture(
+                                new CommentQueryModel(
+                                        commentQueryModelList,
+                                        (rows.iterator().next().getLong("totalcount")
+                                        )
+                        ));
                     }else{
                         return Future.failedFuture(new IllegalArgumentException("There is no comments!"));
                     }

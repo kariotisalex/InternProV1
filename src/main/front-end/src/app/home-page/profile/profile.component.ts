@@ -2,7 +2,7 @@ import { Component, OnInit} from '@angular/core';
 import { User } from "../../services/interfaces/user";
 import { UserService } from "../../services/user.service";
 import { ActivatedRoute, Route, Router } from "@angular/router";
-import { Post } from "../../services/interfaces/post";
+import {Post, Posts} from "../../services/interfaces/post";
 import { PostService } from "../../services/post.service";
 import { map } from "rxjs";
 import { HttpErrorResponse } from "@angular/common/http";
@@ -133,7 +133,7 @@ export class ProfileComponent implements OnInit{
 
 
 
-  get posts() : Post[]{
+  get posts() : Posts[]{
     return this.postService.posts;
   }
 

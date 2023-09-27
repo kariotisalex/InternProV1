@@ -1,22 +1,14 @@
 package com.itsaur.internship.post.query;
 
-import com.itsaur.internship.comment.query.CommentQueryModel;
-import com.itsaur.internship.follower.query.FollowerQueryModel;
 import io.vertx.core.Future;
-import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
-import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.pgclient.PgPool;
-import io.vertx.sqlclient.PoolOptions;
 import io.vertx.sqlclient.Row;
-import io.vertx.sqlclient.SqlClient;
 import io.vertx.sqlclient.Tuple;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 public class PostgresPostQueryModelStore implements PostQueryModelStore{
@@ -35,7 +27,7 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
 
 
     @Override
-    public Future<PostQueryModel> findById(UUID postId) {
+    public Future<PostQueryModel.PostsQueryModel> findById(UUID postId) {
 
         return pool
                 .preparedQuery(
@@ -59,7 +51,7 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                         UUID userid                 = row.getUUID("userid");
                         String username             = row.getString("username");
 
-                        PostQueryModel postQueryModel = new PostQueryModel(
+                        PostQueryModel.PostsQueryModel postQueryModel = new PostQueryModel.PostsQueryModel(
                                 postid,
                                 createdate,
                                 filename,
@@ -80,7 +72,7 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                 });
     }
     @Override
-    public Future<List<PostQueryModel>> findPostPageByUid(UUID uid, int startFrom, int size){
+    public Future<PostQueryModel> findPostPageByUid(UUID uid, int startFrom, int size){
         if (!(MIN_VALUE < size && size < MAX_VALUE)){
             throw new IllegalArgumentException("Comments : The size of comments is unacceptable");
         }
@@ -105,14 +97,9 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                 .compose(rows -> {
                     if (rows.iterator().hasNext()){
 
-                        List<PostQueryModel> queryModelList = new ArrayList<>();
-                        queryModelList.add(new PostQueryModel(
-                                            null,
-                                            null,
-                                            null,
-                                            null,
-                                            null,
-                                String.valueOf(rows.iterator().next().getLong("totalcount"))));
+                        List<PostQueryModel.PostsQueryModel> queryModelList = new ArrayList<>();
+
+
 
                         for (Row row : rows){
 
@@ -125,7 +112,7 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
 
 
                             queryModelList.add(
-                                    new PostQueryModel(
+                                    new PostQueryModel.PostsQueryModel(
                                             postid,
                                             createdate,
                                             filename,
@@ -133,7 +120,12 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                                             userid,
                                             username));
                         };
-                        return Future.succeededFuture(queryModelList);
+
+                        return Future.succeededFuture(
+                                new PostQueryModel(
+                                        rows.iterator().next().getLong("totalcount"),
+                                        queryModelList)
+                        );
                     }else {
                         return Future.failedFuture(new IllegalArgumentException("There is no post!"));
                     }
@@ -145,7 +137,7 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
 
 
     @Override
-    public Future<List<PostQueryModel>> customizeFeed(UUID userid, int startFrom, int size){
+    public Future<PostQueryModel> customizeFeed(UUID userid, int startFrom, int size){
         if (!(MIN_VALUE < size && size < MAX_VALUE)){
             throw new IllegalArgumentException("Comments : The size of comments is unacceptable");
         }
@@ -167,15 +159,9 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                 .compose(rows -> {
                     if (rows.iterator().hasNext()){
 
-                        List<PostQueryModel> queryModelList = new ArrayList<>();
-                        queryModelList.add(new PostQueryModel(
-                                null,
-                                null,
-                                null,
-                                null,
-                                null,
-                                String.valueOf(rows.iterator().next().getLong("totalcount"))));
 
+                        JsonArray jsonArray = new JsonArray();
+                        List<PostQueryModel.PostsQueryModel> postsQueryModels = new ArrayList<>();
                         for (Row row : rows){
 
                             UUID postid                 = row.getUUID("postid");
@@ -185,8 +171,8 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                             String username             = row.getString("username");
 
 
-                            queryModelList.add(
-                                    new PostQueryModel(
+                            postsQueryModels.add(
+                                    new PostQueryModel.PostsQueryModel(
                                             postid,
                                             createdate,
                                             filename,
@@ -194,7 +180,12 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
                                             userid,
                                             username));
                         };
-                        return Future.succeededFuture(queryModelList);
+
+
+                        return Future.succeededFuture(new PostQueryModel(
+                                rows.iterator().next().getLong("totalcount"),
+                                postsQueryModels
+                        ));
                     }else {
                         return Future.failedFuture(new IllegalArgumentException("There is no post!"));
                     }
