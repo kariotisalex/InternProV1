@@ -1,11 +1,13 @@
 package com.itsaur.internship.adminService.postgreSQL;
 
+import com.beust.ah.A;
 import com.itsaur.internship.PostgresOptions;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.pgclient.PgPool;
 import io.vertx.sqlclient.*;
+import net.datafaker.Faker;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -30,26 +32,53 @@ public class CreateUserInPostgreSQL {
         Vertx vertx = Vertx.vertx();
         PostgresOptions postgresOptions = new PostgresOptions();
         PoolOptions poolOptions = new PoolOptions().setMaxSize(5);
-        SqlClient client = PgPool.client(vertx,postgresOptions.getPgConnectOptions(),poolOptions);
+        PgPool pool = PgPool.pool(vertx,postgresOptions.getPgConnectOptions(),poolOptions);
 
-        insertRandomUsers(client, 10);
+        // insertRandomUsers(pool, 90000);
 
-
-
-    }
-    public Future<Void> addUsers(int records){
-        SqlClient client = PgPool.client(vertx, connectOptions, poolOptions);
-
-        return client
-                .query("SELECT EXISTS( SELECT FROM users)")
-                .execute()
-                .onSuccess(a -> {
-                    System.out.println(a + " show LoVe");
-                })
-                .compose(res -> {
-                    return insertRandomUsers(client, records);
+        findAllUserid(pool)
+                .onSuccess(u -> {
+                    insertRandomPostsPerUser(pool, u, 1000);
                 });
+
+
+
     }
+    private static void insertRandomPostsPerUser(PgPool pool, List<UUID> uuids, int records){
+        uuids.forEach(res -> {
+            pool
+                .preparedQuery("INSERT INTO posts(postid, createdate, filename, description, userid) " +
+                        "VALUES ($1 , $2 , $3 , $4, $5)")
+                .executeBatch(tuplePosts(res,1000));
+        });
+
+
+    }
+
+    private static List<Tuple> tuplePosts(UUID res, int records){
+        Faker faker = new Faker();
+        List<Tuple> batch = new ArrayList<>();
+        IntStream.range(0, records).forEach(er -> {
+            batch.add(Tuple.of(UUID.randomUUID(), OffsetDateTime.now(), "477985f6-86e8-4325-b393-e10269448861.png",faker.pokemon(), res));
+        });
+        return batch;
+    }
+    private static Future <List<UUID>> findAllUserid(PgPool pool){
+        return pool
+                .preparedQuery("SELECT userid FROM users " +
+                        " OFFSET 0 ROWS FETCH FIRST 5000 ROWS ONLY ")
+                .execute()
+                .compose(s -> {
+                    List<UUID> uid = new ArrayList<>();
+                    for(Row row : s){
+                        uid.add(row.getUUID(0));
+                    }
+                    return Future.succeededFuture(uid);
+                });
+
+    }
+
+
 
 
     private static Future<Void> insertRandomUsers(SqlClient client, int records){
@@ -57,15 +86,14 @@ public class CreateUserInPostgreSQL {
                 .preparedQuery("INSERT INTO users (userid, createdate, username, password) " +
                         "VALUES ($1, $2, $3, $4)")
                 .executeBatch(tupleFiller(records))
-                .compose(q -> {
-                    return client.close();
-                });
+                .mapEmpty();
     }
     private static List<Tuple> tupleFiller(int records){
 
         List<Tuple> batch = new ArrayList<>();
+        Faker faker = new Faker();
         IntStream.range(0, records).forEach(e ->{
-            batch.add(Tuple.of(UUID.randomUUID(), OffsetDateTime.now(), generateRandom(1), generateRandom(0)));
+            batch.add(Tuple.of(UUID.randomUUID(), OffsetDateTime.now(), faker.name().username(), faker.internet().password()));
         });
         return batch;
     }
@@ -90,6 +118,7 @@ public class CreateUserInPostgreSQL {
 
         return builder.toString();
     }
+
 
 
 }
