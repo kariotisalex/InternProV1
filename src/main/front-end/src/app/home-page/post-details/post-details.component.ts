@@ -69,7 +69,7 @@ export class PostDetailsComponent implements OnInit{
           .subscribe({
             next: x => {
               this.postService.posts = [];
-              this.navigation.goToProfile();
+              this.navigation.goToProfileView(this.userService.getUid(), this.userService.getUsername());
             },
             error: err => {
               console.log(err.error)

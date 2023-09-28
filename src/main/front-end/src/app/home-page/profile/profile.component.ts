@@ -49,6 +49,7 @@ export class ProfileComponent implements OnInit{
   profileShowFunc(status :  boolean, pointer : boolean){
     this.followersPointer = pointer;
     this.profileShow = status;
+    this.getPosts(1);
   }
 
   getFunc(){
@@ -62,9 +63,13 @@ export class ProfileComponent implements OnInit{
               uid: uid,
               username: username
             }
+            if( this.userService.getUid() != this.user.uid){
+              this.isMyProfile = false;
+            }else {
+              this.isMyProfile = true;
+            }
             this.getFollowers();
             this.getFollowingUser();
-            this.isMyProfile = false;
             this.getIsRelation(this.userService.getUid(), this.user.uid);
           } else {
             console.log(this.userService.getUid());
@@ -140,22 +145,24 @@ export class ProfileComponent implements OnInit{
   getPosts(page : number){
     let startFrom : number = (page - 1) * this.postsPerPage;
     this.postService.posts = [];
-    this.pages =[];
+    this.pages = [];
 
     this.postService.getPostsByUserid(this.user.uid,
       startFrom ,
       this.postsPerPage )
-      .pipe(map(x => x.map(z =>{
+      .pipe(map(x => {x.posts.map(z =>{
         if(z.userid){
           z.filename = `/api/post/${z.filename}`
         }
         return z;
-      })))
+      })
+        return x;
+      }))
       .subscribe({
         next: x => {
           this.postService.posts = [];
           this.pages = [];
-          const head = x[0].username as unknown as number;
+          const head = x.count;
 
           if (head % this.postsPerPage != 0) {
             for (let i = 1; i <= (head / this.postsPerPage) + 1; i++) {
@@ -166,9 +173,7 @@ export class ProfileComponent implements OnInit{
               this.pages.push(i);
             }
           }
-          for (let i = 1; i < x.length; i++) {
-            this.postService.posts.push(x[i])
-          }
+            this.postService.posts = x.posts;
           console.log(x)
         },
         error: (err : HttpErrorResponse) => {

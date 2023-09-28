@@ -51,7 +51,7 @@ export class AddPostComponent {
       .subscribe({
         next: x => {
           console.log('this is correct ' + x);
-          this.navigation.goToProfile();
+          this.navigation.goToProfileView(this.userService.getUid(),this.userService.getUsername());
         },
         error: (e : HttpErrorResponse) => {
           console.log('This is error ' + e);

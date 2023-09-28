@@ -6,6 +6,7 @@ import {NavigationService} from "../../services/navigation.service";
 import {Comments} from "../../services/interfaces/comment";
 import {User} from "../../services/interfaces/user";
 import {Posts} from "../../services/interfaces/post";
+import {UserService} from "../../services/user.service";
 
 @Component({
   selector: 'app-comments-panel',
@@ -29,7 +30,8 @@ export class CommentsPanelComponent implements OnInit{
     private commentService : CommentService,
     private route          : ActivatedRoute,
     private router         : Router,
-    private navigation     : NavigationService
+    private navigation     : NavigationService,
+    private userService    : UserService
   ) {
   }
 
@@ -191,7 +193,7 @@ export class CommentsPanelComponent implements OnInit{
   }
 
   postsNav(){
-    this.navigation.goToProfile();
+    this.navigation.goToProfileView(this.userService.getUid(), this.userService.getUsername());
   }
 
 

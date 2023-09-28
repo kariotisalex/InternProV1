@@ -13,7 +13,7 @@ export class HomePageComponent implements OnInit{
 
 
   constructor(
-    private userService : UserService,
+    public userService : UserService,
     private router : Router,
     public navigation : NavigationService
   ) {}

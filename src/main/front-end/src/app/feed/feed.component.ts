@@ -36,7 +36,6 @@ export class FeedComponent implements OnInit{
   }
 
   getFeed(page : number){
-
     let startFrom : number = (page - 1) * this.postsPerPage;
 
     this.postService.getFeed(this.userService.getUid(), startFrom,this.postsPerPage)
@@ -113,7 +112,7 @@ export class FeedComponent implements OnInit{
           .subscribe({
             next: x => {
               this.postService.posts = [];
-              this.navigation.goToProfile();
+              this.navigation.goToProfileView(this.userService.getUid(), this.userService.getUsername());
             },
             error: err => {
               console.log(err.error)

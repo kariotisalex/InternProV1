@@ -17,7 +17,7 @@ export class NavigationService {
     return '/home/profile';
   }
   goToHome(){
-    this.router.navigateByUrl('/home');
+    this.router.navigateByUrl('/home/feed');
   }
   goToHomeString(){
     return '/home';

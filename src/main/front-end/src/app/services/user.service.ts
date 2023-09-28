@@ -10,40 +10,30 @@ import {Observable} from "rxjs";
 })
 export class UserService {
 
-  get user() : any {
-    const uid = localStorage.getItem("uid");
-    const username = localStorage.getItem("username");
-    if (uid && username){
-      const user : User = {
-        uid: uid,
-        username: username
-      }
-      return user;
+  retrieveUser(){
+    const user : string | null = localStorage.getItem('user');
+    if (user){
+      this.user = JSON.parse(user);
     }
-
   }
-  // user! : User
-  //   = {
-  //   uid:"12cfaf83-6928-4bd6-9886-a17b77c5e626",
-  //   username:"asdf"
-  // }
-  // ;
+  user! : User;
 
   constructor(
     private http: HttpClient
-  ) { }
+  ) {
+    this.retrieveUser();
+  }
 
   logIn(username: string, password: string){
     const body = { username: username,
                    password: password }
-    localStorage.setItem("user", JSON.stringify(body));
     return this.http.post<User>("/api/user/login", body)
       ;
   }
 
   loggedinUser(x : User){
-    localStorage.setItem("user",JSON.stringify(x))
-    // this.user = x;
+    localStorage.setItem('user',JSON.stringify(x))
+    this.user = x;
     return true;
   }
 
@@ -66,12 +56,10 @@ export class UserService {
 
   logout(): boolean{
     localStorage.clear();
-
-    // this.user = {
-    //   uid:'',
-    //   username:''
-    // };
-
+    this.user = {
+      uid:'',
+      username:''
+    };
     return true;
   }
 
@@ -87,17 +75,12 @@ export class UserService {
   }
 
   getUid(){
-    const data : any = localStorage.getItem('user');
-    const sess = JSON.parse(data);
-    console.log(sess.uid)
     return this.user.uid;
   }
 
   getUsername(){
-    const data : any = localStorage.getItem('user');
-    const sess = JSON.parse(data);
-    console.log(sess.username)
     return this.user.username;
+
   }
 
   getUser() : User{
