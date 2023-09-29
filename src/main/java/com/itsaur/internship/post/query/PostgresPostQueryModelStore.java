@@ -81,11 +81,13 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
         }
         return pool
                 .preparedQuery(
-                    "SELECT P.postid, P.createdate, P.filename, P.description, P.userid, U.username , COUNT(*) OVER () as TotalCount " +
-                        "FROM posts AS P, users AS U " +
-                        "WHERE U.userid = P.userid AND P.userid=($1)" +
-                        "ORDER BY (createdate) DESC " +
-                        "OFFSET ($2) ROWS FETCH FIRST ($3) ROWS ONLY")
+                    "SELECT P.postid, P.createdate, P.filename, P.description, P.userid, U.username , COUNT(P.postid) OVER () as TotalCount " +
+                        "FROM posts AS P " +
+                        "INNER JOIN users as u on P.userid = u.userid " +
+                        "WHERE P.userid=($1)" +
+                            "ORDER BY (createdate) DESC" +
+                        " LIMIT ($3) " +
+                        "OFFSET ($2)  ")
                 .execute(Tuple.of(
                         String.valueOf(uid),
                         startFrom,
@@ -146,7 +148,7 @@ public class PostgresPostQueryModelStore implements PostQueryModelStore{
         }
         return pool
                 .preparedQuery(
-                        "SELECT P.postid, P.createdate, P.filename, P.description, F.followerid, U.username , COUNT(*) OVER () as TotalCount " +
+                        "SELECT P.postid, P.createdate, P.filename, P.description, F.followerid, U.username , COUNT(P.postid) OVER () as TotalCount " +
                                 "FROM followers AS F, users AS U, posts AS P " +
                                 "WHERE F.followerid = P.userid AND F.followerid = U.userid AND F.userid = ($1)" +
                                 "ORDER BY (createdate) DESC " +

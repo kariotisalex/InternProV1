@@ -43,8 +43,7 @@ public class CreatePost {
                 post.connectOptions,
                 post.poolOptions
         );
-//        insertRandomPostsPerUser(pool,UUID.fromString("12cfaf83-6928-4bd6-9886-a17b77c5e626"),500);
-//        insertRandomPostsPerUser(pool,uuid,10000);
+
         findAllUserid(pool)
                 .compose(listOfUuids -> {
                     System.out.println(listOfUuids.size());
@@ -57,8 +56,13 @@ public class CreatePost {
 
     }
 
+
+
+
+
+
     private static Future<Void> handling(PgPool pool, List<UUID> uuids, int position){
-        return insertRandomPostsPerUser(pool,uuids.get(position),10000)
+        return insertRandomPostsPerUser(pool,uuids.get(position),3000)
                 .compose(res -> {
                     if(position +1 < uuids.size()){
 
